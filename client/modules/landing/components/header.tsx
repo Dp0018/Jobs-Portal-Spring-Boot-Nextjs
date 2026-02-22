@@ -22,7 +22,7 @@ const Header = () => {
   const pathname = usePathname();
 
   const user = useSelector((state: RootState) => state.user);
-  const profileId = useSelector((state: RootState) => state.user?.profileId);
+  const profileId = useSelector((state: RootState) => state.user?.id);
 
   /* Prevent hydration mismatch — server has no user state */
   useEffect(() => {

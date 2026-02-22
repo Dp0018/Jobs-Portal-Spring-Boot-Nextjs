@@ -52,10 +52,6 @@ public class UserServiceImpl implements UserService {
         userDTO.setPassword(passwordEncoder.encode(userDTO.getPassword()));
         User user = userDTO.toEntity();
         user = userRepository.save(user);
-        System.out.println(user);
-        System.out.println(user.getEmail() + user.getName() + user.getId());
-        System.out.println(userDTO);
-        System.out.println(userDTO.getEmail() + userDTO.getName() + userDTO.getId());
         profileService.createProfile(userDTO.getEmail(), userDTO.getName(), user.getId());
 
         return user.toDTO();
