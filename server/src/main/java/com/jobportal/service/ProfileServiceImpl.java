@@ -41,7 +41,6 @@ public class ProfileServiceImpl implements ProfileService{
     @Override
     public ProfileDto updateProfile(ProfileDto profileDto) throws JobPortalExceeption {
         profileRepository.findById(profileDto.getId()).orElseThrow(() -> new JobPortalExceeption("PROFILE_NOT_FOUND"));
-        getWorkingIsTrueSetEndDate(profileDto.getId(),profileDto);
         profileDto.setTotalExp(calculateTotalExp(profileDto));
         profileRepository.save(profileDto.toEntity());
         return profileDto;
@@ -52,33 +51,21 @@ public class ProfileServiceImpl implements ProfileService{
         return profileRepository.findAll().stream().map((x)-> x.toDto()).toList();
     }
 
-    public void getWorkingIsTrueSetEndDate(Long id, ProfileDto profileDto) throws JobPortalExceeption {
-        profileRepository.findById(id).orElseThrow(() -> new JobPortalExceeption("PROFILE_NOT_FOUND"));
-        profileRepository.findById(id).ifPresent(profile1 -> {
-            if (profile1.getExperiences() != null) {
-                profile1.getExperiences().stream()
-                    .filter(experience -> Boolean.TRUE.equals(experience.getWorking()) && (experience.getEndDate() == null || !experience.getEndDate().isEqual(LocalDateTime.now())))
-                    .forEach(experience -> {
-                        if (profileDto.getExperiences() != null) {
-                            profileDto.getExperiences().stream()
-                                .filter(experience1 -> Boolean.TRUE.equals(experience1.getWorking()))
-                                .forEach(experience1 -> experience1.setEndDate(LocalDateTime.now()));
-                        }
-                    });
-            }
-        });
-    }
-
     public Long calculateTotalExp(ProfileDto profileDto){
         if (profileDto.getExperiences() == null || profileDto.getExperiences().isEmpty()) {
             return 0L;
         }
         List<Long> months = profileDto.getExperiences().stream()
-                .filter(experience -> experience.getStartDate() != null && experience.getEndDate() != null)
-                .map(experience -> ChronoUnit.MONTHS.between(experience.getStartDate(), experience.getEndDate()))
+                .filter(experience -> experience.getStartDate() != null
+                        && (experience.getEndDate() != null || Boolean.TRUE.equals(experience.getWorking())))
+                .map(experience -> {
+                    LocalDateTime endDate = experience.getEndDate() != null ? experience.getEndDate()
+                            : LocalDateTime.now();
+                    return ChronoUnit.MONTHS.between(experience.getStartDate(), endDate);
+                })
                 .collect(Collectors.toList());
         Long sum = months.stream().mapToLong(Long::longValue).sum();
-        double expYear = Math.round(sum/12);
+        double expYear = Math.round(sum / 12.0);
         return (long) expYear;
     }
 
