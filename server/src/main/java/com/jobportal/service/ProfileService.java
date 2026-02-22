@@ -1,4 +1,14 @@
 package com.jobportal.service;
 
-public class ProfileService {
+import com.jobportal.dto.ProfileDto;
+import com.jobportal.exception.JobPortalExceeption;
+
+import java.util.List;
+
+public interface ProfileService {
+    public Long createProfile(String email, String name, Long id) throws JobPortalExceeption;
+    public ProfileDto getProfile(Long id) throws JobPortalExceeption;
+    public ProfileDto updateProfile(ProfileDto profileDto) throws JobPortalExceeption;
+
+    public List<ProfileDto> getAllProfile();
 }
