@@ -20,4 +20,6 @@ public interface JobService {
     public List<JobDTO> getJobsPostedBy(Long id);
 
     public void changeAppStatus(Application application) throws JobPortalExceeption;
+
+    public ApplicantDTO analyzeResume(Long jobId, Long applicantId) throws JobPortalExceeption;
 }

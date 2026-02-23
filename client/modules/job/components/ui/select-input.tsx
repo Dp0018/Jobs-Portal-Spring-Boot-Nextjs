@@ -94,14 +94,19 @@ export const SelectInput = (props: any) => {
                 ? "border-destructive focus:ring-destructive"
                 : "border-border hover:border-primary/50 focus:ring-primary focus:border-primary",
               "focus:outline-none focus:ring-1",
-              !value && "text-muted-foreground"
+              !value && "text-muted-foreground",
             )}
           >
             <span className="flex items-center gap-2 flex-1 min-w-0">
               {LeftIcon && (
                 <LeftIcon className="h-4 w-4 text-primary shrink-0" />
               )}
-              <span className={cn("truncate text-left", value ? "text-foreground" : "text-muted-foreground")}>
+              <span
+                className={cn(
+                  "truncate text-left",
+                  value ? "text-foreground" : "text-muted-foreground",
+                )}
+              >
                 {value || props.placeholder || "Select..."}
               </span>
             </span>
@@ -109,14 +114,14 @@ export const SelectInput = (props: any) => {
               size={15}
               className={cn(
                 "text-muted-foreground shrink-0 transition-transform duration-200",
-                open && "rotate-180"
+                open && "rotate-180",
               )}
             />
           </button>
         </PopoverTrigger>
 
         <PopoverContent
-          className="p-0 bg-mine-shaft-900 border border-border/40 rounded-xl shadow-2xl overflow-hidden backdrop-blur-xl"
+          className="p-0 bg-popover border border-border/40 rounded-xl shadow-2xl overflow-hidden backdrop-blur-xl"
           style={{ width: "var(--radix-popover-trigger-width)" }}
           align="start"
           sideOffset={6}

@@ -84,7 +84,7 @@ export const MultiInput: React.FC<MultiInputProps> = (props) => {
         {/* Trigger — replaces PillsInput + Combobox.DropdownTarget */}
         <button
           type="button"
-          className="group w-full flex items-center gap-2 px-2 py-1.5 rounded-lg hover:bg-mine-shaft-800/50 transition-all duration-200 cursor-pointer"
+          className="group w-full flex items-center gap-2 px-2 py-1.5 rounded-lg hover:bg-accent/50 transition-all duration-200 cursor-pointer"
         >
           {/* Icon badge */}
           <div className="p-2 bg-linear-to-br from-primary to-primary/80 rounded-lg shadow-lg shadow-primary/20 shrink-0">
@@ -128,7 +128,7 @@ export const MultiInput: React.FC<MultiInputProps> = (props) => {
             size={15}
             className={cn(
               "text-muted-foreground shrink-0 transition-transform duration-200",
-              open && "rotate-180"
+              open && "rotate-180",
             )}
           />
         </button>
@@ -146,7 +146,7 @@ export const MultiInput: React.FC<MultiInputProps> = (props) => {
               value={search}
               onValueChange={setSearch}
               placeholder={`Search ${props.title}…`}
-              className="h-9 bg-mine-shaft-900/50 text-foreground placeholder:text-muted-foreground text-sm"
+              className="h-9 bg-accent/50 text-foreground placeholder:text-muted-foreground text-sm"
             />
           </div>
 
@@ -171,10 +171,16 @@ export const MultiInput: React.FC<MultiInputProps> = (props) => {
                         "w-4 h-4 rounded border flex items-center justify-center shrink-0 transition-all",
                         checked
                           ? "bg-primary border-primary"
-                          : "border-border/60 bg-transparent"
+                          : "border-border/60 bg-transparent",
                       )}
                     >
-                      {checked && <IconCheck size={10} className="text-primary-foreground" stroke={3} />}
+                      {checked && (
+                        <IconCheck
+                          size={10}
+                          className="text-primary-foreground"
+                          stroke={3}
+                        />
+                      )}
                     </div>
                     <span>{item}</span>
                   </CommandItem>

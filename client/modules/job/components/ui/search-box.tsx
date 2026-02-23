@@ -23,9 +23,8 @@ export const SearchBar = () => {
   };
 
   return (
-    <div className="relative z-50 bg-mine-shaft-900/70 backdrop-blur-xl rounded-2xl shadow-2xl border border-border/20 p-3 hover:border-border/40 transition-all duration-300">
+    <div className="relative z-50 bg-popover/70 backdrop-blur-xl rounded-2xl shadow-2xl border border-border/20 p-3 hover:border-border/40 transition-all duration-300">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-1 items-stretch">
-
         {/* ── Dropdown filters ── */}
         {dropdownData.map((item, index) => (
           <div key={index} className="relative">
@@ -47,7 +46,7 @@ export const SearchBar = () => {
             <button
               type="button"
               onClick={() => setSalaryOpen((v) => !v)}
-              className="group w-full flex items-center gap-2 px-2 py-1.5 rounded-lg hover:bg-mine-shaft-800/50 transition-all duration-200 cursor-pointer"
+              className="group w-full flex items-center gap-2 px-2 py-1.5 rounded-lg hover:bg-accent/50 transition-all duration-200 cursor-pointer"
             >
               {/* Icon badge */}
               <div className="p-2 bg-linear-to-br from-primary to-primary/80 rounded-lg shadow-lg shadow-primary/20 shrink-0">
@@ -122,7 +121,9 @@ export const SearchBar = () => {
                     type="button"
                     onClick={() => {
                       setRange([MIN_LPA, MAX_LPA]);
-                      dispatch(updateFilter({ packageOffered: [MIN_LPA, MAX_LPA] }));
+                      dispatch(
+                        updateFilter({ packageOffered: [MIN_LPA, MAX_LPA] }),
+                      );
                     }}
                     className="w-full mt-3 py-1.5 text-xs text-destructive hover:text-destructive/80 font-medium transition-colors"
                   >

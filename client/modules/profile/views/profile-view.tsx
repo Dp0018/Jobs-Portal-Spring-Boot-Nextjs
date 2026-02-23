@@ -47,9 +47,8 @@ export const ProfileView = (props: any) => {
     : "U";
 
   return (
-    <div className="min-h-screen bg-linear-to-b from-mine-shaft-950 to-mine-shaft-900 py-8">
+    <div className="min-h-screen bg-background py-8">
       <div className="w-full max-w-6xl mx-auto px-4">
-
         {/* Banner & Avatar Section */}
         <div className="relative mb-24">
           {/* Banner with gradient overlay */}
@@ -59,7 +58,7 @@ export const ProfileView = (props: any) => {
               src={Banner}
               alt="banner"
             />
-            <div className="absolute inset-0 bg-linear-to-t from-mine-shaft-950/80 via-mine-shaft-950/20 to-transparent" />
+            <div className="absolute inset-0 bg-linear-to-t from-background/80 via-background/20 to-transparent" />
           </div>
 
           {/* Avatar Container */}
@@ -70,9 +69,13 @@ export const ProfileView = (props: any) => {
               onMouseLeave={() => setHovered(false)}
               onClick={() => fileInputRef.current?.click()}
             >
-              <Avatar className="w-40 h-40 ring-8 ring-mine-shaft-950 group-hover:ring-primary/30 transition-all duration-300">
+              <Avatar className="w-40 h-40 ring-8 ring-background group-hover:ring-primary/30 transition-all duration-300">
                 <AvatarImage
-                  src={profile?.picture ? `data:image/jpeg;base64,${profile.picture}` : undefined}
+                  src={
+                    profile?.picture
+                      ? `data:image/jpeg;base64,${profile.picture}`
+                      : undefined
+                  }
                   alt="profile img"
                   className="object-cover"
                 />
@@ -104,35 +107,35 @@ export const ProfileView = (props: any) => {
         {/* Content Sections */}
         <div className="space-y-6">
           {/* Info Card */}
-          <div className="backdrop-blur-xl bg-mine-shaft-900/60 border border-white/10 rounded-2xl p-8 shadow-2xl hover:border-primary/30 transition-all duration-300">
+          <div className="backdrop-blur-xl bg-popover/60 border border-white/10 rounded-2xl p-8 shadow-2xl hover:border-primary/30 transition-all duration-300">
             <Info profile={profile} edit={!props.id} />
           </div>
 
           <hr className="border-white/5" />
 
           {/* About Card */}
-          <div className="backdrop-blur-xl bg-mine-shaft-900/60 border border-white/10 rounded-2xl p-8 shadow-2xl hover:border-primary/30 transition-all duration-300">
+          <div className="backdrop-blur-xl bg-popover/60 border border-white/10 rounded-2xl p-8 shadow-2xl hover:border-primary/30 transition-all duration-300">
             <About profile={profile} edit={!props.id} />
           </div>
 
           <hr className="border-white/5" />
 
           {/* Skills Card */}
-          <div className="backdrop-blur-xl bg-mine-shaft-900/60 border border-white/10 rounded-2xl p-8 shadow-2xl hover:border-primary/30 transition-all duration-300">
+          <div className="backdrop-blur-xl bg-popover/60 border border-white/10 rounded-2xl p-8 shadow-2xl hover:border-primary/30 transition-all duration-300">
             <Skills profile={profile} edit={!props.id} />
           </div>
 
           <hr className="border-white/5" />
 
           {/* Experience Card */}
-          <div className="backdrop-blur-xl bg-mine-shaft-900/60 border border-white/10 rounded-2xl p-8 shadow-2xl hover:border-primary/30 transition-all duration-300">
+          <div className="backdrop-blur-xl bg-popover/60 border border-white/10 rounded-2xl p-8 shadow-2xl hover:border-primary/30 transition-all duration-300">
             <Experience profile={profile} edit={!props.id} />
           </div>
 
           <hr className="border-white/5" />
 
           {/* Certificate Card */}
-          <div className="backdrop-blur-xl bg-mine-shaft-900/60 border border-white/10 rounded-2xl p-8 shadow-2xl hover:border-primary/30 transition-all duration-300">
+          <div className="backdrop-blur-xl bg-popover/60 border border-white/10 rounded-2xl p-8 shadow-2xl hover:border-primary/30 transition-all duration-300">
             <Certificate profile={profile} edit={!props.id} />
           </div>
         </div>

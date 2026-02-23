@@ -213,8 +213,18 @@ const TimelineItem = ({
   desc: string;
   align: "left" | "right";
 }) => (
-  <div className={cn("flex gap-6 items-start", align === "right" && "flex-row-reverse")}>
-    <div className={cn("flex-1 pb-8", align === "right" ? "text-left" : "text-right")}>
+  <div
+    className={cn(
+      "flex gap-6 items-start",
+      align === "right" && "flex-row-reverse",
+    )}
+  >
+    <div
+      className={cn(
+        "flex-1 pb-8",
+        align === "right" ? "text-left" : "text-right",
+      )}
+    >
       <div className="inline-block px-3 py-1 bg-primary/10 border border-primary/20 rounded-full text-primary text-xs font-bold mb-2">
         {year}
       </div>
@@ -223,7 +233,7 @@ const TimelineItem = ({
     </div>
     {/* Dot */}
     <div className="relative flex flex-col items-center shrink-0 w-4">
-      <div className="w-4 h-4 rounded-full bg-primary border-4 border-mine-shaft-950 ring-2 ring-primary/30 z-10 mt-1" />
+      <div className="w-4 h-4 rounded-full bg-primary border-4 border-background ring-2 ring-primary/30 z-10 mt-1" />
       <div className="w-px flex-1 bg-linear-to-b from-primary/40 to-border/20" />
     </div>
     <div className="flex-1" />
@@ -337,8 +347,7 @@ const AboutPage = () => {
   const { ref: teamRef, inView: teamInView } = useInView(0.1);
 
   return (
-    <div className="min-h-screen bg-linear-to-b from-mine-shaft-950 via-mine-shaft-900 to-mine-shaft-950 overflow-x-hidden">
-
+    <div className="min-h-screen bg-background overflow-x-hidden">
       {/* ── Noise texture overlay ── */}
       <div
         className="fixed inset-0 pointer-events-none z-0 opacity-[0.025]"
@@ -349,21 +358,36 @@ const AboutPage = () => {
       />
 
       <div className="relative z-10">
-
         {/* ════════════════════════════════════
             HERO
         ════════════════════════════════════ */}
         <section className="relative min-h-[92vh] flex items-center overflow-hidden">
-
           {/* Animated background blobs */}
           <div className="absolute inset-0 pointer-events-none">
             <div className="absolute top-1/4 -left-32 w-[500px] h-[500px] bg-primary/8 rounded-full blur-[120px] animate-pulse" />
-            <div className="absolute bottom-1/4 -right-32 w-[400px] h-[400px] bg-primary/6 rounded-full blur-[100px] animate-pulse" style={{ animationDelay: "1.5s" }} />
+            <div
+              className="absolute bottom-1/4 -right-32 w-[400px] h-[400px] bg-primary/6 rounded-full blur-[100px] animate-pulse"
+              style={{ animationDelay: "1.5s" }}
+            />
             {/* Geometric lines */}
-            <svg className="absolute inset-0 w-full h-full opacity-5" xmlns="http://www.w3.org/2000/svg">
+            <svg
+              className="absolute inset-0 w-full h-full opacity-5"
+              xmlns="http://www.w3.org/2000/svg"
+            >
               <defs>
-                <pattern id="grid" width="60" height="60" patternUnits="userSpaceOnUse">
-                  <path d="M 60 0 L 0 0 0 60" fill="none" stroke="currentColor" strokeWidth="0.5" className="text-primary" />
+                <pattern
+                  id="grid"
+                  width="60"
+                  height="60"
+                  patternUnits="userSpaceOnUse"
+                >
+                  <path
+                    d="M 60 0 L 0 0 0 60"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="0.5"
+                    className="text-primary"
+                  />
                 </pattern>
               </defs>
               <rect width="100%" height="100%" fill="url(#grid)" />
@@ -372,7 +396,6 @@ const AboutPage = () => {
 
           <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-
               {/* Left column */}
               <div>
                 {/* Badge */}
@@ -395,9 +418,14 @@ const AboutPage = () => {
                 </h1>
 
                 <p className="text-xl text-muted-foreground leading-relaxed mb-10 max-w-lg animate-in fade-in slide-in-from-bottom-4 duration-700 delay-200 fill-mode-forwards">
-                  We're on a mission to make finding the right job — and the right talent — feel
-                  <em className="text-foreground not-italic font-semibold"> effortless</em>. Not exhausting. Not
-                  overwhelming. Just clear, human, and fast.
+                  We're on a mission to make finding the right job — and the
+                  right talent — feel
+                  <em className="text-foreground not-italic font-semibold">
+                    {" "}
+                    effortless
+                  </em>
+                  . Not exhausting. Not overwhelming. Just clear, human, and
+                  fast.
                 </p>
 
                 <div className="flex flex-wrap gap-4 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-300 fill-mode-forwards">
@@ -423,19 +451,30 @@ const AboutPage = () => {
                 {[
                   { icon: IconBriefcase, label: "Verified Jobs", val: "50K+" },
                   { icon: IconUsers, label: "Active Talent", val: "200K+" },
-                  { icon: IconBuildingSkyscraper, label: "Companies", val: "5K+" },
+                  {
+                    icon: IconBuildingSkyscraper,
+                    label: "Companies",
+                    val: "5K+",
+                  },
                   { icon: IconStar, label: "Avg. Rating", val: "4.8★" },
                 ].map(({ icon: Icon, label, val }, i) => (
                   <div
                     key={label}
                     className="p-5 rounded-2xl border border-border/20 bg-muted/10 backdrop-blur-sm hover:border-primary/30 transition-all animate-in fade-in slide-in-from-right-4 fill-mode-forwards"
-                    style={{ animationDelay: `${0.2 + i * 0.1}s`, animationDuration: "0.6s" }}
+                    style={{
+                      animationDelay: `${0.2 + i * 0.1}s`,
+                      animationDuration: "0.6s",
+                    }}
                   >
                     <div className="p-2.5 bg-primary/10 border border-primary/20 rounded-xl w-fit mb-3">
                       <Icon size={18} className="text-primary" />
                     </div>
-                    <div className="text-2xl font-black text-foreground">{val}</div>
-                    <div className="text-xs text-muted-foreground font-medium mt-0.5">{label}</div>
+                    <div className="text-2xl font-black text-foreground">
+                      {val}
+                    </div>
+                    <div className="text-xs text-muted-foreground font-medium mt-0.5">
+                      {label}
+                    </div>
                   </div>
                 ))}
               </div>
@@ -453,13 +492,12 @@ const AboutPage = () => {
               Our Mission
             </p>
             <blockquote className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground leading-tight">
-              "To{" "}
-              <span className="text-primary">eliminate the friction</span>{" "}
-              between great people and great opportunities — for everyone, everywhere."
+              "To <span className="text-primary">eliminate the friction</span>{" "}
+              between great people and great opportunities — for everyone,
+              everywhere."
             </blockquote>
           </div>
         </section>
-
 
         {/* ════════════════════════════════════
             VALUES
@@ -469,13 +507,18 @@ const AboutPage = () => {
           <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-16">
               <div>
-                <p className="text-xs font-bold uppercase tracking-[0.3em] text-primary mb-3">What drives us</p>
+                <p className="text-xs font-bold uppercase tracking-[0.3em] text-primary mb-3">
+                  What drives us
+                </p>
                 <h2 className="text-4xl md:text-5xl font-black text-foreground leading-tight">
-                  Our values,<br />not just words.
+                  Our values,
+                  <br />
+                  not just words.
                 </h2>
               </div>
               <p className="text-muted-foreground max-w-sm text-sm leading-relaxed md:text-right">
-                These aren't posted on a wall. They show up in every product decision, every customer interaction, every line of code.
+                These aren't posted on a wall. They show up in every product
+                decision, every customer interaction, every line of code.
               </p>
             </div>
 
@@ -492,8 +535,12 @@ const AboutPage = () => {
         ════════════════════════════════════ */}
         <section className="py-24 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <p className="text-xs font-bold uppercase tracking-[0.3em] text-primary mb-3">How we got here</p>
-            <h2 className="text-4xl md:text-5xl font-black text-foreground">Our journey</h2>
+            <p className="text-xs font-bold uppercase tracking-[0.3em] text-primary mb-3">
+              How we got here
+            </p>
+            <h2 className="text-4xl md:text-5xl font-black text-foreground">
+              Our journey
+            </h2>
           </div>
 
           <div className="relative">
@@ -509,9 +556,13 @@ const AboutPage = () => {
                     <div className="w-px flex-1 bg-border/30 mt-1" />
                   </div>
                   <div className="pb-6">
-                    <div className="inline-block px-3 py-1 bg-primary/10 border border-primary/20 rounded-full text-primary text-xs font-bold mb-2">{year}</div>
+                    <div className="inline-block px-3 py-1 bg-primary/10 border border-primary/20 rounded-full text-primary text-xs font-bold mb-2">
+                      {year}
+                    </div>
                     <h4 className="text-foreground font-bold mb-1">{title}</h4>
-                    <p className="text-sm text-muted-foreground leading-relaxed">{desc}</p>
+                    <p className="text-sm text-muted-foreground leading-relaxed">
+                      {desc}
+                    </p>
                   </div>
                 </div>
               ))}
@@ -548,12 +599,14 @@ const AboutPage = () => {
                   We're hiring
                 </div>
                 <h2 className="text-3xl md:text-4xl font-black text-foreground mb-3">
-                  Join us and build<br />
+                  Join us and build
+                  <br />
                   <span className="text-primary">the future of work.</span>
                 </h2>
                 <p className="text-muted-foreground text-sm max-w-md leading-relaxed">
-                  We're a remote-first team that values autonomy, craft, and deep focus. If you care about meaningful
-                  work and real impact, let's talk.
+                  We're a remote-first team that values autonomy, craft, and
+                  deep focus. If you care about meaningful work and real impact,
+                  let's talk.
                 </p>
               </div>
               <div className="flex flex-col sm:flex-row gap-3 shrink-0">
@@ -570,7 +623,6 @@ const AboutPage = () => {
 
         {/* Bottom spacer */}
         <div className="h-24" />
-
       </div>
     </div>
   );

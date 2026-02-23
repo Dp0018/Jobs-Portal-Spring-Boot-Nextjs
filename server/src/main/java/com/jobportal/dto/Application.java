@@ -14,4 +14,5 @@ public class Application {
     private Long applicantId;
     private LocalDateTime interviewTime;
     private ApplicationStatus applicationStatus;
+    private String emailMessage;
 }

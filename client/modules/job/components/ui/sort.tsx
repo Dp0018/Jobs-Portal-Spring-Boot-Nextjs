@@ -62,7 +62,7 @@ export const Sort = (props: any) => {
           <IconAdjustments
             className={cn(
               "w-5 h-5 text-primary transition-transform duration-300",
-              open && "rotate-90"
+              open && "rotate-90",
             )}
           />
           <span className="text-foreground font-medium capitalize text-sm">
@@ -74,7 +74,7 @@ export const Sort = (props: any) => {
       <PopoverContent
         align="end"
         sideOffset={8}
-        className="p-0 w-72 bg-mine-shaft-800 border border-border/30 rounded-xl shadow-2xl overflow-hidden backdrop-blur-xl"
+        className="p-0 w-72 bg-popover border border-border/30 rounded-xl shadow-2xl overflow-hidden backdrop-blur-xl"
       >
         <Command className="bg-transparent">
           <div className="border-b border-border/30">
@@ -82,7 +82,7 @@ export const Sort = (props: any) => {
               value={search}
               onValueChange={setSearch}
               placeholder="Search options…"
-              className="h-9 bg-mine-shaft-900/50 text-foreground placeholder:text-muted-foreground text-sm"
+              className="h-9 bg-accent/50 text-foreground placeholder:text-muted-foreground text-sm"
             />
           </div>
 

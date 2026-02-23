@@ -28,7 +28,7 @@ export const SearchBar = () => {
   };
 
   return (
-    <div className="bg-mine-shaft-900/60 backdrop-blur-xl rounded-2xl shadow-2xl border border-border/20 p-6 hover:border-border/40 transition-all duration-300">
+    <div className="bg-popover/60 backdrop-blur-xl rounded-2xl shadow-2xl border border-border/20 p-6 hover:border-border/40 transition-all duration-300">
       {/* Header */}
       <div className="flex items-center gap-3 mb-6">
         <div className="h-8 w-1 bg-linear-to-b from-primary to-primary/60 rounded-full" />
