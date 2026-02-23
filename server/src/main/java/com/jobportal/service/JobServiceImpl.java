@@ -13,13 +13,34 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.jobportal.repository.UserRepository;
+import com.jobportal.entity.User;
+import com.jobportal.utility.Data;
+import jakarta.mail.internet.MimeMessage;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
+
 @Service("jobService")
 public class JobServiceImpl implements JobService{
     @Autowired
     private JobRepository jobRepository;
 
     @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private JavaMailSender mailSender;
+
+    @Autowired
     private NotificationService notificationService;
+
+    @Autowired
+    private CVParserService cvParserService;
+
+    @Autowired
+    private AIService aiService;
 
     @Override
     public JobDTO postJob(JobDTO jobDTO) throws JobPortalExceeption {
@@ -67,9 +88,60 @@ public class JobServiceImpl implements JobService{
         if(applicants.stream().filter((x) -> x.getApplicantId() ==applicantDTO.getApplicantId()).toList().size() > 0) throw new JobPortalExceeption("JOB_APPLIED_ALREADY");
 
         applicantDTO.setApplicationStatus(ApplicationStatus.APPLIED);
+        applicantDTO.setMatchScore(null); // Score will be hydrated later via manual AI scan
+        applicantDTO.setAiExplanation(null);
+
         applicants.add(applicantDTO.toEntity());
         job.setApplicants(applicants);
         jobRepository.save(job);
+    }
+
+    @Override
+    public ApplicantDTO analyzeResume(Long jobId, Long applicantId) throws JobPortalExceeption {
+        Job job = jobRepository.findById(jobId).orElseThrow(() -> new JobPortalExceeption("JOB_NOT_FOUND"));
+
+        List<Applicant> applicants = job.getApplicants();
+        if (applicants == null || applicants.isEmpty())
+            throw new JobPortalExceeption("NO_APPLICANTS_FOUND");
+
+        Applicant targetApplicant = applicants.stream()
+                .filter(a -> a.getApplicantId().equals(applicantId))
+                .findFirst()
+                .orElseThrow(() -> new JobPortalExceeption("APPLICANT_NOT_FOUND"));
+
+        String resumeText = cvParserService.extractTextFromPdfBytes(targetApplicant.getResume());
+        String aiResponse = aiService.analyzeResume(resumeText, job.getJobTitle() + "\\n" + job.getDescription());
+
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            JsonNode node = mapper.readTree(aiResponse);
+            int score = node.has("matchScore") ? node.get("matchScore").asInt() : 0;
+            String explanation = node.has("aiExplanation") ? node.get("aiExplanation").asText()
+                    : "No explanation provided.";
+
+            List<String> reqSkills = new ArrayList<>();
+            if (node.has("requiredSkills")) {
+                node.get("requiredSkills").forEach(s -> reqSkills.add(s.asText()));
+            }
+
+            List<String> candSkills = new ArrayList<>();
+            if (node.has("candidateSkills")) {
+                node.get("candidateSkills").forEach(s -> candSkills.add(s.asText()));
+            }
+
+            targetApplicant.setMatchScore(score);
+            targetApplicant.setAiExplanation(explanation);
+            targetApplicant.setRequiredSkills(reqSkills);
+            targetApplicant.setCandidateSkills(candSkills);
+        } catch (Exception e) {
+            targetApplicant.setMatchScore(0);
+            targetApplicant.setAiExplanation("Error parsing AI response: " + e.getMessage() + " | Raw: " + aiResponse);
+            targetApplicant.setRequiredSkills(new ArrayList<>());
+            targetApplicant.setCandidateSkills(new ArrayList<>());
+        }
+
+        jobRepository.save(job);
+        return targetApplicant.toDTO();
     }
 
     @Override
@@ -82,25 +154,70 @@ public class JobServiceImpl implements JobService{
         Job job = jobRepository.findById(application.getId()).orElseThrow(()-> new JobPortalExceeption("JOB_NOT_FOUND"));
 
         List<Applicant> applicants = job.getApplicants().stream().map((x) -> {
-            if(application.getApplicantId() == x.getApplicantId()){
-//                System.out.println("status: "+application.getApplicationStatus());
-//                System.out.println(application.toString());
+            if (application.getApplicantId() == x.getApplicantId()) {
                 x.setApplicationStatus(application.getApplicationStatus());
+
+                String action = "";
+                String message = "";
+                String emailMessage = "";
+
                 if(application.getApplicationStatus().equals(ApplicationStatus.INTERVIEWING)) {
                     x.setInterviewTime(application.getInterviewTime());
+                    action = "Interview Scheduled";
+                    message = "Interview Scheduled for job: " + job.getJobTitle();
+                    emailMessage = "Congratulations! You have been selected for an interview for the position of "
+                            + job.getJobTitle() + " at " + job.getCompany()
+                            + ". We will be in touch shortly with more details.";
+                } else if (application.getApplicationStatus().equals(ApplicationStatus.REJECTED)) {
+                    action = "Application Update";
+                    message = "Your application for " + job.getJobTitle() + " was not selected.";
+                    emailMessage = "Thank you for your interest in " + job.getCompany()
+                            + ". Unfortunately, we will not be moving forward with your application for the "
+                            + job.getJobTitle() + " position at this time. We wish you the best in your job search.";
+                } else if (application.getApplicationStatus().equals(ApplicationStatus.OFFERED)) {
+                    action = "Offer Received";
+                    message = "Congratulations! You received an offer for " + job.getJobTitle();
+                    emailMessage = "Congratulations! We are thrilled to offer you the position of " + job.getJobTitle()
+                            + " at " + job.getCompany() + ". Welcome to the team!";
+                }
+
+                // Override with custom email message from employer if provided
+                if (application.getEmailMessage() != null && !application.getEmailMessage().isBlank()) {
+                    emailMessage = application.getEmailMessage();
+                }
+
+                if (!action.isEmpty()) {
                     NotificationDto notificationDto = new NotificationDto();
-                    notificationDto.setAction("Interview Scheduled");
-                    notificationDto.setMessage("Interview Scheduled for job id: "+application.getApplicantId());
+                    notificationDto.setAction(action);
+                    notificationDto.setMessage(message);
                     notificationDto.setUserId(application.getApplicantId());
                     notificationDto.setRoute("/jhistory");
 
                     try {
                         notificationService.sendNotification(notificationDto);
-                    } catch (JobPortalExceeption e) {
-                        throw new RuntimeException(e);
+
+                        // Send Email Notification
+                        User user = userRepository.findById(application.getApplicantId()).orElse(null);
+                        if (user != null) {
+                            MimeMessage mm = mailSender.createMimeMessage();
+                            MimeMessageHelper helper = new MimeMessageHelper(mm, true);
+                            helper.setTo(user.getEmail());
+                            helper.setSubject(action + " - " + job.getCompany());
+
+                            String emailBody = Data.getApplicationStatusBody(
+                                    user.getName(),
+                                    job.getJobTitle(),
+                                    job.getCompany(),
+                                    application.getApplicationStatus().name(),
+                                    emailMessage);
+                            helper.setText(emailBody, true);
+                            mailSender.send(mm);
+                        }
+
+                    } catch (Exception e) {
+                        System.out.println("Error sending notification or email: " + e.getMessage());
                     }
                 }
-
             }
             return  x;
         }).toList();

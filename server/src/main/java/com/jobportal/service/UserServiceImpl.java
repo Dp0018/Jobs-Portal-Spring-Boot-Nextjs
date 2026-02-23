@@ -23,6 +23,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
+import com.jobportal.security.JwtService;
 
 @Service(value = "userService")
 public class UserServiceImpl implements UserService {
@@ -41,6 +42,9 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private ProfileService profileService;
+
+    @Autowired
+    private JwtService jwtService;
 
     @Override
     public UserDTO registerUser(UserDTO userDTO) throws JobPortalExceeption {
@@ -63,7 +67,9 @@ public class UserServiceImpl implements UserService {
 
         if(!passwordEncoder.matches(loginDTO.getPassword(), user.getPassword())) throw new JobPortalExceeption("INVALID_CREDENTIALS");
 
-        return user.toDTO();
+        UserDTO userDTO = user.toDTO();
+        userDTO.setToken(jwtService.generateToken(user));
+        return userDTO;
     }
 
     @Override

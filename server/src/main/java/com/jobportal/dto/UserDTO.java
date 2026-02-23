@@ -31,6 +31,8 @@ public class UserDTO {
 
     private AccountType accountType;
 
+    private String token;
+
     public User toEntity() {
         return new User(this.id, this.name, this.email, this.password, this.accountType);
     }

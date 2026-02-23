@@ -374,7 +374,50 @@ public class Data {
                         </div>
                     </div>
                 </body>
+                """
+                .formatted(name, otp);
+    }
+
+    public static String getApplicationStatusBody(String name, String jobTitle, String company, String status,
+            String message) {
+        String color = status.equalsIgnoreCase("REJECTED") ? "#e53e3e"
+                : status.equalsIgnoreCase("HIRED") ? "#38a169" : "#3182ce";
+        return """
+                <!DOCTYPE html>
+                <html lang="en">
+                <head>
+                    <meta charset="UTF-8" />
+                    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+                    <title>Joblify – Application Update</title>
+                    <style>
+                        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+                        body { background-color: #f5f4ee; font-family: 'Inter', sans-serif; }
+                        .container { max-width: 520px; margin: 40px auto; background-color: #ffffff; border-radius: 16px; padding: 40px; border: 1px solid #e8e7e2; }
+                        .header { text-align: center; margin-bottom: 24px; }
+                        .status-badge { display: inline-block; padding: 6px 16px; border-radius: 20px; font-weight: 600; font-size: 14px; background-color: %s20; color: %s; }
+                        h1 { font-size: 20px; color: #1a1a18; margin-top: 20px; }
+                        p { font-size: 15px; color: #6b6a63; line-height: 1.6; }
+                        .job-details { background: #f9f8f5; padding: 16px; border-radius: 8px; margin: 24px 0; border-left: 4px solid %s; }
+                    </style>
+                </head>
+                <body>
+                    <div class="container">
+                        <div class="header">
+                            <h2>Joblify</h2>
+                            <div class="status-badge">Update on Your Application</div>
+                        </div>
+                        <h1>Hi %s,</h1>
+                        <p>%s</p>
+                        <div class="job-details">
+                            <strong>Role:</strong> %s<br/>
+                            <strong>Company:</strong> %s<br/>
+                            <strong>Status:</strong> %s
+                        </div>
+                        <p>Best Regards,<br/>The Joblify Team</p>
+                    </div>
+                </body>
                 </html>
-                """.formatted(name, otp);
+                """
+                .formatted(color, color, color, name, message, jobTitle, company, status);
     }
 }

@@ -55,4 +55,10 @@ public class JobAPI {
         return new ResponseEntity<>(new ResponseDTO("Application status changed successfully"), HttpStatus.OK);
     }
 
+    @PostMapping("/analyze-resume/{jobId}/{applicantId}")
+    public ResponseEntity<ApplicantDTO> analyzeResume(@PathVariable Long jobId, @PathVariable Long applicantId)
+            throws JobPortalExceeption {
+        return new ResponseEntity<>(jobService.analyzeResume(jobId, applicantId), HttpStatus.OK);
+    }
+
 }

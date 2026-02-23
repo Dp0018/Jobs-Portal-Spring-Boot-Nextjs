@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.util.Base64;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -23,8 +24,15 @@ public class Applicant {
     private LocalDateTime timestamp;
     private ApplicationStatus applicationStatus;
     private LocalDateTime interviewTime;
+    private Integer matchScore;
+    private String aiExplanation;
+    private List<String> requiredSkills;
+    private List<String> candidateSkills;
 
     public ApplicantDTO toDTO(){
-        return new ApplicantDTO(this.applicantId, this.name, this.email, this.phone, this.website, this.resume!=null? Base64.getEncoder().encodeToString(this.resume):null, this.coverLetter, this.timestamp, this.applicationStatus, this.interviewTime);
+        return new ApplicantDTO(this.applicantId, this.name, this.email, this.phone, this.website,
+                this.resume != null ? Base64.getEncoder().encodeToString(this.resume) : null, this.coverLetter,
+                this.timestamp, this.applicationStatus, this.interviewTime, this.matchScore, this.aiExplanation,
+                this.requiredSkills, this.candidateSkills);
     }
 }

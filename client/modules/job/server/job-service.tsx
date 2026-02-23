@@ -40,3 +40,12 @@ export const changeAppStatus = async(application:any) => {
         .then(result => result.data)
         .catch(error => {throw error;})
 }
+
+export const analyzeResume = async (jobId: any, applicantId: any) => {
+  return axios
+    .post(`${base_url}/analyze-resume/${jobId}/${applicantId}`)
+    .then((result) => result.data)
+    .catch((error) => {
+      throw error;
+    });
+};

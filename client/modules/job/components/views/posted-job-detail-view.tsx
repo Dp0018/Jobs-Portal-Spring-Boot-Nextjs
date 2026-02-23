@@ -16,6 +16,7 @@ import {
 } from "@tabler/icons-react";
 import { getJob } from "../../server/job-service";
 import { SectionHeader } from "./post-job-view"; // Reusing SectionHeader
+import { TalentCard } from "../ui/talent-card";
 
 export const PostedJobDetailView = () => {
   const params = useParams();
@@ -71,7 +72,6 @@ export const PostedJobDetailView = () => {
       </div>
 
       <div className="relative w-11/12 max-w-7xl mx-auto space-y-6">
-
         {/* Navigation */}
         <button
           onClick={() => router.back()}
@@ -90,12 +90,12 @@ export const PostedJobDetailView = () => {
           <div className="flex flex-col md:flex-row gap-6 items-start md:items-center justify-between relative z-10">
             <div className="flex gap-5 items-start">
               <div className="w-16 h-16 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center shrink-0">
-                 <IconBuilding size={32} className="text-primary" />
+                <IconBuilding size={32} className="text-primary" />
               </div>
               <div>
                 <div className="flex items-center gap-2 mb-2">
                   <span className="px-2.5 py-0.5 rounded-full bg-primary/10 text-primary text-xs font-medium border border-primary/20">
-                    {job.jobStatus || 'ACTIVE'}
+                    {job.jobStatus || "ACTIVE"}
                   </span>
                   <span className="text-xs text-muted-foreground flex items-center gap-1">
                     <IconClock size={12} />
@@ -130,7 +130,9 @@ export const PostedJobDetailView = () => {
               </div>
               <div>
                 <p className="text-xs text-muted-foreground">Location</p>
-                <p className="text-sm font-medium text-foreground">{job.location}</p>
+                <p className="text-sm font-medium text-foreground">
+                  {job.location}
+                </p>
               </div>
             </div>
             <div className="flex items-center gap-3">
@@ -139,7 +141,9 @@ export const PostedJobDetailView = () => {
               </div>
               <div>
                 <p className="text-xs text-muted-foreground">Job Type</p>
-                <p className="text-sm font-medium text-foreground">{job.jobType}</p>
+                <p className="text-sm font-medium text-foreground">
+                  {job.jobType}
+                </p>
               </div>
             </div>
             <div className="flex items-center gap-3">
@@ -148,7 +152,9 @@ export const PostedJobDetailView = () => {
               </div>
               <div>
                 <p className="text-xs text-muted-foreground">Experience</p>
-                <p className="text-sm font-medium text-foreground">{job.experience}</p>
+                <p className="text-sm font-medium text-foreground">
+                  {job.experience}
+                </p>
               </div>
             </div>
             <div className="flex items-center gap-3">
@@ -157,7 +163,9 @@ export const PostedJobDetailView = () => {
               </div>
               <div>
                 <p className="text-xs text-muted-foreground">Package Options</p>
-                <p className="text-sm font-medium text-foreground">{job.packageOffered} LPA</p>
+                <p className="text-sm font-medium text-foreground">
+                  {job.packageOffered} LPA
+                </p>
               </div>
             </div>
           </div>
@@ -176,7 +184,7 @@ export const PostedJobDetailView = () => {
 
               <div
                 className="prose prose-sm md:prose-base prose-invert max-w-none text-muted-foreground marker:text-primary prose-a:text-primary"
-                dangerouslySetInnerHTML={{ __html: job.description || '' }}
+                dangerouslySetInnerHTML={{ __html: job.description || "" }}
               />
             </div>
           </div>
@@ -218,6 +226,32 @@ export const PostedJobDetailView = () => {
           </div>
         </div>
 
+        {/* Applicants Section */}
+        {user?.id === job.postedBy &&
+          job.applicants &&
+          job.applicants.length > 0 && (
+            <div className="mt-12 space-y-6">
+              <div className="flex items-center gap-3 mb-6">
+                <div className="h-8 w-1.5 bg-linear-to-b from-primary to-primary/60 rounded-full" />
+                <h2 className="text-2xl font-bold text-foreground">
+                  Applicants ({job.applicants.length})
+                </h2>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+                {job.applicants.map((applicant: any, idx: number) => (
+                  <TalentCard
+                    key={idx}
+                    {...applicant}
+                    posted={true}
+                    jobTitle={job.jobTitle}
+                    company={job.company}
+                    requiredSkills={job.skillsRequired}
+                  />
+                ))}
+              </div>
+            </div>
+          )}
       </div>
     </div>
   );

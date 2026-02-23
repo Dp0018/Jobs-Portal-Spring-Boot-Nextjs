@@ -87,7 +87,7 @@ export const SelectInput = (props: any) => {
               "bg-input/20 border border-border",
               "hover:border-primary/50 focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary",
               "transition-all duration-200",
-              !value && "text-muted-foreground"
+              !value && "text-muted-foreground",
             )}
           >
             <span className="flex items-center gap-2 flex-1 min-w-0">
@@ -102,7 +102,7 @@ export const SelectInput = (props: any) => {
               size={16}
               className={cn(
                 "text-muted-foreground shrink-0 transition-transform duration-200",
-                open && "rotate-180"
+                open && "rotate-180",
               )}
             />
           </button>
@@ -116,7 +116,7 @@ export const SelectInput = (props: any) => {
         )}
 
         <PopoverContent
-          className="p-0 w-[--radix-popover-trigger-width] bg-mine-shaft-900 border border-border/40 rounded-xl shadow-2xl backdrop-blur-xl overflow-hidden"
+          className="p-0 w-[--radix-popover-trigger-width] bg-popover border border-border/40 rounded-xl shadow-2xl backdrop-blur-xl overflow-hidden"
           align="start"
           sideOffset={6}
         >

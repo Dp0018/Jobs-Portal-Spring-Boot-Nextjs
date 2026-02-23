@@ -8,7 +8,7 @@ import { RootState } from "@/modules/redux/store";
 interface AuthGuardProps {
   children: React.ReactNode;
   requireAuth?: boolean;
-  allowedRoles?: ("APPLICANT" | "EMPLOYER")[];
+  allowedRoles?: ("APPLICANT" | "EMPLOYER" | "ADMIN")[];
 }
 
 export const AuthGuard = ({
@@ -32,8 +32,12 @@ export const AuthGuard = ({
     if (user && allowedRoles && !allowedRoles.includes(user.accountType)) {
       if (user.accountType === "APPLICANT") {
         router.push("/find-jobs");
-      } else {
+      } else if (user.accountType === "EMPLOYER") {
         router.push("/find-talent");
+      } else if (user.accountType === "ADMIN") {
+        router.push("/admin");
+      } else {
+        router.push("/");
       }
       return;
     }
