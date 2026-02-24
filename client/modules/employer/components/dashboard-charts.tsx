@@ -1,149 +1,218 @@
 "use client";
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from "@/components/ui/card";
 import {
   PieChart,
   Pie,
   Cell,
-  ResponsiveContainer,
-  Tooltip,
-  Legend,
   BarChart,
   Bar,
   XAxis,
   YAxis,
   CartesianGrid,
+  AreaChart,
+  Area,
+  RadarChart,
+  Radar,
+  PolarGrid,
+  PolarAngleAxis,
+  PolarRadiusAxis,
 } from "recharts";
+import {
+  ChartConfig,
+  ChartContainer,
+  ChartTooltip,
+  ChartTooltipContent,
+  ChartLegend,
+  ChartLegendContent,
+} from "@/components/ui/chart";
 
-interface DashboardChartsProps {
-  funnelData: { name: string; value: number; color: string }[];
-  activeJobsData: { name: string; applicants: number }[];
-}
+export const DashboardPieChart = ({ funnelData }: { funnelData: any[] }) => {
+  const pieConfig = {
+    Applied: { label: "Applied", color: "var(--color-chart-1)" },
+    Interviewing: { label: "Interviewing", color: "var(--color-chart-2)" },
+    Hired: { label: "Hired", color: "var(--color-chart-3)" },
+    Rejected: { label: "Rejected", color: "var(--color-chart-4)" },
+    value: { label: "Count" },
+  } satisfies ChartConfig;
 
-export const DashboardCharts = ({ funnelData, activeJobsData }: DashboardChartsProps) => {
+  const mappedFunnelData = funnelData.map((d) => ({
+    ...d,
+    fill: d.color,
+  }));
+
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-      {/* Funnel Donut Chart */}
-      <Card className="border-border bg-card/60 backdrop-blur-xl h-full flex flex-col">
-        <CardHeader>
-          <CardTitle className="text-xl font-bold">Candidate Pipeline Funnel</CardTitle>
-          <p className="text-sm text-muted-foreground">
-            Distribution of applicants across all your active jobs.
-          </p>
-        </CardHeader>
-        <CardContent className="flex-1 flex items-center justify-center min-h-[300px]">
-          <ResponsiveContainer width="100%" height="100%">
-            <PieChart>
-              <Pie
-                data={funnelData}
-                cx="50%"
-                cy="50%"
-                innerRadius={80}
-                outerRadius={120}
-                paddingAngle={5}
-                dataKey="value"
-                label={({ cx, cy, midAngle, innerRadius, outerRadius, percent }) => {
-                  const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
-                  const x = cx + radius * Math.cos(-midAngle * (Math.PI / 180));
-                  const y = cy + radius * Math.sin(-midAngle * (Math.PI / 180));
-                  return (
-                    <text
-                      x={x}
-                      y={y}
-                      fill="white"
-                      textAnchor="middle"
-                      dominantBaseline="central"
-                      className="text-xs font-bold shadow-md"
-                    >
-                      {`${(percent * 100).toFixed(0)}%`}
-                    </text>
-                  );
-                }}
-              >
-                {funnelData.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={entry.color} />
-                ))}
-              </Pie>
-              <Tooltip
-                contentStyle={{
-                  backgroundColor: "rgba(24, 24, 27, 0.9)",
-                  borderColor: "rgba(255,255,255,0.1)",
-                  borderRadius: "8px",
-                  color: "#fff",
-                  boxShadow: "0 10px 15px -3px rgba(0, 0, 0, 0.5)",
-                }}
-                itemStyle={{ color: "#fff", fontWeight: "bold" }}
-              />
-              <Legend
-                verticalAlign="bottom"
-                height={36}
-                iconType="circle"
-                wrapperStyle={{ paddingTop: "20px" }}
-              />
-            </PieChart>
-          </ResponsiveContainer>
-        </CardContent>
-      </Card>
+    <Card className="border-border bg-card/60 backdrop-blur-xl h-full flex flex-col">
+      <CardHeader>
+        <CardTitle className="text-xl font-bold">Candidate Pipeline</CardTitle>
+        <CardDescription>Distribution of applicants.</CardDescription>
+      </CardHeader>
+      <CardContent className="flex-1 flex items-center justify-center min-h-[300px] pb-4">
+        <ChartContainer
+          config={pieConfig}
+          className="w-full aspect-square max-h-[300px]"
+        >
+          <PieChart>
+            <ChartTooltip
+              cursor={false}
+              content={<ChartTooltipContent hideLabel />}
+            />
+            <Pie
+              data={mappedFunnelData}
+              cx="50%"
+              cy="50%"
+              innerRadius={60}
+              outerRadius={100}
+              paddingAngle={5}
+              dataKey="value"
+              nameKey="name"
+            >
+              {mappedFunnelData.map((entry, index) => (
+                <Cell key={`cell-${index}`} fill={entry.fill} />
+              ))}
+            </Pie>
+            <ChartLegend
+              content={<ChartLegendContent />}
+              className="flex-wrap"
+            />
+          </PieChart>
+        </ChartContainer>
+      </CardContent>
+    </Card>
+  );
+};
 
-      {/* Active Jobs Bar Chart */}
-      <Card className="border-border bg-card/60 backdrop-blur-xl h-full flex flex-col">
-        <CardHeader>
-          <CardTitle className="text-xl font-bold">Most Active Jobs</CardTitle>
-          <p className="text-sm text-muted-foreground">
-            Top job postings mapped by total applicant volume.
-          </p>
-        </CardHeader>
-        <CardContent className="flex-1 flex items-center justify-center min-h-[300px]">
-          {activeJobsData.length > 0 ? (
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart
-                data={activeJobsData}
-                margin={{ top: 20, right: 30, left: 0, bottom: 5 }}
-              >
-                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" vertical={false} />
-                <XAxis
-                  dataKey="name"
-                  stroke="rgba(255,255,255,0.5)"
-                  fontSize={12}
-                  tickLine={false}
-                  axisLine={false}
-                  tick={{ fill: "rgba(255,255,255,0.7)" }}
+export const DashboardBarChart = ({
+  activeJobsData,
+}: {
+  activeJobsData: any[];
+}) => {
+  const barConfig = {
+    applicants: { label: "Applicants", color: "var(--color-chart-1)" },
+  } satisfies ChartConfig;
+
+  return (
+    <Card className="border-border bg-card/60 backdrop-blur-xl h-full flex flex-col">
+      <CardHeader>
+        <CardTitle className="text-xl font-bold">Top Active Jobs</CardTitle>
+        <CardDescription>
+          Jobs with the highest applicant volume.
+        </CardDescription>
+      </CardHeader>
+      <CardContent className="flex-1 flex items-center justify-center min-h-[300px] pb-4">
+        {activeJobsData.length > 0 ? (
+          <ChartContainer
+            config={barConfig}
+            className="w-full aspect-auto h-[300px]"
+          >
+            <BarChart
+              data={activeJobsData}
+              margin={{ top: 20, right: 10, left: 0, bottom: 5 }}
+            >
+              <CartesianGrid strokeDasharray="3 3" vertical={false} />
+              <XAxis
+                dataKey="name"
+                tickLine={false}
+                axisLine={false}
+                tickMargin={10}
+                fontSize={12}
+              />
+              <YAxis
+                tickLine={false}
+                axisLine={false}
+                tickMargin={10}
+                fontSize={12}
+                allowDecimals={false}
+              />
+              <ChartTooltip
+                cursor={{ fill: "rgba(0,0,0,0.1)" }}
+                content={<ChartTooltipContent />}
+              />
+              <Bar
+                dataKey="applicants"
+                fill="var(--color-applicants)"
+                radius={[4, 4, 0, 0]}
+                maxBarSize={50}
+              />
+            </BarChart>
+          </ChartContainer>
+        ) : (
+          <div className="flex items-center justify-center h-[300px] text-muted-foreground text-sm">
+            Not enough data to display.
+          </div>
+        )}
+      </CardContent>
+    </Card>
+  );
+};
+
+export const DashboardAreaChart = ({ trendData }: { trendData: any[] }) => {
+  const areaConfig = {
+    applications: { label: "Applications", color: "var(--color-chart-2)" },
+  } satisfies ChartConfig;
+
+  return (
+    <Card className="border-border bg-card/60 backdrop-blur-xl h-full flex flex-col">
+      <CardHeader>
+        <CardTitle className="text-xl font-bold">Application Trends</CardTitle>
+        <CardDescription>
+          Monthly volume of new applications over time.
+        </CardDescription>
+      </CardHeader>
+      <CardContent className="flex-1 flex items-center justify-center min-h-[300px] pb-4">
+        <ChartContainer
+          config={areaConfig}
+          className="w-full aspect-auto h-[300px]"
+        >
+          <AreaChart
+            data={trendData || []}
+            margin={{ top: 20, right: 10, left: 0, bottom: 5 }}
+          >
+            <defs>
+              <linearGradient id="fillApplications" x1="0" y1="0" x2="0" y2="1">
+                <stop
+                  offset="5%"
+                  stopColor="var(--color-applications)"
+                  stopOpacity={0.8}
                 />
-                <YAxis
-                  stroke="rgba(255,255,255,0.5)"
-                  fontSize={12}
-                  tickLine={false}
-                  axisLine={false}
-                  tick={{ fill: "rgba(255,255,255,0.7)" }}
-                  allowDecimals={false}
+                <stop
+                  offset="95%"
+                  stopColor="var(--color-applications)"
+                  stopOpacity={0.1}
                 />
-                <Tooltip
-                  cursor={{ fill: "rgba(255,255,255,0.05)" }}
-                  contentStyle={{
-                    backgroundColor: "rgba(24, 24, 27, 0.9)",
-                    borderColor: "rgba(255,255,255,0.1)",
-                    borderRadius: "8px",
-                    color: "#fff",
-                    boxShadow: "0 10px 15px -3px rgba(0, 0, 0, 0.5)",
-                  }}
-                />
-                <Bar dataKey="applicants" fill="#3b82f6" radius={[4, 4, 0, 0]} maxBarSize={50}>
-                  {activeJobsData.map((entry, index) => (
-                    <Cell
-                      key={`cell-${index}`}
-                      fill={index % 2 === 0 ? "#3b82f6" : "#60a5fa"}
-                    />
-                  ))}
-                </Bar>
-              </BarChart>
-            </ResponsiveContainer>
-          ) : (
-             <div className="flex items-center justify-center h-full text-muted-foreground">
-               Not enough data to display.
-             </div>
-          )}
-        </CardContent>
-      </Card>
-    </div>
+              </linearGradient>
+            </defs>
+            <CartesianGrid strokeDasharray="3 3" vertical={false} />
+            <XAxis
+              dataKey="month"
+              tickLine={false}
+              axisLine={false}
+              tickMargin={10}
+              fontSize={12}
+            />
+            <YAxis
+              tickLine={false}
+              axisLine={false}
+              tickMargin={10}
+              fontSize={12}
+            />
+            <ChartTooltip content={<ChartTooltipContent />} />
+            <Area
+              type="monotone"
+              dataKey="applications"
+              stroke="var(--color-applications)"
+              fillOpacity={1}
+              fill="url(#fillApplications)"
+            />
+          </AreaChart>
+        </ChartContainer>
+      </CardContent>
+    </Card>
   );
 };
