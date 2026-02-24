@@ -59,7 +59,9 @@ public class UserServiceImpl implements UserService {
         user = userRepository.save(user);
         profileService.createProfile(userDTO.getEmail(), userDTO.getName(), user.getId());
 
-        return user.toDTO();
+        UserDTO result = user.toDTO();
+        result.setPassword(null);
+        return result;
     }
 
     @Override
@@ -69,7 +71,9 @@ public class UserServiceImpl implements UserService {
         if(!passwordEncoder.matches(loginDTO.getPassword(), user.getPassword())) throw new JobPortalExceeption("INVALID_CREDENTIALS");
 
         UserDTO userDTO = user.toDTO();
+        userDTO.setPassword(null);
         userDTO.setToken(jwtService.generateToken(user));
+        userDTO.setRefreshToken(jwtService.generateRefreshToken(user));
         return userDTO;
     }
 
