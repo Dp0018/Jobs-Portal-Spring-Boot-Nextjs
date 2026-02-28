@@ -48,7 +48,7 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000", "http://localhost:3001")); // Ensure
+        configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000", "http://localhost:3001","https://jobs-portal-spring-boot-nextjs.vercel.app")); // Ensure
                                                                                                           // frontend
                                                                                                           // URLs are
                                                                                                           // allowed
