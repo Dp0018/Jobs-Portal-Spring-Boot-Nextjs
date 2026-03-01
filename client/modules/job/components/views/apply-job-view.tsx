@@ -135,6 +135,38 @@ const ApplyJob = ({ params }: ApplyJobProps) => {
                 </div>
               </div>
             </div>
+          ) : user?.accountType === "EMPLOYER" ? (
+            <div className="flex items-center justify-center py-20 px-4">
+              <div className="text-center w-full max-w-2xl">
+                <div className="p-8 bg-card border border-border rounded-2xl shadow-lg inline-block w-full">
+                  <div className="w-16 h-16 bg-yellow-500/10 text-yellow-600 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl">
+                    🏢
+                  </div>
+                  <h3 className="text-2xl font-bold text-foreground mb-3">
+                    Employers Cannot Apply
+                  </h3>
+                  <p className="text-muted-foreground mb-6">
+                    Your account is registered as an Employer. Only Applicant
+                    accounts can apply for jobs. Switch to the Employer
+                    dashboard to manage your job postings.
+                  </p>
+                  <div className="flex justify-center gap-3">
+                    <button
+                      onClick={() => router.push("/find-jobs")}
+                      className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg border border-border bg-card text-foreground font-semibold text-sm hover:bg-accent transition-all duration-200"
+                    >
+                      Browse Jobs
+                    </button>
+                    <button
+                      onClick={() => router.push("/employer/jobs")}
+                      className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg bg-primary text-primary-foreground font-semibold text-sm hover:opacity-90 transition-all duration-200"
+                    >
+                      My Posted Jobs
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
           ) : job ? (
             <ApplyJobCompany {...job} />
           ) : (

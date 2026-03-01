@@ -42,10 +42,6 @@ export const Skills = ({ profile, edit }: any) => {
     if (e.key === "Enter" || e.key === "," || e.key === "|") {
       e.preventDefault();
       addSkill(inputValue);
-    } else if (e.key === " ") {
-      // split on space like Mantine does
-      e.preventDefault();
-      addSkill(inputValue);
     } else if (e.key === "Backspace" && inputValue === "" && skills.length > 0) {
       setSkills((prev) => prev.slice(0, -1));
     }
@@ -84,7 +80,11 @@ export const Skills = ({ profile, edit }: any) => {
                   : "text-primary hover:text-primary hover:bg-primary/10"
               }`}
             >
-              {isEditing ? <IconX className="h-5 w-5" /> : <IconPencil className="h-5 w-5" />}
+              {isEditing ? (
+                <IconX className="h-5 w-5" />
+              ) : (
+                <IconPencil className="h-5 w-5" />
+              )}
             </Button>
           )}
         </div>
@@ -117,7 +117,9 @@ export const Skills = ({ profile, edit }: any) => {
             onChange={(e) => setInputValue(e.target.value)}
             onKeyDown={handleKeyDown}
             onBlur={() => inputValue.trim() && addSkill(inputValue)}
-            placeholder={skills.length === 0 ? "Add skill (Enter, comma or space)" : ""}
+            placeholder={
+              skills.length === 0 ? "Add skill (Enter or comma)" : ""
+            }
             className="flex-1 min-w-[180px] bg-transparent outline-none text-sm text-foreground placeholder:text-muted-foreground"
           />
         </div>

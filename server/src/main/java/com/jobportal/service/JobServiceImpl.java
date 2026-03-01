@@ -318,7 +318,17 @@ public class JobServiceImpl implements JobService{
                                     job.getJobTitle(),
                                     job.getCompany(),
                                     application.getApplicationStatus().name(),
-                                    emailMessage);
+                                    emailMessage,
+                                    // Format interview time as readable string
+                                    application.getInterviewTime() != null
+                                            ? application.getInterviewTime().format(
+                                                    java.time.format.DateTimeFormatter
+                                                            .ofPattern("EEEE, MMMM d, yyyy 'at' hh:mm a"))
+                                            : null,
+                                    // Compute missing skills for rejection emails
+                                    application.getApplicationStatus().equals(ApplicationStatus.REJECTED)
+                                            ? computeMissingSkills(job.getSkillsRequired(), x.getCandidateSkills())
+                                            : null);
                             helper.setText(emailBody, true);
                             mailSender.send(mm);
                         }
@@ -430,5 +440,30 @@ public class JobServiceImpl implements JobService{
     public void deleteJob(Long id) throws JobPortalExceeption {
         Job job = jobRepository.findById(id).orElseThrow(() -> new JobPortalExceeption("JOB_NOT_FOUND"));
         jobRepository.delete(job);
+    }
+
+    /**
+     * Compare required skills for the job vs the candidate's skills.
+     * Returns a comma-separated string of skills the candidate is missing.
+     */
+    private String computeMissingSkills(List<String> requiredSkills, List<String> candidateSkills) {
+        if (requiredSkills == null || requiredSkills.isEmpty())
+            return null;
+
+        // Build a lowercase set of candidate skills for case-insensitive matching
+        java.util.Set<String> candidateSet = new java.util.HashSet<>();
+        if (candidateSkills != null) {
+            for (String s : candidateSkills) {
+                candidateSet.add(s.toLowerCase().trim());
+            }
+        }
+
+        List<String> missing = new ArrayList<>();
+        for (String required : requiredSkills) {
+            if (!candidateSet.contains(required.toLowerCase().trim())) {
+                missing.add(required);
+            }
+        }
+        return missing.isEmpty() ? null : String.join(", ", missing);
     }
 }

@@ -79,9 +79,6 @@ const TagsField = ({
     if (["Enter", ",", "|"].includes(e.key)) {
       e.preventDefault();
       addTag(inputValue);
-    } else if (e.key === " ") {
-      e.preventDefault();
-      addTag(inputValue);
     } else if (e.key === "Backspace" && inputValue === "" && value.length > 0) {
       onChange(value.slice(0, -1));
     }
@@ -119,12 +116,14 @@ const TagsField = ({
           onChange={(e) => setInputValue(e.target.value)}
           onKeyDown={handleKeyDown}
           onBlur={() => inputValue.trim() && addTag(inputValue)}
-          placeholder={value.length === 0 ? "Type a skill and press Enter, comma or space…" : ""}
+          placeholder={
+            value.length === 0 ? "Type a skill and press Enter or comma…" : ""
+          }
           className="flex-1 min-w-[180px] bg-transparent outline-none text-sm text-foreground placeholder:text-muted-foreground"
         />
       </div>
       <p className="text-xs text-muted-foreground">
-        Press Enter, comma, or space to add each skill
+        Press Enter or comma to add each skill
       </p>
       {error && <p className="text-xs text-destructive">{error}</p>}
     </div>

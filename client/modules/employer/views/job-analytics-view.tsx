@@ -70,7 +70,7 @@ export const JobAnalyticsView = ({ jobId }: JobAnalyticsViewProps) => {
   const [totalElements, setTotalElements] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
 
-  const [statusFilter, setStatusFilter] = useState<string>("");
+  const [statusFilter, setStatusFilter] = useState<string>("APPLIED");
   const [scoreFilter, setScoreFilter] = useState<number | "">("");
 
   const fetchFilteredData = () => {
@@ -330,13 +330,44 @@ export const JobAnalyticsView = ({ jobId }: JobAnalyticsViewProps) => {
 
         {/* RIGHT CONTENT: Applicant Pipeline List */}
         <div className="flex-1">
-          <div className="mb-6 flex items-center justify-between">
+          <div className="mb-6 flex flex-col gap-4">
             <div>
               <h2 className="text-2xl font-bold">Applicant Review Pipeline</h2>
               <p className="text-muted-foreground text-sm mt-1">
                 Showing {applicants.length} of {totalElements} filtered
                 candidates
               </p>
+            </div>
+
+            {/* Status Tab Pills */}
+            <div className="flex flex-wrap gap-2">
+              {[
+                { label: "Applied", value: "APPLIED", color: "bg-blue-500" },
+                {
+                  label: "Interviewing",
+                  value: "INTERVIEWING",
+                  color: "bg-yellow-500",
+                },
+                { label: "Offered", value: "OFFERED", color: "bg-green-500" },
+                { label: "Rejected", value: "REJECTED", color: "bg-red-500" },
+                { label: "All", value: "", color: "bg-muted-foreground" },
+              ].map((tab) => (
+                <button
+                  key={tab.value}
+                  onClick={() => {
+                    setStatusFilter(tab.value);
+                    setPage(0);
+                  }}
+                  className={cn(
+                    "px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200 border",
+                    statusFilter === tab.value
+                      ? `${tab.color} text-white border-transparent shadow-md scale-105`
+                      : "bg-card text-muted-foreground border-border hover:border-border/80 hover:text-foreground",
+                  )}
+                >
+                  {tab.label}
+                </button>
+              ))}
             </div>
           </div>
 
@@ -349,297 +380,264 @@ export const JobAnalyticsView = ({ jobId }: JobAnalyticsViewProps) => {
             </div>
           ) : applicants.length > 0 ? (
             <div className="flex flex-col gap-6">
-              {applicants.map((applicant: any, index: number) => {
-                const initials = applicant.name
-                  ? applicant.name
-                      .split(" ")
-                      .map((n: string) => n[0])
-                      .join("")
-                      .toUpperCase()
-                      .slice(0, 2)
-                  : "?";
-                const isMatchScored =
-                  applicant.matchScore !== undefined &&
-                  applicant.matchScore !== null &&
-                  applicant.matchScore > 0;
+              {/* 2-Column Grid of Compact Cards */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                {applicants.map((applicant: any, index: number) => {
+                  const initials = applicant.name
+                    ? applicant.name
+                        .split(" ")
+                        .map((n: string) => n[0])
+                        .join("")
+                        .toUpperCase()
+                        .slice(0, 2)
+                    : "?";
+                  const isMatchScored =
+                    applicant.matchScore !== undefined &&
+                    applicant.matchScore !== null &&
+                    applicant.matchScore > 0;
 
-                return (
-                  <div
-                    key={index}
-                    className="bg-card border border-border/50 rounded-2xl shadow-sm overflow-hidden flex flex-col"
-                  >
-                    {/* Top Section: Profile Info */}
-                    <div className="p-6 md:p-8 flex flex-col lg:flex-row gap-8">
-                      {/* Left Col: Avatar & Basic Info */}
-                      <div className="flex-1 space-y-6">
-                        <div className="flex items-start gap-5">
-                          <Avatar className="h-20 w-20 ring-4 ring-muted">
-                            <AvatarImage
-                              src={
-                                applicant.picture
-                                  ? `data:image/jpeg;base64,${applicant.picture}`
-                                  : undefined
-                              }
-                              className="object-cover"
-                            />
-                            <AvatarFallback className="bg-primary/10 text-primary text-xl font-bold">
-                              {initials}
-                            </AvatarFallback>
-                          </Avatar>
-                          <div>
-                            <h3 className="text-2xl font-bold text-foreground capitalize">
+                  return (
+                    <div
+                      key={index}
+                      className="bg-card border border-border/50 rounded-xl shadow-sm hover:shadow-md hover:border-border transition-all duration-200 flex flex-col"
+                    >
+                      {/* Card Header: Avatar + Name + Status */}
+                      <div className="p-5 flex items-start gap-4">
+                        <Avatar className="h-14 w-14 ring-2 ring-muted shrink-0">
+                          <AvatarImage
+                            src={
+                              applicant.picture
+                                ? `data:image/jpeg;base64,${applicant.picture}`
+                                : undefined
+                            }
+                            className="object-cover"
+                          />
+                          <AvatarFallback className="bg-primary/10 text-primary text-lg font-bold">
+                            {initials}
+                          </AvatarFallback>
+                        </Avatar>
+
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center justify-between gap-2 mb-1">
+                            <h3 className="text-base font-bold text-foreground capitalize truncate">
                               {applicant.name}
                             </h3>
-                            <p className="text-lg text-muted-foreground capitalize mb-2">
-                              {applicant.jobTitle || "Candidate"}
-                            </p>
-                            <div className="flex flex-wrap gap-2 text-sm text-muted-foreground">
-                              {applicant.email && (
-                                <span className="flex items-center gap-1">
-                                  <IconMail size={16} /> {applicant.email}
-                                </span>
+                            <Badge
+                              className={cn(
+                                "text-[10px] px-2 py-0.5 font-bold shrink-0",
+                                applicant.applicationStatus === "APPLIED"
+                                  ? "bg-blue-500/10 text-blue-500 border-blue-500/20"
+                                  : applicant.applicationStatus ===
+                                      "INTERVIEWING"
+                                    ? "bg-yellow-500/10 text-yellow-600 border-yellow-500/20"
+                                    : applicant.applicationStatus ===
+                                          "OFFERED" ||
+                                        applicant.applicationStatus === "HIRED"
+                                      ? "bg-green-500/10 text-green-500 border-green-500/20"
+                                      : "bg-destructive/10 text-destructive border-destructive/20",
                               )}
-                              {applicant.website && (
-                                <span className="flex items-center gap-1">
-                                  <IconLink size={16} />{" "}
-                                  <a
-                                    href={applicant.website}
-                                    target="_blank"
-                                    rel="noreferrer"
-                                    className="hover:text-primary hover:underline"
-                                  >
-                                    Portfolio
-                                  </a>
-                                </span>
-                              )}
-                              {applicant.location && (
-                                <span className="flex items-center gap-1">
-                                  <IconMapPin size={16} /> {applicant.location}
-                                </span>
-                              )}
-                            </div>
-                          </div>
-                        </div>
-
-                        <div className="space-y-4">
-                          <div>
-                            <h4 className="text-sm font-semibold text-foreground uppercase tracking-wider mb-2">
-                              About Candidate
-                            </h4>
-                            <p className="text-muted-foreground leading-relaxed text-sm md:text-base">
-                              {applicant.about ||
-                                applicant.coverLetter ||
-                                "No cover letter or about section provided."}
-                            </p>
-                          </div>
-
-                          <div>
-                            <h4 className="text-sm font-semibold text-foreground uppercase tracking-wider mb-2">
-                              Skills
-                            </h4>
-                            <div className="flex flex-wrap gap-2">
-                              {applicant.candidateSkills?.length > 0 ? (
-                                applicant.candidateSkills.map(
-                                  (s: string, i: number) => (
-                                    <Badge
-                                      key={i}
-                                      variant="secondary"
-                                      className="bg-muted px-2.5 py-1 text-sm font-medium"
-                                    >
-                                      {s}
-                                    </Badge>
-                                  ),
-                                )
-                              ) : (
-                                <span className="text-muted-foreground italic text-sm">
-                                  No specific skills listed
-                                </span>
-                              )}
-                            </div>
-                          </div>
-
-                          <div className="pt-2">
-                            <Button
-                              variant="link"
-                              onClick={() => openBase64PDF(applicant.resume)}
-                              className="h-auto p-0 text-primary font-semibold text-base"
                             >
-                              View Full Resume PDF Document &rarr;
-                            </Button>
+                              {applicant.applicationStatus}
+                            </Badge>
+                          </div>
+
+                          <p className="text-sm text-muted-foreground capitalize truncate mb-1.5">
+                            {applicant.jobTitle || "Candidate"}
+                          </p>
+
+                          {/* Info Row */}
+                          <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground">
+                            {applicant.email && (
+                              <span className="flex items-center gap-1 truncate">
+                                <IconMail size={12} /> {applicant.email}
+                              </span>
+                            )}
+                            {applicant.location && (
+                              <span className="flex items-center gap-1">
+                                <IconMapPin size={12} /> {applicant.location}
+                              </span>
+                            )}
                           </div>
                         </div>
                       </div>
 
-                      {/* Right Col: AI Analysis & Status */}
-                      <div className="lg:w-[350px] shrink-0 bg-muted/30 rounded-xl p-6 border border-border/40 flex flex-col">
-                        <div className="flex items-center justify-between mb-4">
-                          <h4 className="font-bold text-lg flex items-center gap-2">
-                            ✨ AI Match
-                          </h4>
-                          {isMatchScored && (
-                            <Badge
-                              className={cn(
-                                "text-sm px-3 py-1 font-bold",
-                                applicant.matchScore >= 80
-                                  ? "bg-green-500 hover:bg-green-600"
-                                  : applicant.matchScore >= 50
-                                    ? "bg-yellow-500 hover:bg-yellow-600"
-                                    : "bg-red-500 hover:bg-red-600",
-                              )}
-                            >
-                              {applicant.matchScore}%
-                            </Badge>
-                          )}
-                        </div>
-
-                        {isMatchScored ? (
-                          <div className="flex-1 flex flex-col">
-                            <div className="text-sm leading-relaxed text-foreground/80 mb-4 bg-background border border-border/50 p-4 rounded-lg flex-1">
-                              <p className="line-clamp-4 mb-3">
-                                {applicant.aiExplanation}
-                              </p>
-                              <div className="flex flex-col gap-2">
-                                <Button
-                                  variant="secondary"
-                                  size="sm"
-                                  className="w-full text-xs font-bold"
-                                  onClick={() => {
-                                    setSelectedAiApplicant(applicant);
-                                    setAiDialogOpen(true);
-                                  }}
-                                >
-                                  View Detailed AI Match &rarr;
-                                </Button>
-                                <Button
-                                  variant="outline"
-                                  size="sm"
-                                  className="w-full text-xs font-bold"
-                                  onClick={() =>
-                                    handleScan(applicant.applicantId)
-                                  }
-                                  disabled={
-                                    scanningId === applicant.applicantId
-                                  }
-                                >
-                                  {scanningId === applicant.applicantId
-                                    ? "Scanning..."
-                                    : "Rescan (Update AI)"}
-                                </Button>
-                              </div>
-                            </div>
-                            {applicant.interviewTime && (
-                              <div className="mt-4 flex flex-col gap-1 text-primary font-medium bg-primary/10 p-3 rounded-lg border border-primary/20 text-sm">
-                                <div className="flex items-center gap-2">
-                                  <IconCalendarMonth size={18} /> Interview:
-                                </div>
-                                <div>
-                                  {formatInterviewTime(applicant.interviewTime)}
-                                </div>
-                              </div>
+                      {/* AI Match + Skills */}
+                      <div className="px-5 pb-3">
+                        {/* Match Score */}
+                        <div className="flex items-center justify-between mb-3">
+                          <div className="flex items-center gap-2">
+                            <span className="text-xs font-semibold text-muted-foreground">
+                              ✨ AI Match
+                            </span>
+                            {isMatchScored && (
+                              <Badge
+                                className={cn(
+                                  "text-xs px-2 py-0.5 font-bold",
+                                  applicant.matchScore >= 80
+                                    ? "bg-green-500 hover:bg-green-600"
+                                    : applicant.matchScore >= 50
+                                      ? "bg-yellow-500 hover:bg-yellow-600"
+                                      : "bg-red-500 hover:bg-red-600",
+                                )}
+                              >
+                                {applicant.matchScore}%
+                              </Badge>
                             )}
                           </div>
-                        ) : (
-                          <div className="flex-1 flex flex-col items-center justify-center text-center p-6 border-2 border-dashed border-border/50 rounded-lg">
-                            <p className="text-xs text-muted-foreground mb-4">
-                              Un-analyzed against requirements.
-                            </p>
+                          {isMatchScored ? (
+                            <div className="flex gap-1.5">
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                className="h-7 text-[11px] font-semibold text-primary"
+                                onClick={() => {
+                                  setSelectedAiApplicant(applicant);
+                                  setAiDialogOpen(true);
+                                }}
+                              >
+                                View Report
+                              </Button>
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                className="h-7 text-[11px]"
+                                onClick={() =>
+                                  handleScan(applicant.applicantId)
+                                }
+                                disabled={scanningId === applicant.applicantId}
+                              >
+                                {scanningId === applicant.applicantId
+                                  ? "…"
+                                  : "Rescan"}
+                              </Button>
+                            </div>
+                          ) : (
                             <Button
+                              size="sm"
                               onClick={() => handleScan(applicant.applicantId)}
                               disabled={scanningId === applicant.applicantId}
-                              className="w-full bg-indigo-500 hover:bg-indigo-600 text-white font-semibold text-xs py-1 h-8"
+                              className="h-7 text-[11px] bg-indigo-500 hover:bg-indigo-600 text-white font-semibold"
                             >
                               {scanningId === applicant.applicantId ? (
                                 <>
-                                  <Loader2 className="mr-2 h-3 w-3 animate-spin" />
+                                  <Loader2 className="mr-1 h-3 w-3 animate-spin" />
                                   Scanning
                                 </>
                               ) : (
-                                "Run Analysis"
+                                "Run AI Scan"
                               )}
                             </Button>
+                          )}
+                        </div>
+
+                        {/* Short AI Explanation */}
+                        {isMatchScored && applicant.aiExplanation && (
+                          <p className="text-xs text-muted-foreground line-clamp-2 mb-3 bg-muted/30 rounded-lg p-2.5 border border-border/30">
+                            {applicant.aiExplanation}
+                          </p>
+                        )}
+
+                        {/* Skills pills */}
+                        {applicant.candidateSkills?.length > 0 && (
+                          <div className="flex flex-wrap gap-1.5 mb-3">
+                            {applicant.candidateSkills
+                              .slice(0, 5)
+                              .map((s: string, i: number) => (
+                                <span
+                                  key={i}
+                                  className="px-2 py-0.5 bg-muted text-muted-foreground text-[10px] font-medium rounded-md"
+                                >
+                                  {s}
+                                </span>
+                              ))}
+                            {applicant.candidateSkills.length > 5 && (
+                              <span className="px-2 py-0.5 text-[10px] text-muted-foreground">
+                                +{applicant.candidateSkills.length - 5}
+                              </span>
+                            )}
                           </div>
                         )}
 
-                        <div className="mt-4 pt-4 border-t border-border/50 flex flex-col gap-2">
-                          <div className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-1">
-                            Status
+                        {/* Interview time */}
+                        {applicant.interviewTime && (
+                          <div className="flex items-center gap-2 text-primary text-xs font-medium bg-primary/10 p-2 rounded-lg border border-primary/20 mb-3">
+                            <IconCalendarMonth size={14} />
+                            {formatInterviewTime(applicant.interviewTime)}
                           </div>
-                          <div
-                            className={cn(
-                              "inline-flex justify-center w-full py-2.5 rounded-lg border font-bold text-sm",
-                              applicant.applicationStatus === "APPLIED"
-                                ? "bg-blue-500/10 text-blue-500 border-blue-500/20"
-                                : applicant.applicationStatus === "INTERVIEWING"
-                                  ? "bg-yellow-500/10 text-yellow-600 border-yellow-500/20"
-                                  : applicant.applicationStatus === "OFFERED" ||
-                                      applicant.applicationStatus === "HIRED"
-                                    ? "bg-green-500/10 text-green-500 border-green-500/20"
-                                    : "bg-destructive/10 text-destructive border-destructive/20",
-                            )}
-                          >
-                            {applicant.applicationStatus}
+                        )}
+
+                        {/* Resume link */}
+                        <Button
+                          variant="link"
+                          onClick={() => openBase64PDF(applicant.resume)}
+                          className="h-auto p-0 text-primary font-semibold text-xs"
+                        >
+                          View Resume →
+                        </Button>
+                      </div>
+
+                      {/* Action Buttons */}
+                      <div className="bg-muted/50 px-5 py-3 border-t border-border/50 flex items-center gap-2 mt-auto">
+                        {applicant.applicationStatus === "APPLIED" && (
+                          <>
+                            <Button
+                              onClick={() =>
+                                handleOfferClick(applicant, "REJECTED")
+                              }
+                              variant="outline"
+                              size="sm"
+                              className="flex-1 h-8 text-xs border-destructive/50 text-destructive hover:bg-destructive/10 font-semibold"
+                            >
+                              Reject
+                            </Button>
+                            <Button
+                              onClick={() =>
+                                handleOfferClick(applicant, "INTERVIEWING")
+                              }
+                              size="sm"
+                              className="flex-1 h-8 text-xs font-semibold bg-primary hover:bg-primary/90 text-primary-foreground"
+                            >
+                              Schedule Interview
+                            </Button>
+                          </>
+                        )}
+
+                        {applicant.applicationStatus === "INTERVIEWING" && (
+                          <>
+                            <Button
+                              onClick={() =>
+                                handleOfferClick(applicant, "REJECTED")
+                              }
+                              variant="outline"
+                              size="sm"
+                              className="flex-1 h-8 text-xs border-destructive/50 text-destructive hover:bg-destructive/10 font-semibold"
+                            >
+                              Reject
+                            </Button>
+                            <Button
+                              onClick={() =>
+                                handleOfferClick(applicant, "OFFERED")
+                              }
+                              size="sm"
+                              className="flex-1 h-8 text-xs font-semibold bg-green-500 hover:bg-green-600 text-white"
+                            >
+                              Hire / Offer
+                            </Button>
+                          </>
+                        )}
+
+                        {(applicant.applicationStatus === "OFFERED" ||
+                          applicant.applicationStatus === "HIRED" ||
+                          applicant.applicationStatus === "REJECTED") && (
+                          <div className="text-xs text-muted-foreground font-medium flex-1 text-center">
+                            Decision made ✓
                           </div>
-                        </div>
+                        )}
                       </div>
                     </div>
-
-                    {/* Bottom Section: Action Controls */}
-                    <div className="bg-muted px-6 py-4 md:px-8 border-t border-border flex flex-col sm:flex-row items-center justify-end gap-3">
-                      {applicant.applicationStatus === "APPLIED" && (
-                        <>
-                          <Button
-                            onClick={() =>
-                              handleOfferClick(applicant, "REJECTED")
-                            }
-                            variant="outline"
-                            className="w-full sm:w-auto border-destructive/50 text-destructive hover:bg-destructive/10 font-bold"
-                          >
-                            Reject Candidacy
-                          </Button>
-                          <Button
-                            onClick={() =>
-                              handleOfferClick(applicant, "INTERVIEWING")
-                            }
-                            className="w-full sm:w-auto font-bold bg-primary hover:bg-primary/90 text-primary-foreground min-w-[200px]"
-                          >
-                            Schedule Interview
-                          </Button>
-                        </>
-                      )}
-
-                      {applicant.applicationStatus === "INTERVIEWING" && (
-                        <>
-                          <Button
-                            onClick={() =>
-                              handleOfferClick(applicant, "REJECTED")
-                            }
-                            variant="outline"
-                            className="w-full sm:w-auto border-destructive/50 text-destructive hover:bg-destructive/10 font-bold"
-                          >
-                            Reject Candidacy
-                          </Button>
-                          <Button
-                            onClick={() =>
-                              handleOfferClick(applicant, "OFFERED")
-                            }
-                            className="w-full sm:w-auto font-bold bg-green-500 hover:bg-green-600 text-white min-w-[200px]"
-                          >
-                            Hire / Extend Offer
-                          </Button>
-                        </>
-                      )}
-
-                      {(applicant.applicationStatus === "OFFERED" ||
-                        applicant.applicationStatus === "HIRED" ||
-                        applicant.applicationStatus === "REJECTED") && (
-                        <div className="text-sm text-muted-foreground font-medium flex-1 text-right">
-                          Decision has been made for this candidate.
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                );
-              })}
+                  );
+                })}
+              </div>
 
               {/* Pagination Controls */}
               {totalPages > 1 && (
