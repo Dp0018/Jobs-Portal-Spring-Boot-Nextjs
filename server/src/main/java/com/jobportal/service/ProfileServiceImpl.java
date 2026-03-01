@@ -47,9 +47,21 @@ public class ProfileServiceImpl implements ProfileService{
         return profileDto;
     }
 
+    @Autowired
+    private com.jobportal.repository.UserRepository userRepository;
+
     @Override
     public List<ProfileDto> getAllProfile() {
-        return profileRepository.findAll().stream().map((x)-> x.toDto()).toList();
+        // Only return profiles for APPLICANT users (exclude EMPLOYER and ADMIN)
+        java.util.Set<Long> applicantIds = userRepository.findAll().stream()
+                .filter(u -> u.getAccountType() == com.jobportal.dto.AccountType.APPLICANT)
+                .map(com.jobportal.entity.User::getId)
+                .collect(java.util.stream.Collectors.toSet());
+
+        return profileRepository.findAll().stream()
+                .filter(p -> applicantIds.contains(p.getId()))
+                .map(Profile::toDto)
+                .toList();
     }
 
     @Override

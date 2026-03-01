@@ -379,9 +379,76 @@ public class Data {
     }
 
     public static String getApplicationStatusBody(String name, String jobTitle, String company, String status,
-            String message) {
-        String color = status.equalsIgnoreCase("REJECTED") ? "#e53e3e"
-                : status.equalsIgnoreCase("HIRED") ? "#38a169" : "#3182ce";
+            String message, String interviewTime, String missingSkills) {
+
+        String statusColor;
+        String statusBg;
+        String statusIcon;
+        String statusLabel;
+
+        switch (status.toUpperCase()) {
+            case "INTERVIEWING":
+                statusColor = "#c96442";
+                statusBg = "#fdf5f2";
+                statusIcon = "📅";
+                statusLabel = "Interview Scheduled";
+                break;
+            case "OFFERED":
+                statusColor = "#38a169";
+                statusBg = "#f0fff4";
+                statusIcon = "🎉";
+                statusLabel = "Offer Extended";
+                break;
+            case "REJECTED":
+                statusColor = "#e53e3e";
+                statusBg = "#fff5f5";
+                statusIcon = "📋";
+                statusLabel = "Application Update";
+                break;
+            default:
+                statusColor = "#3182ce";
+                statusBg = "#ebf8ff";
+                statusIcon = "📌";
+                statusLabel = "Application Update";
+        }
+
+        // Build the interview details section
+        String interviewSection = "";
+        if (status.equalsIgnoreCase("INTERVIEWING") && interviewTime != null && !interviewTime.isBlank()) {
+            interviewSection = """
+                        <div style="background: linear-gradient(135deg, #fdf5f2 0%%, #fef9f7 100%%); border: 2px solid #f0cfc4; border-radius: 12px; padding: 24px; margin: 24px 0; text-align: center;">
+                            <p style="font-size: 12px; font-weight: 600; color: #c96442; text-transform: uppercase; letter-spacing: 1.2px; margin-bottom: 12px;">📅 Interview Details</p>
+                            <p style="font-size: 22px; font-weight: 700; color: #1a1a18; margin-bottom: 8px;">%s</p>
+                            <p style="font-size: 13px; color: #6b6a63;">Please be prepared and on time. We look forward to meeting you!</p>
+                        </div>
+                    """
+                    .formatted(interviewTime);
+        }
+
+        // Build the missing skills section
+        String skillsSection = "";
+        if (status.equalsIgnoreCase("REJECTED") && missingSkills != null && !missingSkills.isBlank()) {
+            String[] skills = missingSkills.split(",");
+            StringBuilder skillBadges = new StringBuilder();
+            for (String skill : skills) {
+                String trimmed = skill.trim();
+                if (!trimmed.isEmpty()) {
+                    skillBadges.append(String.format(
+                            "<span style=\"display: inline-block; padding: 5px 14px; margin: 4px; background-color: #fff5f5; border: 1px solid #fed7d7; border-radius: 20px; font-size: 13px; font-weight: 500; color: #e53e3e;\">%s</span>",
+                            trimmed));
+                }
+            }
+            skillsSection = """
+                        <div style="background: #fff5f5; border: 1px solid #fed7d7; border-radius: 12px; padding: 20px; margin: 24px 0;">
+                            <p style="font-size: 12px; font-weight: 600; color: #e53e3e; text-transform: uppercase; letter-spacing: 1.2px; margin-bottom: 12px;">Skills Gap Identified</p>
+                            <p style="font-size: 13px; color: #6b6a63; margin-bottom: 12px;">The following skills from the job requirements were not found in your resume:</p>
+                            <div style="text-align: center;">%s</div>
+                            <p style="font-size: 12px; color: #9b9a94; margin-top: 12px; font-style: italic;">Consider upskilling in these areas to improve your chances for similar roles.</p>
+                        </div>
+                    """
+                    .formatted(skillBadges.toString());
+        }
+
         return """
                 <!DOCTYPE html>
                 <html lang="en">
@@ -389,35 +456,90 @@ public class Data {
                     <meta charset="UTF-8" />
                     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
                     <title>Joblify – Application Update</title>
-                    <style>
-                        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
-                        body { background-color: #f5f4ee; font-family: 'Inter', sans-serif; }
-                        .container { max-width: 520px; margin: 40px auto; background-color: #ffffff; border-radius: 16px; padding: 40px; border: 1px solid #e8e7e2; }
-                        .header { text-align: center; margin-bottom: 24px; }
-                        .status-badge { display: inline-block; padding: 6px 16px; border-radius: 20px; font-weight: 600; font-size: 14px; background-color: %s20; color: %s; }
-                        h1 { font-size: 20px; color: #1a1a18; margin-top: 20px; }
-                        p { font-size: 15px; color: #6b6a63; line-height: 1.6; }
-                        .job-details { background: #f9f8f5; padding: 16px; border-radius: 8px; margin: 24px 0; border-left: 4px solid %s; }
-                    </style>
                 </head>
-                <body>
-                    <div class="container">
-                        <div class="header">
-                            <h2>Joblify</h2>
-                            <div class="status-badge">Update on Your Application</div>
+                <body style="margin: 0; padding: 0; background-color: #f5f4ee; font-family: 'Inter', ui-sans-serif, system-ui, sans-serif; -webkit-font-smoothing: antialiased;">
+                    <div style="width: 100%%; padding: 40px 16px; background-color: #f5f4ee;">
+                        <div style="max-width: 560px; margin: 0 auto; background-color: #ffffff; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 24px rgba(0,0,0,0.08); border: 1px solid #e8e7e2;">
+                            <!-- Header -->
+                            <div style="background: linear-gradient(135deg, #c96442 0%%, #d9775a 100%%); padding: 36px 40px 32px; text-align: center; position: relative;">
+                                <div style="display: inline-flex; align-items: center; gap: 10px; margin-bottom: 4px;">
+                                    <div style="width: 36px; height: 36px; background: rgba(255,255,255,0.2); border-radius: 10px; display: inline-flex; align-items: center; justify-content: center;">
+                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                            <rect x="2" y="7" width="20" height="14" rx="2" ry="2"/>
+                                            <path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/>
+                                            <path d="M2 12h20"/>
+                                        </svg>
+                                    </div>
+                                    <span style="font-size: 24px; font-weight: 700; color: #ffffff; letter-spacing: -0.5px;">Joblify</span>
+                                </div>
+                                <p style="font-size: 13px; color: rgba(255,255,255,0.80); margin-top: 6px;">Your career journey starts here</p>
+                            </div>
+
+                            <!-- Body -->
+                            <div style="padding: 40px 40px 32px;">
+                                <!-- Status Badge -->
+                                <div style="text-align: center; margin-bottom: 28px;">
+                                    <span style="display: inline-block; padding: 8px 20px; border-radius: 24px; font-weight: 600; font-size: 14px; background-color: %s; color: %s; letter-spacing: 0.3px;">
+                                        %s %s
+                                    </span>
+                                </div>
+
+                                <h1 style="font-size: 22px; font-weight: 700; color: #1a1a18; margin-bottom: 16px; letter-spacing: -0.3px;">Hi %s 👋</h1>
+                                <p style="font-size: 15px; color: #6b6a63; line-height: 1.65; margin-bottom: 24px;">%s</p>
+
+                                %s
+
+                                <!-- Job Details Card -->
+                                <div style="background: #f9f8f5; padding: 20px; border-radius: 12px; margin: 24px 0; border-left: 4px solid %s;">
+                                    <table style="width: 100%%; border-collapse: collapse;">
+                                        <tr>
+                                            <td style="font-size: 13px; color: #9b9a94; padding-bottom: 8px; font-weight: 600;">ROLE</td>
+                                            <td style="font-size: 14px; color: #1a1a18; padding-bottom: 8px; font-weight: 500; text-align: right;">%s</td>
+                                        </tr>
+                                        <tr>
+                                            <td style="font-size: 13px; color: #9b9a94; padding-bottom: 8px; font-weight: 600;">COMPANY</td>
+                                            <td style="font-size: 14px; color: #1a1a18; padding-bottom: 8px; font-weight: 500; text-align: right;">%s</td>
+                                        </tr>
+                                        <tr>
+                                            <td style="font-size: 13px; color: #9b9a94; font-weight: 600;">STATUS</td>
+                                            <td style="font-size: 14px; color: %s; font-weight: 700; text-align: right;">%s</td>
+                                        </tr>
+                                    </table>
+                                </div>
+
+                                %s
+
+                                <!-- CTA -->
+                                <div style="text-align: center; margin: 32px 0;">
+                                    <a href="https://joblify.com/jhistory" style="display: inline-block; background: linear-gradient(135deg, #c96442 0%%, #d9775a 100%%); color: #ffffff; text-decoration: none; font-size: 15px; font-weight: 600; padding: 14px 36px; border-radius: 10px; letter-spacing: 0.2px;">
+                                        View on Joblify →
+                                    </a>
+                                </div>
+
+                                <p style="font-size: 14px; color: #6b6a63; line-height: 1.6; margin-top: 24px;">
+                                    Best Regards,<br/>
+                                    <strong style="color: #1a1a18;">The Joblify Team</strong>
+                                </p>
+                            </div>
+
+                            <!-- Footer -->
+                            <div style="background-color: #f9f8f5; border-top: 1px solid #ebe9e3; padding: 24px 40px; text-align: center;">
+                                <p style="font-size: 11px; color: #9b9a94; line-height: 1.6;">
+                                    © 2025 Joblify. All rights reserved.<br/>
+                                    You received this email because you applied for a job through Joblify.
+                                </p>
+                            </div>
                         </div>
-                        <h1>Hi %s,</h1>
-                        <p>%s</p>
-                        <div class="job-details">
-                            <strong>Role:</strong> %s<br/>
-                            <strong>Company:</strong> %s<br/>
-                            <strong>Status:</strong> %s
-                        </div>
-                        <p>Best Regards,<br/>The Joblify Team</p>
                     </div>
                 </body>
                 </html>
                 """
-                .formatted(color, color, color, name, message, jobTitle, company, status);
+                .formatted(
+                        statusBg, statusColor, statusIcon, statusLabel, // status badge
+                        name, message, // greeting + body
+                        interviewSection, // interview card (or empty)
+                        statusColor, jobTitle, company, statusColor, status, // job details card
+                        skillsSection // missing skills (or empty)
+                );
     }
 }
