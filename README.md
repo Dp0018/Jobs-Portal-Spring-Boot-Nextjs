@@ -13,8 +13,8 @@
 
 ---
 
-A modern, full-featured **Job Portal** that connects employers with job seekers.  
-Employers can post jobs, manage applicants, schedule interviews, and leverage **AI-powered resume analysis** (Google Gemini).  
+A modern, full-featured **Job Portal** that connects employers with job seekers.
+Employers can post jobs, manage applicants, schedule interviews, and leverage **RAG-powered AI resume analysis** for highly accurate candidate matching.
 Job seekers can search for jobs, build profiles, upload resumes, and track applications — all in a beautiful, responsive UI.
 
 [Features](#-features) · [Tech Stack](#-tech-stack) · [Getting Started](#-getting-started) · [API Endpoints](#-api-endpoints) · [Contributing](#-contributing)
@@ -75,12 +75,12 @@ Job seekers can search for jobs, build profiles, upload resumes, and track appli
 </td>
 <td>
 
-### 🤖 AI Resume Analysis
+### 🤖 AI Resume Analysis (RAG-Powered)
 
-- **Google Gemini AI** integration
-- Automated match-score generation
-- AI-generated candidate-fit explanation
-- Skills gap analysis (required vs. candidate)
+- **Retrieval-Augmented Generation (RAG)** for high-accuracy, context-aware resume screening
+- Automated match-score generation based on deep analysis of job descriptions
+- AI-generated candidate-fit explanation highlighting relevant past experiences
+- Skills gap analysis (required vs. candidate) with actionable insights
 
 </td>
 </tr>
@@ -164,8 +164,8 @@ Job seekers can search for jobs, build profiles, upload resumes, and track appli
 | [MongoDB Atlas](https://www.mongodb.com/atlas) | — | NoSQL cloud database |
 | [Spring Security](https://spring.io/projects/spring-security) | — | Authentication & authorization |
 | [jjwt](https://github.com/jwtk/jjwt) | `0.11.5` | JWT token handling |
-| [Spring Mail](https://docs.spring.io/spring-boot/reference/io/email.html) | — | Email OTP delivery |
-| [Google Gemini AI](https://ai.google.dev/) | `1.0.0` | AI-powered resume analysis |
+| [Resend](https://resend.com/) | — | Email OTP delivery |
+| [RAG Model](#) | — | AI-powered resume analysis |
 | [Apache PDFBox](https://pdfbox.apache.org/) | `2.0.29` | PDF / CV text extraction |
 | [Lombok](https://projectlombok.org/) | — | Boilerplate reduction |
 | [Bean Validation](https://beanvalidation.org/) | — | Request validation |
@@ -303,16 +303,11 @@ npm run dev    # or: bun dev
 # MongoDB
 spring.mongodb.uri=mongodb+srv://<username>:<password>@<cluster>.mongodb.net/<database>
 
-# Email (SMTP) — for OTP
-spring.mail.host=smtp.gmail.com
-spring.mail.port=587
-spring.mail.username=your-email@gmail.com
-spring.mail.password=your-app-password
-spring.mail.properties.mail.smtp.auth=true
-spring.mail.properties.mail.smtp.starttls.enable=true
+# Email — for OTP (Resend)
+resend.api.key=your-resend-api-key
 
-# Google Gemini AI
-gemini.api.key=your-gemini-api-key
+# AI / RAG Model
+rag.api.key=your-rag-api-key
 ```
 
 ### Frontend — `client/.env`
