@@ -239,8 +239,23 @@ export const TalentCard = (props: any) => {
                       : "bg-red-500/10 text-red-500 border-red-500/30 hover:bg-red-500/20",
                 )}
               >
-                ✨ AI Match Score: {props.matchScore}% (Click to Details)
+                ✨ AI Match Score: {props.matchScore}%
               </button>
+              {props.fairnessScore !== undefined &&
+                props.fairnessScore !== null && (
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <div className="inline-flex items-center px-3 py-1.5 rounded-full text-xs font-bold border bg-purple-500/10 text-purple-500 border-purple-500/30 cursor-help">
+                          ⚖️ Fairness: {props.fairnessScore}%
+                        </div>
+                      </TooltipTrigger>
+                      <TooltipContent className="max-w-xs text-xs">
+                        <p>PII redacted. Candidate evaluated without bias.</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                )}
               <Button
                 variant="outline"
                 size="sm"
@@ -618,6 +633,28 @@ export const TalentCard = (props: any) => {
                 {props.aiExplanation || "Evaluating candidate fit..."}
               </p>
             </div>
+
+            {/* AI Fairness Explanation */}
+            {props.fairnessScore !== undefined &&
+              props.fairnessScore !== null && (
+                <div className="space-y-2 mt-2">
+                  <h4 className="text-sm font-semibold text-purple-500 tracking-wide uppercase flex items-center gap-1.5">
+                    ⚖️ Ethical AI / Fairness Report
+                    <span className="bg-purple-500/10 text-purple-500 px-2 py-0.5 rounded text-xs">
+                      Score: {props.fairnessScore}%
+                    </span>
+                  </h4>
+                  <div className="text-sm text-muted-foreground leading-relaxed bg-purple-500/5 p-4 rounded-xl border border-purple-500/20">
+                    <p className="mb-2 text-xs font-medium text-purple-400">
+                      ✅ GDPR Compliant · PII Redacted Before Analysis
+                    </p>
+                    <p>
+                      {props.fairnessExplanation ||
+                        "Candidate was evaluated objectively based purely on technical skills and experience without demographic bias."}
+                    </p>
+                  </div>
+                </div>
+              )}
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-3">

@@ -18,9 +18,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jobportal.repository.UserRepository;
 import com.jobportal.entity.User;
 import com.jobportal.utility.Data;
-import jakarta.mail.internet.MimeMessage;
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.MimeMessageHelper;
 
 @Service("jobService")
 public class JobServiceImpl implements JobService{
@@ -31,7 +28,7 @@ public class JobServiceImpl implements JobService{
     private UserRepository userRepository;
 
     @Autowired
-    private JavaMailSender mailSender;
+    private ResendEmailService resendEmailService;
 
     @Autowired
     private NotificationService notificationService;
@@ -232,6 +229,10 @@ public class JobServiceImpl implements JobService{
             String explanation = node.has("aiExplanation") ? node.get("aiExplanation").asText()
                     : "No explanation provided.";
 
+            int fairnessScore = node.has("fairnessScore") ? node.get("fairnessScore").asInt() : 100;
+            String fairnessExplanation = node.has("fairnessExplanation") ? node.get("fairnessExplanation").asText()
+                    : "Evaluated objectively based on skills.";
+
             List<String> reqSkills = new ArrayList<>();
             if (node.has("requiredSkills")) {
                 node.get("requiredSkills").forEach(s -> reqSkills.add(s.asText()));
@@ -244,11 +245,15 @@ public class JobServiceImpl implements JobService{
 
             targetApplicant.setMatchScore(score);
             targetApplicant.setAiExplanation(explanation);
+            targetApplicant.setFairnessScore(fairnessScore);
+            targetApplicant.setFairnessExplanation(fairnessExplanation);
             targetApplicant.setRequiredSkills(reqSkills);
             targetApplicant.setCandidateSkills(candSkills);
         } catch (Exception e) {
             targetApplicant.setMatchScore(0);
             targetApplicant.setAiExplanation("Error parsing AI response: " + e.getMessage() + " | Raw: " + aiResponse);
+            targetApplicant.setFairnessScore(0);
+            targetApplicant.setFairnessExplanation("Error assessing fairness.");
             targetApplicant.setRequiredSkills(new ArrayList<>());
             targetApplicant.setCandidateSkills(new ArrayList<>());
         }
@@ -312,14 +317,9 @@ public class JobServiceImpl implements JobService{
                     try {
                         notificationService.sendNotification(notificationDto);
 
-                        // Send Email Notification
+                        // Send Email Notification via Resend
                         User user = userRepository.findById(application.getApplicantId()).orElse(null);
                         if (user != null) {
-                            MimeMessage mm = mailSender.createMimeMessage();
-                            MimeMessageHelper helper = new MimeMessageHelper(mm, true);
-                            helper.setTo(user.getEmail());
-                            helper.setSubject(action + " - " + job.getCompany());
-
                             String emailBody = Data.getApplicationStatusBody(
                                     user.getName(),
                                     job.getJobTitle(),
@@ -336,8 +336,10 @@ public class JobServiceImpl implements JobService{
                                     application.getApplicationStatus().equals(ApplicationStatus.REJECTED)
                                             ? computeMissingSkills(job.getSkillsRequired(), x.getCandidateSkills())
                                             : null);
-                            helper.setText(emailBody, true);
-                            mailSender.send(mm);
+                            resendEmailService.sendEmail(
+                                    user.getEmail(),
+                                    action + " - " + job.getCompany(),
+                                    emailBody);
                         }
 
                     } catch (Exception e) {

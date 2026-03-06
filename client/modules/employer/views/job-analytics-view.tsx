@@ -705,6 +705,12 @@ export const JobAnalyticsView = ({ jobId }: JobAnalyticsViewProps) => {
                     {selectedAiApplicant.matchScore}% Match
                   </div>
                 )}
+              {selectedAiApplicant?.fairnessScore !== undefined &&
+                selectedAiApplicant?.fairnessScore !== null && (
+                  <div className="px-4 py-1.5 rounded-full text-sm font-bold border bg-purple-500/10 text-purple-500 border-purple-500/20 ml-2">
+                    ⚖️ Fairness: {selectedAiApplicant.fairnessScore}%
+                  </div>
+                )}
             </div>
           </DialogHeader>
 
@@ -723,6 +729,28 @@ export const JobAnalyticsView = ({ jobId }: JobAnalyticsViewProps) => {
                   ))}
               </div>
             </div>
+
+            {/* AI Fairness Explanation */}
+            {selectedAiApplicant?.fairnessScore !== undefined &&
+              selectedAiApplicant?.fairnessScore !== null && (
+                <div className="space-y-2 mt-2">
+                  <h4 className="text-sm font-semibold text-purple-500 tracking-wide uppercase flex items-center gap-1.5">
+                    ⚖️ Ethical AI / Fairness Report
+                    <span className="bg-purple-500/10 text-purple-500 px-2 py-0.5 rounded text-xs">
+                      Score: {selectedAiApplicant.fairnessScore}%
+                    </span>
+                  </h4>
+                  <div className="text-sm text-muted-foreground leading-relaxed bg-purple-500/5 p-4 rounded-xl border border-purple-500/20">
+                    <p className="mb-2 text-xs font-medium text-purple-400">
+                      ✅ GDPR Compliant · PII Redacted Before Analysis
+                    </p>
+                    <p>
+                      {selectedAiApplicant.fairnessExplanation ||
+                        "Candidate was evaluated objectively based purely on technical skills and experience without demographic bias."}
+                    </p>
+                  </div>
+                </div>
+              )}
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-3">

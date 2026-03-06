@@ -12,10 +12,7 @@ import com.jobportal.repository.OTPRepository;
 import com.jobportal.repository.UserRepository;
 import com.jobportal.utility.Data;
 import com.jobportal.utility.Utilities;
-import jakarta.mail.internet.MimeMessage;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -39,7 +36,7 @@ public class UserServiceImpl implements UserService {
     private PasswordEncoder passwordEncoder;
 
     @Autowired
-    private JavaMailSender mailSender;
+    private ResendEmailService resendEmailService;
 
     @Autowired
     private ProfileService profileService;
@@ -63,17 +60,15 @@ public class UserServiceImpl implements UserService {
             existingUser.setEmailVerified(false);
             existingUser = userRepository.save(existingUser);
 
-            // Resend verification OTP (async to avoid blocking)
+            // Resend verification OTP
             final String userEmail = existingUser.getEmail();
             final String userName = existingUser.getName();
-            new Thread(() -> {
-                try {
-                    sendOtpInternal(userEmail, userName);
-                } catch (Exception e) {
-                    System.err.println("Failed to resend verification OTP: " + e.getMessage());
-                    e.printStackTrace();
-                }
-            }).start();
+            try {
+                sendOtpInternal(userEmail, userName);
+            } catch (Exception e) {
+                System.err.println("Failed to resend verification OTP: " + e.getMessage());
+                throw new JobPortalExceeption("Failed to send OTP email: " + e.getMessage());
+            }
 
             UserDTO result = existingUser.toDTO();
             result.setPassword(null);
@@ -86,17 +81,15 @@ public class UserServiceImpl implements UserService {
         user = userRepository.save(user);
         profileService.createProfile(userDTO.getEmail(), userDTO.getName(), user.getId());
 
-        // Auto-send OTP for email verification (async to avoid blocking)
+        // Auto-send OTP for email verification
         final String newUserEmail = user.getEmail();
         final String newUserName = user.getName();
-        new Thread(() -> {
-            try {
-                sendOtpInternal(newUserEmail, newUserName);
-            } catch (Exception e) {
-                System.err.println("Failed to send verification OTP: " + e.getMessage());
-                e.printStackTrace();
-            }
-        }).start();
+        try {
+            sendOtpInternal(newUserEmail, newUserName);
+        } catch (Exception e) {
+            System.err.println("Failed to send verification OTP: " + e.getMessage());
+            throw new JobPortalExceeption("Failed to send OTP email: " + e.getMessage());
+        }
 
         UserDTO result = user.toDTO();
         result.setPassword(null);
@@ -127,22 +120,15 @@ public class UserServiceImpl implements UserService {
     }
 
     private Boolean sendOtpInternal(String email, String userName) throws Exception {
-        MimeMessage mm = mailSender.createMimeMessage();
-        MimeMessageHelper message = new MimeMessageHelper(mm,true);
-
-        message.setTo(email);
-        message.setSubject("Your OTP Code");
-
         String genOtp = Utilities.generateOTP();
 
         OTP otp = new OTP(email, genOtp, LocalDateTime.now());
 
-        // Save OTP to database (this shouldn't fail due to replication lag as it's an insert)
+        // Save OTP to database
         otpRepository.save(otp);
 
-        message.setText(Data.getMessageBody(userName, genOtp), true);
-
-        mailSender.send(mm);
+        String htmlBody = Data.getMessageBody(userName, genOtp);
+        resendEmailService.sendEmail(email, "Your OTP Code", htmlBody);
 
         return true;
     }
