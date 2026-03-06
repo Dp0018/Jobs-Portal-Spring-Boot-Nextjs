@@ -26,6 +26,11 @@ public class Applicant {
     private LocalDateTime interviewTime;
     private Integer matchScore;
     private String aiExplanation;
+
+    // AI Bias Detection & Fairness
+    private Integer fairnessScore;
+    private String fairnessExplanation;
+
     private List<String> requiredSkills;
     private List<String> candidateSkills;
     private List<Double> resumeEmbedding;
@@ -34,6 +39,7 @@ public class Applicant {
         return new ApplicantDTO(this.applicantId, this.name, this.email, this.phone, this.website,
                 this.resume != null ? Base64.getEncoder().encodeToString(this.resume) : null, this.coverLetter,
                 this.timestamp, this.applicationStatus, this.interviewTime, this.matchScore, this.aiExplanation,
-                this.requiredSkills, this.candidateSkills, null, null, null);
+                this.fairnessScore, this.fairnessExplanation,
+                        this.requiredSkills, this.candidateSkills, null, null, null);
     }
 }

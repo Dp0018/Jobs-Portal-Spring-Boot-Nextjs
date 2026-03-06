@@ -90,12 +90,13 @@ public class AIService {
         String prompt = "You are an expert HR Technical Recruiter. Please analyze the following resume against the provided job description.\n\n" +
                 "Job Description:\n" + jobDescription + "\n\n" +
                 "Resume:\n" + resumeText + "\n\n" +
-                "Provide a JSON response STRICTLY in the following exact format without any markdown wrappers (no ```json or backticks):\n" +
+                "Provide a JSON response STRICTLY in the following exact format without any markdown wrappers (no ```json or backticks). Do NOT copy these example strings, you MUST calculate your own matchScore integer (0-100) and provide the correct arrays and strings based on the candidate's actual fit:\n"
+                +
                 "{\n" +
-                "  \"matchScore\": 85,\n" +
-                "  \"aiExplanation\": \"The candidate is a strong fit...\",\n" +
-                "  \"requiredSkills\": [\"Java\", \"Spring Boot\"],\n" +
-                "  \"candidateSkills\": [\"Java\", \"React\"]\n" +
+                "  \"matchScore\": <integer_between_0_and_100>,\n" +
+                "  \"aiExplanation\": \"<detailed_string_explanation>\",\n" +
+                "  \"requiredSkills\": [\"<skill_1>\", \"<skill_2>\"],\n" +
+                "  \"candidateSkills\": [\"<skill_1>\", \"<skill_2>\"]\n" +
                 "}";
 
         try {
@@ -130,17 +131,24 @@ public class AIService {
                 "Job Description:\n" + jobDescription + "\n\n" +
                 "Resume:\n" + resumeText + "\n\n" +
                 "Your task:\n" +
-                "1. Provide a FINAL adjusted matchScore (0-100). If the candidate matches well semantically, the score MUST be high (e.g. 85-100) regardless of the vector score. If the vector score is > 0, use it as a baseline.\n"
+                "1. Provide a FINAL adjusted matchScore (0-100). This matchScore MUST be strictly based on the provided Cosine Similarity Score ("
+                + vectorScorePercentage + "%). You should output exactly " + vectorScorePercentage
+                + " or a value very close to it. Do not hallucinate an arbitrarily high score; precision and vector accuracy are required.\n"
                 +
-                "2. Provide an aiExplanation explaining why they match, explicitly mentioning the alignment found via textual analysis. If the vector score was 0 but they are a strong match, explain that the semantic reading found strong alignment despite the vector gap.\n"
+                "2. Provide an aiExplanation explaining why they match or don't match, explicitly mentioning the vector similarity score ("
+                + vectorScorePercentage + "%) and how their skills align semantically.\n"
                 +
-                "Provide a JSON response STRICTLY in the following exact format without any markdown wrappers (no ```json or backticks):\n"
+                "3. IMPORTANT: Conduct a Fairness and Bias Check. The resume text has had PII redacted. Evaluate the candidate SOLELY on their skills, experience, and qualifications. You must provide a 'fairnessScore' (0-100, typically 100 if evaluated fairly based purely on skills without demographic bias) and a 'fairnessExplanation' explicitly confirming that the evaluation was objective, GDPR-compliant, and free from bias regarding race, gender, age, or location.\n"
+                +
+                "Provide a JSON response STRICTLY in the following exact format without any markdown wrappers (no ```json or backticks). Do NOT copy these example values, you MUST generate your own accurate arrays, strings, and calculate the actual matchScore integer (between 0 and 100):\n"
                 +
                 "{\n" +
-                "  \"matchScore\": 92,\n" +
-                "  \"aiExplanation\": \"The candidate is a strong fit...\",\n" +
-                "  \"requiredSkills\": [\"Java\", \"Spring Boot\"],\n" +
-                "  \"candidateSkills\": [\"Java\", \"React\"]\n" +
+                "  \"matchScore\": <integer_between_0_and_100>,\n" +
+                "  \"aiExplanation\": \"<detailed_string_explanation>\",\n" +
+                "  \"fairnessScore\": <integer_between_0_and_100>,\n" +
+                "  \"fairnessExplanation\": \"<detailed_string_explanation>\",\n" +
+                "  \"requiredSkills\": [\"<skill_1>\", \"<skill_2>\"],\n" +
+                "  \"candidateSkills\": [\"<skill_1>\", \"<skill_2>\"]\n" +
                 "}";
 
         try {
