@@ -83,4 +83,10 @@ public class JobAPI {
             @RequestParam(required = false) List<String> status) throws JobPortalExceeption {
         return new ResponseEntity<>(jobService.getApplicantsByEmployer(employerId, status), HttpStatus.OK);
     }
+
+    // AI Job Recommendation endpoint (content-based + collaborative filtering)
+    @GetMapping("/recommendations/{userId}")
+    public ResponseEntity<List<JobDTO>> getRecommendedJobs(@PathVariable Long userId) throws JobPortalExceeption {
+        return new ResponseEntity<>(jobService.getRecommendedJobs(userId), HttpStatus.OK);
+    }
 }

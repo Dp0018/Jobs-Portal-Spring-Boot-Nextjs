@@ -5,6 +5,8 @@ import com.jobportal.entity.Applicant;
 import com.jobportal.entity.Job;
 import com.jobportal.exception.JobPortalExceeption;
 import com.jobportal.repository.JobRepository;
+import com.jobportal.repository.ProfileRepository;
+import com.jobportal.entity.Profile;
 import com.jobportal.utility.Utilities;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -12,6 +14,11 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
+import java.util.Set;
+import java.util.HashSet;
+import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -38,6 +45,9 @@ public class JobServiceImpl implements JobService{
 
     @Autowired
     private AIService aiService;
+
+    @Autowired
+    private ProfileRepository profileRepository;
 
     @Override
     public JobDTO postJob(JobDTO jobDTO) throws JobPortalExceeption {
@@ -82,6 +92,29 @@ public class JobServiceImpl implements JobService{
                             savedJob.getJobTitle()));
         } catch (Exception e) {
             System.out.println("⚠️ VectorStore indexing failed (non-blocking): " + e.getMessage());
+        }
+
+        // AI Fraud Detection — classify the job posting for scam patterns
+        try {
+            String fraudResponse = aiService.detectFraud(
+                    savedJob.getJobTitle(), savedJob.getCompany(),
+                    savedJob.getDescription(), savedJob.getPackageOffered());
+
+            ObjectMapper mapper = new ObjectMapper();
+            JsonNode fraudNode = mapper.readTree(fraudResponse);
+
+            savedJob.setFraudScore(fraudNode.has("fraudScore") ? fraudNode.get("fraudScore").asInt() : 0);
+            savedJob.setFraudRisk(fraudNode.has("fraudRisk") ? fraudNode.get("fraudRisk").asText() : "LOW");
+
+            List<String> reasons = new ArrayList<>();
+            if (fraudNode.has("fraudReasons")) {
+                fraudNode.get("fraudReasons").forEach(r -> reasons.add(r.asText()));
+            }
+            savedJob.setFraudReasons(reasons);
+
+            jobRepository.save(savedJob);
+        } catch (Exception e) {
+            System.out.println("⚠️ Fraud detection failed (non-blocking): " + e.getMessage());
         }
 
         return savedJob.toDTO();
@@ -477,5 +510,147 @@ public class JobServiceImpl implements JobService{
             }
         }
         return missing.isEmpty() ? null : String.join(", ", missing);
+    }
+
+    /*
+     * ═══════════════════════════════════════════════════════════════════
+     * AI JOB RECOMMENDATION ENGINE
+     * Combines content-based filtering (70%) + collaborative filtering (30%)
+     * to recommend the most relevant jobs to a candidate.
+     * ═══════════════════════════════════════════════════════════════════
+     */
+    @Override
+    public List<JobDTO> getRecommendedJobs(Long userId) throws JobPortalExceeption {
+        // 1. Fetch user profile
+        Profile profile = profileRepository.findById(userId)
+                .orElseThrow(() -> new JobPortalExceeption("PROFILE_NOT_FOUND"));
+
+        // 2. Fetch all active jobs
+        List<Job> allJobs = jobRepository.findAll().stream()
+                .filter(j -> j.getJobStatus() == JobStatus.ACTIVE)
+                .collect(Collectors.toList());
+
+        if (allJobs.isEmpty()) {
+            return new ArrayList<>();
+        }
+
+        // ── CONTENT-BASED FILTERING ──
+        // Build a text profile from user's skills, jobTitle, about, and experience
+        StringBuilder profileText = new StringBuilder();
+        if (profile.getJobTitle() != null)
+            profileText.append(profile.getJobTitle()).append(" ");
+        if (profile.getAbout() != null)
+            profileText.append(profile.getAbout()).append(" ");
+        if (profile.getSkills() != null && !profile.getSkills().isEmpty()) {
+            profileText.append(String.join(" ", profile.getSkills())).append(" ");
+        }
+        if (profile.getExperiences() != null) {
+            profile.getExperiences().forEach(exp -> {
+                if (exp.getTitle() != null)
+                    profileText.append(exp.getTitle()).append(" ");
+                if (exp.getCompany() != null)
+                    profileText.append(exp.getCompany()).append(" ");
+            });
+        }
+
+        // Generate embedding for the user's profile
+        String profileStr = profileText.toString().trim();
+        Map<Long, Double> contentScores = new HashMap<>();
+
+        if (!profileStr.isEmpty()) {
+            try {
+                List<Double> profileEmbedding = aiService.generateEmbedding(profileStr);
+
+                // Calculate cosine similarity against each job's embedding
+                for (Job job : allJobs) {
+                    double score = 0.0;
+                    if (job.getJobEmbedding() != null && !job.getJobEmbedding().isEmpty()) {
+                        score = aiService.calculateCosineSimilarity(profileEmbedding, job.getJobEmbedding());
+                    } else {
+                        // Job has no embedding yet — generate one on the fly from title + description
+                        String jobText = (job.getJobTitle() != null ? job.getJobTitle() : "") + " "
+                                + (job.getDescription() != null ? job.getDescription() : "") + " "
+                                + (job.getSkillsRequired() != null ? String.join(" ", job.getSkillsRequired()) : "");
+                        if (!jobText.trim().isEmpty()) {
+                            List<Double> jobEmb = aiService.generateEmbedding(jobText.trim());
+                            job.setJobEmbedding(jobEmb);
+                            jobRepository.save(job);
+                            score = aiService.calculateCosineSimilarity(profileEmbedding, jobEmb);
+                        }
+                    }
+                    contentScores.put(job.getId(), Math.max(0, score));
+                }
+            } catch (Exception e) {
+                System.err.println("⚠️ Recommendation: embedding error — " + e.getMessage());
+            }
+        }
+
+        // ── COLLABORATIVE FILTERING ──
+        // Find jobs the current user has applied to
+        Set<Long> userAppliedJobIds = new HashSet<>();
+        for (Job job : allJobs) {
+            if (job.getApplicants() != null) {
+                for (Applicant app : job.getApplicants()) {
+                    if (app.getApplicantId() != null && app.getApplicantId().equals(userId)) {
+                        userAppliedJobIds.add(job.getId());
+                    }
+                }
+            }
+        }
+
+        // Find other users who applied to the same jobs
+        Set<Long> similarUserIds = new HashSet<>();
+        for (Job job : allJobs) {
+            if (userAppliedJobIds.contains(job.getId()) && job.getApplicants() != null) {
+                for (Applicant app : job.getApplicants()) {
+                    if (app.getApplicantId() != null && !app.getApplicantId().equals(userId)) {
+                        similarUserIds.add(app.getApplicantId());
+                    }
+                }
+            }
+        }
+
+        // Count how many similar users applied to each job the current user hasn't
+        Map<Long, Integer> collaborativeHits = new HashMap<>();
+        for (Job job : allJobs) {
+            if (!userAppliedJobIds.contains(job.getId()) && job.getApplicants() != null) {
+                int hits = 0;
+                for (Applicant app : job.getApplicants()) {
+                    if (app.getApplicantId() != null && similarUserIds.contains(app.getApplicantId())) {
+                        hits++;
+                    }
+                }
+                if (hits > 0) {
+                    collaborativeHits.put(job.getId(), hits);
+                }
+            }
+        }
+        int maxHits = collaborativeHits.values().stream().mapToInt(Integer::intValue).max().orElse(1);
+
+        // ── COMBINE SCORES ──
+        // finalScore = 0.7 * contentScore + 0.3 * collaborativeScore (normalized)
+        Map<Long, Double> finalScores = new HashMap<>();
+        for (Job job : allJobs) {
+            // Skip jobs the user already applied to
+            if (userAppliedJobIds.contains(job.getId()))
+                continue;
+
+            double content = contentScores.getOrDefault(job.getId(), 0.0);
+            double collab = collaborativeHits.containsKey(job.getId())
+                    ? (double) collaborativeHits.get(job.getId()) / maxHits
+                    : 0.0;
+            double finalScore = 0.7 * content + 0.3 * collab;
+            finalScores.put(job.getId(), finalScore);
+        }
+
+        // Sort by final score descending and return top 6
+        return allJobs.stream()
+                .filter(j -> finalScores.containsKey(j.getId()))
+                .sorted((a, b) -> Double.compare(
+                        finalScores.getOrDefault(b.getId(), 0.0),
+                        finalScores.getOrDefault(a.getId(), 0.0)))
+                .limit(6)
+                .map(Job::toDTO)
+                .collect(Collectors.toList());
     }
 }

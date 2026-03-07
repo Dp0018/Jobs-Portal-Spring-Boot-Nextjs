@@ -15,6 +15,7 @@ import {
   IconLogout2,
   IconChevronDown,
   IconHistory,
+  IconSparkles,
 } from "@tabler/icons-react";
 import { useDispatch, useSelector } from "react-redux";
 import Link from "next/link";
@@ -107,12 +108,30 @@ export const ProfileMenu = () => {
           </Link>
         )}
 
+        {user?.accountType === "ADMIN" && (
+          <Link href="/admin">
+            <DropdownMenuItem className="text-foreground hover:bg-accent focus:bg-accent focus:text-foreground rounded-lg transition-all duration-200 my-1 cursor-pointer gap-2">
+              <IconHistory size={18} stroke={1.5} />
+              <span className="font-medium">Admin Panel</span>
+            </DropdownMenuItem>
+          </Link>
+        )}
+
         <Link href="/profile">
           <DropdownMenuItem className="text-foreground hover:bg-accent focus:bg-accent focus:text-foreground rounded-lg transition-all duration-200 my-1 cursor-pointer gap-2">
             <IconUserCircle size={18} stroke={1.5} />
             <span className="font-medium">Profile</span>
           </DropdownMenuItem>
         </Link>
+
+        {user?.accountType === "APPLICANT" && (
+          <Link href="/recommended-jobs">
+            <DropdownMenuItem className="text-foreground hover:bg-accent focus:bg-accent focus:text-foreground rounded-lg transition-all duration-200 my-1 cursor-pointer gap-2">
+              <IconSparkles size={18} stroke={1.5} />
+              <span className="font-medium">Recommended Jobs</span>
+            </DropdownMenuItem>
+          </Link>
+        )}
 
         <Link href="/jhistory">
           <DropdownMenuItem className="text-foreground hover:bg-accent focus:bg-accent focus:text-foreground rounded-lg transition-all duration-200 my-1 cursor-pointer gap-2">

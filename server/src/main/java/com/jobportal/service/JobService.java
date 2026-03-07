@@ -31,4 +31,7 @@ public interface JobService {
     public List<ApplicantDTO> getApplicantsByEmployer(Long employerId, List<String> status) throws JobPortalExceeption;
 
     public void deleteJob(Long id) throws JobPortalExceeption;
+
+    // AI Job Recommendation: content-based + collaborative filtering
+    public List<JobDTO> getRecommendedJobs(Long userId) throws JobPortalExceeption;
 }

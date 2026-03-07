@@ -8,6 +8,7 @@ import {
   IconMapPin,
   IconUsers,
   IconCurrencyRupee,
+  IconShieldExclamation,
 } from "@tabler/icons-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -98,6 +99,21 @@ export const JobCard = (props: any) => {
           {props.location}
         </Badge>
       </div>
+
+      {/* ── Fraud Risk Badge ── */}
+      {props.fraudRisk && props.fraudRisk !== "LOW" && (
+        <div
+          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold mb-3 border ${
+            props.fraudRisk === "HIGH"
+              ? "bg-destructive/10 text-destructive border-destructive/20"
+              : "bg-amber-500/10 text-amber-600 border-amber-500/20"
+          }`}
+        >
+          <IconShieldExclamation className="w-3.5 h-3.5" />
+          ⚠️ {props.fraudRisk === "HIGH" ? "High" : "Medium"} Risk — AI Fraud
+          Detection
+        </div>
+      )}
 
       {/* ── About — replaces Mantine Text lineClamp=3 ── */}
       <p className="text-sm text-muted-foreground leading-relaxed mb-4 line-clamp-3 flex-1">

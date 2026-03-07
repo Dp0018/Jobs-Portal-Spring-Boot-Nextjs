@@ -201,4 +201,51 @@ public class AIService {
             return 0;
         }
     }
+
+    /**
+     * AI Fraud Job Detection — Classification Model.
+     * Sends job posting details to Gemini to classify the posting as
+     * legitimate or potentially fraudulent. Checks for:
+     * - Suspicious / unknown company names
+     * - Copied or extremely vague job descriptions
+     * - Unrealistic salary or benefits promises
+     * - Common scam patterns (upfront fees, personal info requests)
+     * Returns JSON: { fraudScore, fraudRisk, fraudReasons }
+     */
+    public String detectFraud(String jobTitle, String company, String description, Long salary) {
+        String prompt = "You are an AI fraud detection classifier for a job portal. " +
+                "Analyze the following job posting and determine if it is potentially fraudulent or a scam.\n\n" +
+                "Check for these red flags:\n" +
+                "1. Suspicious or fake company name (doesn't seem like a real company)\n" +
+                "2. Copied, generic, or extremely vague job description\n" +
+                "3. Unrealistic salary (too high for the role, or suspiciously low)\n" +
+                "4. Scam patterns: requests for upfront payment, personal banking info, or 'guaranteed' income\n" +
+                "5. Poor grammar or excessive use of urgency (e.g. 'APPLY NOW!!!', 'limited spots')\n" +
+                "6. Missing key details (no clear responsibilities, no real qualifications)\n\n" +
+                "Job Details:\n" +
+                "Title: " + jobTitle + "\n" +
+                "Company: " + company + "\n" +
+                "Description: " + description + "\n" +
+                "Salary (LPA): " + (salary != null ? salary : "Not specified") + "\n\n" +
+                "Return ONLY a JSON response (no markdown, no backticks) in this exact format:\n" +
+                "{\n" +
+                "  \"fraudScore\": <integer 0-100, where 0=legitimate and 100=definitely fraud>,\n" +
+                "  \"fraudRisk\": \"<LOW or MEDIUM or HIGH>\",\n" +
+                "  \"fraudReasons\": [\"<reason_1>\", \"<reason_2>\"]\n" +
+                "}\n" +
+                "If the job looks legitimate, return fraudScore near 0, fraudRisk LOW, and an empty fraudReasons array.";
+
+        try {
+            String response = chatClient.prompt()
+                    .user(prompt)
+                    .call()
+                    .content();
+
+            JsonNode rootNode = objectMapper.readTree(response);
+            return rootNode.toString();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "{\"fraudScore\": 0, \"fraudRisk\": \"LOW\", \"fraudReasons\": []}";
+        }
+    }
 }
