@@ -94,6 +94,29 @@ public class JobServiceImpl implements JobService{
             System.out.println("⚠️ VectorStore indexing failed (non-blocking): " + e.getMessage());
         }
 
+        // AI Fraud Detection — classify the job posting for scam patterns
+        try {
+            String fraudResponse = aiService.detectFraud(
+                    savedJob.getJobTitle(), savedJob.getCompany(),
+                    savedJob.getDescription(), savedJob.getPackageOffered());
+
+            ObjectMapper mapper = new ObjectMapper();
+            JsonNode fraudNode = mapper.readTree(fraudResponse);
+
+            savedJob.setFraudScore(fraudNode.has("fraudScore") ? fraudNode.get("fraudScore").asInt() : 0);
+            savedJob.setFraudRisk(fraudNode.has("fraudRisk") ? fraudNode.get("fraudRisk").asText() : "LOW");
+
+            List<String> reasons = new ArrayList<>();
+            if (fraudNode.has("fraudReasons")) {
+                fraudNode.get("fraudReasons").forEach(r -> reasons.add(r.asText()));
+            }
+            savedJob.setFraudReasons(reasons);
+
+            jobRepository.save(savedJob);
+        } catch (Exception e) {
+            System.out.println("⚠️ Fraud detection failed (non-blocking): " + e.getMessage());
+        }
+
         return savedJob.toDTO();
     }
 

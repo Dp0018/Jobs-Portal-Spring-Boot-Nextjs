@@ -33,10 +33,16 @@ public class Job {
     private LocalDateTime endDate;
     private List<Double> jobEmbedding;
 
+    // AI Fraud Detection fields
+    private Integer fraudScore; // 0-100 fraud likelihood
+    private String fraudRisk; // LOW, MEDIUM, HIGH
+    private List<String> fraudReasons; // flagged issues
+
     public JobDTO toDTO(){
         return new JobDTO(this.id, this.jobTitle, this.company,
                 this.applicants != null ? this.applicants.stream().map((x) -> x.toDTO()).toList() : null, this.about,
                 this.experience, this.jobType, this.location, this.packageOffered, this.postTime, this.description,
-                this.skillsRequired, this.jobStatus, this.postedBy, this.endDate);
+                this.skillsRequired, this.jobStatus, this.postedBy, this.endDate,
+                this.fraudScore, this.fraudRisk, this.fraudReasons);
     }
 }

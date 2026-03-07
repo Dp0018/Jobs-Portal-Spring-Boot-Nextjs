@@ -1,6 +1,15 @@
 "use client";
 
-import { IconBookmark, IconBookmarkFilled, IconBriefcase, IconClock, IconUsers, IconMapPin, IconCurrencyRupee } from "@tabler/icons-react";
+import {
+  IconBookmark,
+  IconBookmarkFilled,
+  IconBriefcase,
+  IconClock,
+  IconUsers,
+  IconMapPin,
+  IconCurrencyRupee,
+  IconShieldExclamation,
+} from "@tabler/icons-react";
 import Link from "next/link";
 import DOMPurify from 'isomorphic-dompurify';
 import { useDispatch, useSelector } from "react-redux";
@@ -154,6 +163,64 @@ const JobDesc = (props: any) => {
             </div>
           </div>
         </div>
+
+        {/* ── AI Fraud Detection Warning ── */}
+        {props.fraudRisk && props.fraudRisk !== "LOW" && (
+          <div
+            className={`rounded-2xl p-5 border shadow-lg ${
+              props.fraudRisk === "HIGH"
+                ? "bg-destructive/5 border-destructive/30"
+                : "bg-amber-500/5 border-amber-500/30"
+            }`}
+          >
+            <div className="flex items-start gap-3">
+              <div
+                className={`p-2.5 rounded-xl shrink-0 ${
+                  props.fraudRisk === "HIGH"
+                    ? "bg-destructive/10 text-destructive"
+                    : "bg-amber-500/10 text-amber-600"
+                }`}
+              >
+                <IconShieldExclamation className="w-6 h-6" />
+              </div>
+              <div>
+                <h3
+                  className={`text-base font-bold mb-1 ${
+                    props.fraudRisk === "HIGH"
+                      ? "text-destructive"
+                      : "text-amber-600"
+                  }`}
+                >
+                  ⚠️ AI Fraud Detection —{" "}
+                  {props.fraudRisk === "HIGH" ? "High" : "Medium"} Risk
+                  {props.fraudScore !== undefined &&
+                    ` (Score: ${props.fraudScore}/100)`}
+                </h3>
+                <p className="text-muted-foreground text-sm mb-2">
+                  Our AI classification model has flagged potential issues with
+                  this job posting. Please review carefully before applying.
+                </p>
+                {props.fraudReasons && props.fraudReasons.length > 0 && (
+                  <ul className="space-y-1">
+                    {props.fraudReasons.map((reason: string, idx: number) => (
+                      <li
+                        key={idx}
+                        className={`text-sm flex items-start gap-2 ${
+                          props.fraudRisk === "HIGH"
+                            ? "text-destructive/80"
+                            : "text-amber-600/80"
+                        }`}
+                      >
+                        <span className="mt-1">•</span>
+                        {reason}
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Job Stats Cards */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">

@@ -28,10 +28,16 @@ public class JobDTO {
     private Long postedBy;
     private LocalDateTime endDate;
 
+    // AI Fraud Detection fields
+    private Integer fraudScore;
+    private String fraudRisk;
+    private List<String> fraudReasons;
+
     public Job toEntity(){
         return new Job(this.id, this.jobTitle, this.company,
                 this.applicants != null ? this.applicants.stream().map((x) -> x.toEntity()).toList() : null, this.about,
                 this.experience, this.jobType, this.location, this.packageOffered, this.postTime, this.description,
-                this.skillsRequired, this.jobStatus, this.postedBy, this.endDate, null);
+                this.skillsRequired, this.jobStatus, this.postedBy, this.endDate, null,
+                this.fraudScore, this.fraudRisk, this.fraudReasons);
     }
 }
