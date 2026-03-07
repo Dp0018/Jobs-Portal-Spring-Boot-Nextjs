@@ -98,3 +98,13 @@ export const getApplicantsByEmployer = async (
       throw error;
     });
 };
+
+// AI Job Recommendation: content-based + collaborative filtering
+export const getRecommendedJobs = async (userId: any) => {
+  return axios
+    .get(`${base_url}/recommendations/${userId}`)
+    .then((result) => result.data)
+    .catch((error) => {
+      throw error;
+    });
+};
