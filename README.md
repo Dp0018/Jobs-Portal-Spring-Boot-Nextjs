@@ -15,6 +15,7 @@
 
 A modern, full-featured **Job Portal** that connects employers with job seekers.
 Employers can post jobs, manage applicants, schedule interviews, and leverage **RAG-powered AI resume analysis** for highly accurate candidate matching.
+Every job posting is automatically screened by an **AI fraud detection engine** to keep the platform safe.
 Job seekers can search for jobs, build profiles, upload resumes, and track applications — all in a beautiful, responsive UI.
 
 [Features](#-features) · [Tech Stack](#-tech-stack) · [Getting Started](#-getting-started) · [API Endpoints](#-api-endpoints) · [Contributing](#-contributing)
@@ -77,14 +78,25 @@ Job seekers can search for jobs, build profiles, upload resumes, and track appli
 
 ### 🤖 AI Resume Analysis (RAG-Powered)
 
-- **Retrieval-Augmented Generation (RAG)** for high-accuracy, context-aware resume screening
-- Automated match-score generation based on deep analysis of job descriptions
+- **Retrieval-Augmented Generation (RAG)** with **MongoDB Atlas Vector Search** for context-aware resume screening
+- Embeddings generated via **Spring AI EmbeddingModel** and stored in a vector store for semantic similarity
+- Dedicated **Gemini LLM** call for an unbiased match-score (0–100 %)
 - AI-generated candidate-fit explanation highlighting relevant past experiences
-- Skills gap analysis (required vs. candidate) with actionable insights
+- Skills gap analysis (required vs. candidate skills) with actionable insights
 
 </td>
 </tr>
 <tr>
+<td>
+
+### 🛡️ AI Fraud Detection
+
+- Every new job posting is **automatically scanned** by a Gemini-powered classification model
+- Detects suspicious company names, vague descriptions, unrealistic salaries & common scam patterns
+- Returns a **fraud score** (0–100), **risk level** (LOW / MEDIUM / HIGH) and **flagged reasons**
+- Non-blocking — posting is saved even if the AI call fails, so the platform stays fast
+
+</td>
 <td>
 
 ### 📊 Employer Dashboard
@@ -95,6 +107,8 @@ Job seekers can search for jobs, build profiles, upload resumes, and track appli
 - Paginated & filterable applicant lists
 
 </td>
+</tr>
+<tr>
 <td>
 
 ### 🔍 Talent Search
@@ -104,8 +118,6 @@ Job seekers can search for jobs, build profiles, upload resumes, and track appli
 - Sort by relevance
 
 </td>
-</tr>
-<tr>
 <td>
 
 ### 🔔 Notifications
@@ -114,14 +126,17 @@ Job seekers can search for jobs, build profiles, upload resumes, and track appli
 - Real-time status change alerts
 
 </td>
-<td>
+</tr>
+<tr>
+<td colspan="2">
 
 ### 🛠️ Admin Panel
 
 - User management dashboard
-- Job listing oversight
+- Job listing oversight & deletion
 - Admin creation controls
-- Platform-wide settings
+- **AI Fraud Monitoring** — dedicated page listing suspicious job postings with fraud scores, risk badges & flagged reasons
+- Approve or remove flagged postings directly from the dashboard
 
 </td>
 </tr>
@@ -165,7 +180,9 @@ Job seekers can search for jobs, build profiles, upload resumes, and track appli
 | [Spring Security](https://spring.io/projects/spring-security) | — | Authentication & authorization |
 | [jjwt](https://github.com/jwtk/jjwt) | `0.11.5` | JWT token handling |
 | [Resend](https://resend.com/) | — | Email OTP delivery |
-| [RAG Model](#) | — | AI-powered resume analysis |
+| [Spring AI](https://docs.spring.io/spring-ai/reference/) | — | LLM / embedding integration (Gemini) |
+| [MongoDB Atlas Vector Search](https://www.mongodb.com/products/platform/atlas-vector-search) | — | RAG vector store for resume analysis |
+| [Google Gemini](https://ai.google.dev/) | — | AI resume analysis & fraud detection |
 | [Apache PDFBox](https://pdfbox.apache.org/) | `2.0.29` | PDF / CV text extraction |
 | [Lombok](https://projectlombok.org/) | — | Boilerplate reduction |
 | [Bean Validation](https://beanvalidation.org/) | — | Request validation |
@@ -186,6 +203,7 @@ job-portal/
 │   │   │   ├── about/
 │   │   │   ├── admin/               # Admin panel (layout + sub-pages)
 │   │   │   │   ├── add-admin/
+│   │   │   │   ├── fraud-monitor/   # AI fraud detection dashboard
 │   │   │   │   ├── jobs/
 │   │   │   │   ├── settings/
 │   │   │   │   └── users/
@@ -306,8 +324,12 @@ spring.mongodb.uri=mongodb+srv://<username>:<password>@<cluster>.mongodb.net/<da
 # Email — for OTP (Resend)
 resend.api.key=your-resend-api-key
 
-# AI / RAG Model
-rag.api.key=your-rag-api-key
+# AI — Gemini via Spring AI
+spring.ai.google.gemini.api-key=your-gemini-api-key
+
+# MongoDB Atlas Vector Search (used for RAG resume analysis)
+spring.ai.vectorstore.mongodb.collection-name=vector_store
+spring.ai.vectorstore.mongodb.index-name=vector_index
 ```
 
 ### Frontend — `client/.env`
@@ -362,9 +384,11 @@ NEXT_PUBLIC_API_URL=http://localhost:8080
 
 | Method | Endpoint | Description |
 | :---: | :--- | :--- |
-| `GET` | `/admin/users` | Get all users |
-| `GET` | `/admin/jobs` | Get all jobs |
-| `POST` | `/admin/add-admin` | Create admin user |
+| `GET` | `/admin/users` | Get all users (optional `?accountType=` filter) |
+| `DELETE` | `/admin/users/{id}` | Delete a user |
+| `GET` | `/admin/jobs` | Get all jobs (includes fraud metadata) |
+| `DELETE` | `/admin/jobs/{id}` | Delete a job posting |
+| `POST` | `/admin/create-admin` | Create admin user |
 
 ---
 
