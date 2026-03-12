@@ -1,425 +1,127 @@
-<div align="center">
+# 🚀 Job Portal Platform (Spring Boot & Next.js)
 
-# 💼 Job Portal
-
-### A full-stack job portal built with **Spring Boot** & **Next.js**
-
-[![Spring Boot](https://img.shields.io/badge/Spring%20Boot-4.0.1-6DB33F?style=for-the-badge&logo=springboot&logoColor=white)](https://spring.io/projects/spring-boot)
-[![Next.js](https://img.shields.io/badge/Next.js-16.1.6-000000?style=for-the-badge&logo=next.js&logoColor=white)](https://nextjs.org/)
-[![MongoDB](https://img.shields.io/badge/MongoDB-Atlas-47A248?style=for-the-badge&logo=mongodb&logoColor=white)](https://www.mongodb.com/)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
-[![Java](https://img.shields.io/badge/Java-17-ED8B00?style=for-the-badge&logo=openjdk&logoColor=white)](https://openjdk.org/)
-[![Tailwind CSS](https://img.shields.io/badge/Tailwind%20CSS-4-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white)](https://tailwindcss.com/)
+A modern, full-stack Job Portal Application built with a robust **Spring Boot** micro-services backend and a highly interactive **Next.js** frontend. This platform features advanced **AI capabilities** leveraging **Spring AI**, **Google GenAI**, and **MongoDB Atlas Vector Search** to automate resume screening, ensure fair hiring, and detect fraudulent job postings.
 
 ---
 
-A modern, full-featured **Job Portal** that connects employers with job seekers.
-Employers can post jobs, manage applicants, schedule interviews, and leverage **RAG-powered AI resume analysis** for highly accurate candidate matching.
-Every job posting is automatically screened by an **AI fraud detection engine** to keep the platform safe.
-Job seekers can search for jobs, build profiles, upload resumes, and track applications — all in a beautiful, responsive UI.
+## ✨ Core Features
 
-[Features](#-features) · [Tech Stack](#-tech-stack) · [Getting Started](#-getting-started) · [API Endpoints](#-api-endpoints) · [Contributing](#-contributing)
+### 🏢 Employer Portal
+- **Dashboard & Analytics:** Comprehensive overview of posted jobs, applicant statistics, and hiring metrics using Recharts.
+- **AI Accuracy Dashboard:** Specialized AI insights and analytics for tracking candidate match scores, fairness compliance, and skill gaps across all jobs.
+- **Job Management:** Create, edit, publish, and manage job listings with a rich text editor (Tiptap).
+- **Applicant Tracking System (ATS):** View, filter, and manage job applications seamlessly.
+- **AI-Powered Candidate Matching:** Instantly find the most suitable candidates for a job using semantic vector search.
 
-</div>
+### 👩‍💻 Applicant Portal
+- **Profile Builder:** Create detailed professional profiles, including skills, experience, and education.
+- **CV Parsing:** Automated resume data extraction from uploaded PDFs using Apache PDFBox.
+- **AI Job Recommendations:** Get personalized, AI-driven job suggestions tailored to your profile skills and experience.
+- **Job Discovery & Application:** Search, filter, and apply for jobs seamlessly.
+- **Application History:** Track the status of active and past applications in real-time.
 
----
-
-## 📋 Table of Contents
-
-- [Features](#-features)
-- [Tech Stack](#-tech-stack)
-- [Project Structure](#-project-structure)
-- [Getting Started](#-getting-started)
-- [Environment Variables](#-environment-variables)
-- [API Endpoints](#-api-endpoints)
-- [Screenshots](#-screenshots)
-- [Contributing](#-contributing)
-- [License](#-license)
-
----
-
-## ✨ Features
-
-<table>
-<tr>
-<td width="50%">
-
-### 🔐 Authentication & Security
-
-- JWT-based auth with **access & refresh tokens**
-- Email **OTP verification** on signup
-- Secure password reset flow
-- Role-based access control — **Applicant · Employer · Admin**
-
-</td>
-<td width="50%">
-
-### 👤 User Profiles
-
-- Profile picture upload
-- Skills, work experience & certifications
-- Resume / CV upload and storage
-- Save jobs for later
-
-</td>
-</tr>
-<tr>
-<td>
-
-### 💼 Job Management
-
-- Rich text job descriptions (**Tiptap editor**)
-- Filter & search by title, location, type, experience, salary
-- Job status — Active / Draft / Closed
-- Configurable job expiry dates
-
-</td>
-<td>
-
-### 🤖 AI Resume Analysis (RAG-Powered)
-
-- **Retrieval-Augmented Generation (RAG)** with **MongoDB Atlas Vector Search** for context-aware resume screening
-- Embeddings generated via **Spring AI EmbeddingModel** and stored in a vector store for semantic similarity
-- Dedicated **Gemini LLM** call for an unbiased match-score (0–100 %)
-- AI-generated candidate-fit explanation highlighting relevant past experiences
-- Skills gap analysis (required vs. candidate skills) with actionable insights
-
-</td>
-</tr>
-<tr>
-<td>
-
-### 🛡️ AI Fraud Detection
-
-- Every new job posting is **automatically scanned** by a Gemini-powered classification model
-- Detects suspicious company names, vague descriptions, unrealistic salaries & common scam patterns
-- Returns a **fraud score** (0–100), **risk level** (LOW / MEDIUM / HIGH) and **flagged reasons**
-- Non-blocking — posting is saved even if the AI call fails, so the platform stays fast
-
-</td>
-<td>
-
-### 📊 Employer Dashboard
-
-- Analytics on posted jobs
-- Applicant tracking — Applied → Interviewing → Offered → Rejected
-- Interview scheduling with date/time picker
-- Paginated & filterable applicant lists
-
-</td>
-</tr>
-<tr>
-<td>
-
-### 🔍 Talent Search
-
-- Search candidates across the platform
-- Filter by skills, experience & location
-- Sort by relevance
-
-</td>
-<td>
-
-### 🔔 Notifications
-
-- In-app notification system
-- Real-time status change alerts
-
-</td>
-</tr>
-<tr>
-<td colspan="2">
-
-### 🛠️ Admin Panel
-
-- User management dashboard
-- Job listing oversight & deletion
-- Admin creation controls
-- **AI Fraud Monitoring** — dedicated page listing suspicious job postings with fraud scores, risk badges & flagged reasons
-- Approve or remove flagged postings directly from the dashboard
-
-</td>
-</tr>
-</table>
-
-### 🎨 UI / UX
-
-- Fully **responsive** — mobile + desktop
-- **Dark / Light mode** with persistence
-- Component library built on **Radix UI + shadcn/ui**
-- Smooth animations & modern glassmorphism effects
+### 🛡️ Admin & Security
+- **Role-Based Access Control (RBAC):** Secure access segregation for Applicants, Employers, and Administrators.
+- **JWT Authentication:** Stateless and secure authentication mechanism via Spring Security.
+- **Platform Analytics:** Global view of platform health, user engagement, and job posting metrics.
+- **Fraud Monitoring:** Specialized admin dashboard to review and moderate AI-flagged suspicious job listings.
 
 ---
 
-## 🛠️ Tech Stack
+## 🧠 Advanced AI Capabilities
 
-### Frontend
+This project integrates state-of-the-art Generative AI and Retrieval-Augmented Generation (RAG) directly into the hiring workflow:
 
-| Technology | Version | Purpose |
-| :--- | :---: | :--- |
-| [Next.js](https://nextjs.org/) | `16.1.6` | React framework · App Router · SSR |
-| [React](https://react.dev/) | `19.2.3` | UI library |
-| [TypeScript](https://www.typescriptlang.org/) | `5` | Type-safe JavaScript |
-| [Tailwind CSS](https://tailwindcss.com/) | `4` | Utility-first styling |
-| [Redux Toolkit](https://redux-toolkit.js.org/) | `2.x` | Global state management |
-| [React Hook Form](https://react-hook-form.com/) + [Zod](https://zod.dev/) | `7.x` / `4.x` | Form handling & validation |
-| [Radix UI / shadcn/ui](https://ui.shadcn.com/) | — | Accessible component library |
-| [Tiptap](https://tiptap.dev/) | `3.x` | Rich text editor |
-| [Recharts](https://recharts.org/) | `2.15` | Data visualization |
-| [Axios](https://axios-http.com/) | `1.x` | HTTP client |
-| [Sonner](https://sonner.emilkowal.dev/) | `2.x` | Toast notifications |
-| [next-themes](https://github.com/pacocoursey/next-themes) | `0.4` | Dark / Light mode |
+- **🤖 Semantic Resume Matching (RAG):**
+  Uses **Spring AI** and **MongoDB Atlas Vector Store** to generate high-dimensional embeddings of candidate resumes. It performs semantic vector searches to rank candidates based on true contextual fit rather than simple keyword matching.
 
-### Backend
+- **📊 Comprehensive Applicant Evaluation:**
+  Generates an intelligent analysis of a candidate's resume against a specific job description. Powered by **Google GenAI (Gemini)**, it extracts both missing and matching skills, generating a transparent `matchScore` and a detailed textual explanation of the candidate's suitability.
 
-| Technology | Version | Purpose |
-| :--- | :---: | :--- |
-| [Spring Boot](https://spring.io/projects/spring-boot) | `4.0.1` | Java REST API framework |
-| [Java](https://openjdk.org/) | `17` | Programming language |
-| [MongoDB Atlas](https://www.mongodb.com/atlas) | — | NoSQL cloud database |
-| [Spring Security](https://spring.io/projects/spring-security) | — | Authentication & authorization |
-| [jjwt](https://github.com/jwtk/jjwt) | `0.11.5` | JWT token handling |
-| [Resend](https://resend.com/) | — | Email OTP delivery |
-| [Spring AI](https://docs.spring.io/spring-ai/reference/) | — | LLM / embedding integration (Gemini) |
-| [MongoDB Atlas Vector Search](https://www.mongodb.com/products/platform/atlas-vector-search) | — | RAG vector store for resume analysis |
-| [Google Gemini](https://ai.google.dev/) | — | AI resume analysis & fraud detection |
-| [Apache PDFBox](https://pdfbox.apache.org/) | `2.0.29` | PDF / CV text extraction |
-| [Lombok](https://projectlombok.org/) | — | Boilerplate reduction |
-| [Bean Validation](https://beanvalidation.org/) | — | Request validation |
+- **⚖️ AI Fairness & Bias Checking:**
+  Ensures ethical hiring practices. A dedicated AI evaluation layer analyzes the candidate strictly on skills and experience—ignoring demographic identifiers—to explicitly output a `fairnessScore` and guarantee GDPR-compliant, unbiased screening.
+
+- **🚨 AI-Driven Fraud Job Detection:**
+  Automatically scans every newly posted job description using a specialized classification prompt. It detect red flags such as unrealistic salaries, generic/copied descriptions, scam patterns (e.g., upfront payment requests), and suspicious company names, generating a `fraudScore` and `fraudRisk` level for Admin review.
 
 ---
 
-## 📁 Project Structure
+## 🛠️ Technology Stack
 
-```
-job-portal/
-│
-├── client/                          # ── Next.js Frontend ──────────────────
-│   ├── app/
-│   │   ├── (auth)/                  # Login & Signup pages
-│   │   │   ├── login/
-│   │   │   └── signup/
-│   │   ├── (routes)/                # Main application pages
-│   │   │   ├── about/
-│   │   │   ├── admin/               # Admin panel (layout + sub-pages)
-│   │   │   │   ├── add-admin/
-│   │   │   │   ├── fraud-monitor/   # AI fraud detection dashboard
-│   │   │   │   ├── jobs/
-│   │   │   │   ├── settings/
-│   │   │   │   └── users/
-│   │   │   ├── apply-job/[id]/
-│   │   │   ├── find-jobs/
-│   │   │   ├── find-talent/
-│   │   │   ├── jhistory/            # Application history
-│   │   │   ├── jobs/[id]/
-│   │   │   ├── post-job/
-│   │   │   ├── posted-jobs/[jobId]/
-│   │   │   └── profile/
-│   │   └── employer/                # Employer dashboard
-│   │       ├── applicants/
-│   │       ├── dashboard/
-│   │       └── jobs/[jobId]/
-│   ├── components/ui/               # shadcn/ui components
-│   ├── hooks/                       # Custom React hooks
-│   ├── lib/                         # Utility functions
-│   └── modules/                     # Feature modules
-│       ├── auth/
-│       ├── job/
-│       ├── employer/
-│       ├── profile/
-│       ├── landing/
-│       ├── admin/
-│       ├── notifications/
-│       └── redux/                   # Redux store & slices
-│
-└── server/                          # ── Spring Boot Backend ───────────────
-    └── src/main/java/com/jobportal/
-        ├── api/                     # REST Controllers
-        │   ├── AdminAPI.java
-        │   ├── JobAPI.java
-        │   ├── NotificationAPI.java
-        │   ├── ProfileAPI.java
-        │   └── UserAPI.java
-        ├── dto/                     # Data Transfer Objects
-        ├── entity/                  # MongoDB Documents
-        │   ├── Applicant.java
-        │   ├── Job.java
-        │   ├── Notification.java
-        │   ├── OTP.java
-        │   ├── Profile.java
-        │   └── User.java
-        ├── exception/               # Custom exceptions
-        ├── repository/              # MongoDB Repositories
-        ├── security/                # JWT & Spring Security
-        │   ├── ApplicationConfig.java
-        │   ├── JwtAuthenticationFilter.java
-        │   └── JwtService.java
-        ├── service/                 # Business logic
-        │   ├── AIService.java
-        │   ├── CVParserService.java
-        │   ├── JobServiceImpl.java
-        │   ├── ProfileServiceImpl.java
-        │   └── UserServiceImpl.java
-        └── utility/                 # Helpers & seed data
-```
+### Backend (Server)
+- **Framework:** Java 17, Spring Boot 3
+- **Security:** Spring Security, JWT (JSON Web Tokens)
+- **AI & RAG:** Spring AI, Google GenAI (Gemini Models & Embeddings)
+- **Database:** MongoDB, MongoDB Atlas Vector Store
+- **Utilities:** Apache PDFBox (Resume Parsing), Resend Java SDK (Transactional Emails), Lombok
+- **Architecture:** Monolithic / Modular Multi-tenant design
+
+### Frontend (Client)
+- **Framework:** Next.js (App Router), React 19
+- **Styling:** TailwindCSS, Base UI, Radix UI Primitives, Lucide Icons, Tabler Icons
+- **State Management:** Redux Toolkit, Server-side React Query state
+- **Form Handling:** React Hook Form, Zod Validation
+- **Editor:** Tiptap (Rich Text Editing)
+- **Data Visualization:** Recharts
+- **Formatting:** Date-fns
 
 ---
 
 ## 🚀 Getting Started
 
 ### Prerequisites
+- [Node.js](https://nodejs.org/) (v18+ recommended) & npm / bun
+- [Java 17](https://jdk.java.net/17/) or higher
+- [Maven](https://maven.apache.org/)
+- [MongoDB](https://www.mongodb.com/) (Local or Atlas with Vector Search enabled)
+- Accounts/API Keys for: **Google Gemini API**, **Resend**, and **MongoDB Atlas**
 
-| Tool | Version |
-| :--- | :--- |
-| Java | 17+ |
-| Node.js (or Bun) | 18+ |
-| MongoDB | Local or Atlas |
-| Maven | Included via `mvnw` |
+### 1. Backend Setup (`/server`)
 
-### 1. Clone the Repository
+1. Navigate to the `server` directory:
+   ```bash
+   cd server
+   ```
+2. Configure your environment variables. Create an `application.properties` or `.env` equivalent supplying:
+   - MongoDB connection URI
+   - Google GenAI API Key
+   - Resend API Key
+   - JWT Secret Key
+3. Build and run the Spring Boot application:
+   ```bash
+   ./mvnw clean install
+   ./mvnw spring-boot:run
+   ```
+   *The backend will typically start on `http://localhost:8080`.*
 
-```bash
-git clone https://github.com/samarth-kamble/Jobs-Portal-Spring-Boot-Nextjs.git
-cd Jobs-Portal-Spring-Boot-Nextjs
-```
+### 2. Frontend Setup (`/client`)
 
-### 2. Backend Setup
-
-```bash
-cd server
-
-# Configure environment variables (see below)
-# Edit src/main/resources/application.properties
-
-# Run with Maven wrapper
-./mvnw spring-boot:run
-```
-
-> The backend starts on **http://localhost:8080**
-
-### 3. Frontend Setup
-
-```bash
-cd client
-
-# Install dependencies
-npm install    # or: bun install
-
-# Start development server
-npm run dev    # or: bun dev
-```
-
-> The frontend starts on **http://localhost:3000**
-
----
-
-## 🔑 Environment Variables
-
-### Backend — `server/src/main/resources/application.properties`
-
-```properties
-# MongoDB
-spring.mongodb.uri=mongodb+srv://<username>:<password>@<cluster>.mongodb.net/<database>
-
-# Email — for OTP (Resend)
-resend.api.key=your-resend-api-key
-
-# AI — Gemini via Spring AI
-spring.ai.google.gemini.api-key=your-gemini-api-key
-
-# MongoDB Atlas Vector Search (used for RAG resume analysis)
-spring.ai.vectorstore.mongodb.collection-name=vector_store
-spring.ai.vectorstore.mongodb.index-name=vector_index
-```
-
-### Frontend — `client/.env`
-
-```env
-NEXT_PUBLIC_API_URL=http://localhost:8080
-```
-
----
-
-## 📡 API Endpoints
-
-### Authentication — `/users`
-
-| Method | Endpoint | Description |
-| :---: | :--- | :--- |
-| `POST` | `/users/register` | Register a new user |
-| `POST` | `/users/login` | Login & receive JWT tokens |
-| `POST` | `/users/change-pass` | Change password |
-| `POST` | `/users/send-otp/{email}` | Send OTP to email |
-| `GET` | `/users/verify-otp/{email}/{otp}` | Verify OTP |
-| `POST` | `/users/refresh-token` | Refresh access token |
-
-### Jobs — `/jobs`
-
-| Method | Endpoint | Description |
-| :---: | :--- | :--- |
-| `POST` | `/jobs/post` | Create a new job posting |
-| `GET` | `/jobs/get-all` | Get all job listings |
-| `GET` | `/jobs/get/{id}` | Get job by ID |
-| `POST` | `/jobs/apply/{id}` | Apply to a job |
-| `GET` | `/jobs/posted-by/{id}` | Get jobs posted by employer |
-| `POST` | `/jobs/change-app-status` | Update application status |
-| `POST` | `/jobs/analyze-resume/{jobId}/{applicantId}` | AI resume analysis |
-| `GET` | `/jobs/{id}/applicants/filter` | Filter applicants (paginated) |
-| `GET` | `/jobs/employer/{employerId}/applicants` | Get employer's applicants |
-
-### Profiles — `/profiles`
-
-| Method | Endpoint | Description |
-| :---: | :--- | :--- |
-| `GET` | `/profiles/get/{id}` | Get user profile |
-| `PUT` | `/profiles/update` | Update user profile |
-
-### Notifications — `/notifications`
-
-| Method | Endpoint | Description |
-| :---: | :--- | :--- |
-| `GET` | `/notifications/{userId}` | Get user notifications |
-
-### Admin — `/admin`
-
-| Method | Endpoint | Description |
-| :---: | :--- | :--- |
-| `GET` | `/admin/users` | Get all users (optional `?accountType=` filter) |
-| `DELETE` | `/admin/users/{id}` | Delete a user |
-| `GET` | `/admin/jobs` | Get all jobs (includes fraud metadata) |
-| `DELETE` | `/admin/jobs/{id}` | Delete a job posting |
-| `POST` | `/admin/create-admin` | Create admin user |
-
----
-
-## 📸 Screenshots
-
-> _Coming soon_
+1. Navigate to the `client` directory:
+   ```bash
+   cd client
+   ```
+2. Install dependencies (using your preferred package manager):
+   ```bash
+   npm install
+   # or
+   bun install
+   ```
+3. Set up environment variables. Create a `.env` file in the `client` root:
+   ```env
+   NEXT_PUBLIC_API_URL=http://localhost:8080/api
+   ```
+4. Start the development server:
+   ```bash
+   npm run dev
+   # or
+   bun dev
+   ```
+   *The frontend will run on `http://localhost:3000`.*
 
 ---
 
 ## 🤝 Contributing
+Contributions, issues, and feature requests are welcome! Feel free to check the issues page.
 
-Contributions are welcome! Follow these steps:
-
-1. **Fork** the repository
-2. **Create** a feature branch — `git checkout -b feature/amazing-feature`
-3. **Commit** your changes — `git commit -m 'Add amazing feature'`
-4. **Push** to the branch — `git push origin feature/amazing-feature`
-5. **Open** a Pull Request
-
----
-
-## 📄 License
-
-This project is open source and available under the [MIT License](LICENSE).
-
----
-
-<div align="center">
-
-**Built with ❤️ by [Samarth Kamble](https://github.com/samarth-kamble)**
-
-⭐ Star this repo if you found it helpful!
-
-</div>
+## 📝 License
+This project is proprietary or licensed under [Your License Choice].
