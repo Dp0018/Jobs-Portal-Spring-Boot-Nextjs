@@ -2,41 +2,42 @@
 
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { Users } from "lucide-react";
 import { IconMoodSad } from "@tabler/icons-react";
 import { getAllProfiles } from "@/modules/profile/server/profile-service";
 import { resetFilter } from "@/modules/redux/filter-slice";
 import { Sort } from "./sort";
 import { TalentCard } from "./talent-card";
+import { Skeleton } from "@/components/ui/skeleton";
 
-/* ── Skeleton card — replaces Mantine Loader ── */
 const SkeletonCard = () => (
-  <div className="border border-border/20 rounded-2xl bg-muted/10 p-5 animate-pulse">
-    <div className="flex gap-3 items-center mb-4">
-      <div className="w-12 h-12 bg-muted/40 rounded-full shrink-0" />
+  <div className="bg-white border border-[#E2E8F0] rounded-2xl p-5 space-y-4">
+    <div className="flex gap-3 items-center">
+      <Skeleton className="w-11 h-11 rounded-full bg-[#F1F5F9]" />
       <div className="flex-1 space-y-2">
-        <div className="h-4 bg-muted/40 rounded w-2/3" />
-        <div className="h-3 bg-muted/40 rounded w-1/2" />
+        <Skeleton className="h-4 w-3/5 bg-[#F1F5F9]" />
+        <Skeleton className="h-3 w-2/5 bg-[#F1F5F9]" />
       </div>
     </div>
-    <div className="flex gap-2 mb-4">
-      {[1, 2, 3].map((i) => (
-        <div key={i} className="h-6 bg-muted/40 rounded-lg w-16" />
-      ))}
+    <div className="flex gap-2">
+      <Skeleton className="h-6 w-16 rounded-lg bg-[#F1F5F9]" />
+      <Skeleton className="h-6 w-20 rounded-lg bg-[#F1F5F9]" />
+      <Skeleton className="h-6 w-14 rounded-lg bg-[#F1F5F9]" />
     </div>
-    <div className="space-y-2 mb-4">
-      <div className="h-3 bg-muted/40 rounded w-full" />
-      <div className="h-3 bg-muted/40 rounded w-5/6" />
-      <div className="h-3 bg-muted/40 rounded w-4/6" />
+    <div className="space-y-1.5">
+      <Skeleton className="h-3 w-full bg-[#F1F5F9]" />
+      <Skeleton className="h-3 w-5/6 bg-[#F1F5F9]" />
+      <Skeleton className="h-3 w-4/6 bg-[#F1F5F9]" />
     </div>
-    <div className="h-px bg-muted/30 my-4" />
-    <div className="flex justify-between mb-4">
-      <div className="h-4 bg-muted/40 rounded w-20" />
-      <div className="h-4 bg-muted/40 rounded w-24" />
+    <div className="h-px bg-[#F1F5F9]" />
+    <div className="flex justify-between">
+      <Skeleton className="h-4 w-20 bg-[#F1F5F9]" />
+      <Skeleton className="h-4 w-24 bg-[#F1F5F9]" />
     </div>
-    <div className="h-px bg-muted/30 my-4" />
+    <div className="h-px bg-[#F1F5F9]" />
     <div className="flex gap-3">
-      <div className="h-9 bg-muted/40 rounded-lg flex-1" />
-      <div className="h-9 bg-muted/40 rounded-lg flex-1" />
+      <Skeleton className="h-9 flex-1 rounded-xl bg-[#F1F5F9]" />
+      <Skeleton className="h-9 flex-1 rounded-xl bg-[#F1F5F9]" />
     </div>
   </div>
 );
@@ -49,7 +50,6 @@ export const Talents = () => {
   const sort = useSelector((state: any) => state.sort);
   const [filteredTalent, setFilteredTalent] = useState<any[]>([]);
 
-  /* ── Fetch ── */
   useEffect(() => {
     dispatch(resetFilter());
     getAllProfiles()
@@ -63,107 +63,89 @@ export const Talents = () => {
       });
   }, []);
 
-  /* ── Sort & Filter merged to prevent circular dependency loops ── */
   useEffect(() => {
     let result = [...talents];
-    const currentFilter = filter || {};
+    const f = filter || {};
 
-    if (currentFilter.name)
+    if (f.name)
       result = result.filter((t) =>
-        t.name?.toLowerCase().includes(currentFilter.name.toLowerCase())
+        t.name?.toLowerCase().includes(f.name.toLowerCase()),
       );
-
-    if (currentFilter["Job Title"]?.length)
+    if (f["Job Title"]?.length)
       result = result.filter((t) =>
-        currentFilter["Job Title"].some((title: string) =>
-          t.jobTitle?.toLowerCase().includes(title.toLowerCase())
-        )
+        f["Job Title"].some((title: string) =>
+          t.jobTitle?.toLowerCase().includes(title.toLowerCase()),
+        ),
       );
-
-    if (currentFilter.Location?.length)
+    if (f.Location?.length)
       result = result.filter((t) =>
-        currentFilter.Location.some((loc: string) =>
-          t.location?.toLowerCase().includes(loc.toLowerCase())
-        )
+        f.Location.some((loc: string) =>
+          t.location?.toLowerCase().includes(loc.toLowerCase()),
+        ),
       );
-
-    if (currentFilter.Skills?.length)
+    if (f.Skills?.length)
       result = result.filter((t) =>
-        currentFilter.Skills.some((skill: string) =>
+        f.Skills.some((skill: string) =>
           t.skills?.some((s: string) =>
-            s.toLowerCase().includes(skill.toLowerCase())
-          )
-        )
+            s.toLowerCase().includes(skill.toLowerCase()),
+          ),
+        ),
       );
-
-    if (currentFilter.exp?.length === 2)
+    if (f.exp?.length === 2)
       result = result.filter(
-        (t) => t.totalExp >= currentFilter.exp[0] && t.totalExp <= currentFilter.exp[1]
+        (t) => t.totalExp >= f.exp[0] && t.totalExp <= f.exp[1],
       );
 
-    // 2. Apply Sort to the filtered results
-    if (sort === "experience: low to high") {
+    if (sort === "experience: low to high")
       result.sort((a, b) => a.totalExp - b.totalExp);
-    } else if (sort === "experience: high to low") {
+    else if (sort === "experience: high to low")
       result.sort((a, b) => b.totalExp - a.totalExp);
-    }
 
     setFilteredTalent(result);
   }, [filter, sort, talents]);
 
   return (
-    <div className="mt-12 pb-12">
-
-      {/* ── Header ── */}
-      <div className="flex items-center justify-between mb-8 pb-6 border-b border-border/20">
-        <div>
-          <div className="flex items-center gap-3 mb-2">
-            <div className="h-8 w-1.5 bg-linear-to-b from-primary to-primary/60 rounded-full" />
-            <h2 className="text-3xl font-bold text-foreground">
-              Find Your Dream Talent
-            </h2>
+    <div className="pb-10">
+      {/* ── Results header ── */}
+      <div className="flex items-center justify-between mb-5">
+        <div className="flex items-center gap-2">
+          <div className="w-5 h-5 rounded-md bg-[#EFF6FF] flex items-center justify-center">
+            <Users className="w-3 h-3 text-[#2563EB]" strokeWidth={2} />
           </div>
-          <p className="text-muted-foreground ml-5 text-sm">
+          <span className="text-xs font-bold text-[#94A3B8] uppercase tracking-[0.07em]">
             {loading
-              ? "Loading talents…"
+              ? "Loading…"
               : `${filteredTalent.length} talent${filteredTalent.length !== 1 ? "s" : ""} found`}
-          </p>
+          </span>
         </div>
         <Sort sort="talent" />
       </div>
 
       {/* ── Grid ── */}
       {loading ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
           {Array.from({ length: 6 }).map((_, i) => (
             <SkeletonCard key={i} />
           ))}
         </div>
       ) : filteredTalent.length > 0 ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
           {filteredTalent.map((talent: any, idx: number) => (
             <TalentCard key={idx} {...talent} />
           ))}
         </div>
       ) : (
-        /* ── Empty state ── */
-        <div className="flex flex-col items-center justify-center py-24">
-          <div className="relative">
-            <div className="absolute inset-0 bg-primary/20 blur-3xl rounded-full" />
-            <div className="relative p-8 bg-muted/10 backdrop-blur-xl rounded-2xl border border-border/20">
-              <IconMoodSad
-                className="w-16 h-16 text-primary/50 mx-auto mb-4"
-                stroke={1.2}
-              />
-              <h3 className="text-2xl font-bold text-foreground text-center mb-2">
-                No Talents Found
-              </h3>
-              <p className="text-muted-foreground text-center max-w-sm text-sm leading-relaxed">
-                We couldn't find any talents matching your criteria. Try
-                adjusting your filters or search terms.
-              </p>
-            </div>
+        <div className="flex flex-col items-center justify-center py-20 bg-white border border-[#E2E8F0] rounded-2xl shadow-sm">
+          <div className="w-14 h-14 rounded-2xl bg-[#F1F5F9] flex items-center justify-center mb-4">
+            <IconMoodSad className="w-7 h-7 text-[#94A3B8]" stroke={1.5} />
           </div>
+          <h3 className="text-base font-bold text-[#0F172A] mb-1">
+            No Talents Found
+          </h3>
+          <p className="text-sm text-[#94A3B8] text-center max-w-xs leading-relaxed">
+            We couldn't find any talents matching your criteria. Try adjusting
+            your filters.
+          </p>
         </div>
       )}
     </div>

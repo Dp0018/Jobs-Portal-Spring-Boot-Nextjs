@@ -1,17 +1,24 @@
-import DreamJobs from "@/modules/landing/components/dream-jobs";
-import { JobCategories } from "@/modules/landing/components/job-categories";
-import { HowItWorks } from "@/modules/landing/components/how-it-work";
-import { Testimonial } from "@/modules/landing/components/testionial";
+import { HeroSearchSection } from "@/modules/landing/components/hero-search-section";
+import { PopularRolesSection } from "@/modules/landing/components/popular-roles-section";
+import { TopCompaniesSection } from "@/modules/landing/components/top-companies-section";
 
-const Page = () => {
+/* ═══════════════════════════════════════════
+   HOME / LANDING PAGE
+   Place this file at: app/page.tsx  (or app/(home)/page.tsx)
+═══════════════════════════════════════════ */
+const HomePage = () => {
   return (
-    <>
-      <DreamJobs />
-      <JobCategories />
-      <HowItWorks />
-      <Testimonial />
-    </>
+    <main className="min-h-screen bg-[#F8FAFC]">
+      {/* 1 — Hero + search bar + category chips */}
+      <HeroSearchSection />
+
+      {/* 2 — Top company categories + featured company cards */}
+      <TopCompaniesSection />
+
+      {/* 3 — Promo banner + popular roles grid */}
+      <PopularRolesSection />
+    </main>
   );
 };
 
-export default Page;
+export default HomePage;

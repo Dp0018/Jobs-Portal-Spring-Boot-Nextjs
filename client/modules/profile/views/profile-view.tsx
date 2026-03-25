@@ -6,13 +6,46 @@ import { IconEdit } from "@tabler/icons-react";
 import { useDispatch, useSelector } from "react-redux";
 import { getBase64 } from "@/lib/get-base64";
 import { successNotification } from "@/modules/notifications/server/notification-service";
-import {Info} from "../components/info";
-import {About} from "../components/about";
-import {Skills} from "../components/skills";
+import { Info } from "../components/info";
+import { About } from "../components/about";
+import { Skills } from "../components/skills";
 import { changeProfile } from "@/modules/landing/server/profile-slice";
 import { Experience } from "../components/experience";
 import { Certificate } from "../components/certificate";
 import { ResumeSection } from "../components/resume-section";
+
+/* ─── Accent colour map for left-border stripe ──────────────── */
+const accentMap: Record<string, string> = {
+  amber:  "before:bg-amber-400",
+  orange: "before:bg-orange-500",
+  rose:   "before:bg-rose-400",
+  sky:    "before:bg-sky-400",
+};
+
+const ProfileCard = ({
+  children,
+  accent = "amber",
+}: {
+  children: React.ReactNode;
+  accent?: string;
+}) => (
+  <div
+    className={`
+      relative bg-white rounded-3xl px-8 py-7
+      shadow-[0_2px_20px_rgba(0,0,0,0.055)]
+      border border-stone-100
+      before:absolute before:left-0 before:top-6 before:bottom-6
+      before:w-[3px] before:rounded-r-full
+      ${accentMap[accent] ?? accentMap.amber}
+      overflow-hidden transition-shadow duration-300
+      hover:shadow-[0_4px_32px_rgba(0,0,0,0.09)]
+    `}
+  >
+    {children}
+  </div>
+);
+
+/* ─── Main view ─────────────────────────────────────────────── */
 export const ProfileView = (props: any) => {
   const dispatch = useDispatch();
   const userProfile = useSelector((state: any) => state.profile);
@@ -41,96 +74,104 @@ export const ProfileView = (props: any) => {
   };
 
   const initials = profile?.name
-    ? profile.name.split(" ").map((n: string) => n[0]).join("").toUpperCase().slice(0, 2)
+    ? profile.name
+        .split(" ")
+        .map((n: string) => n[0])
+        .join("")
+        .toUpperCase()
+        .slice(0, 2)
     : "U";
 
   return (
-    <div className="min-h-screen bg-background py-8">
-      <div className="w-full max-w-6xl mx-auto px-4">
-        {/* Banner & Avatar Section */}
-        <div className="relative mb-24">
-          {/* Banner with ultra-premium abstract design */}
-          <div className="relative h-72 rounded-2xl overflow-hidden bg-slate-950/40 border border-white/5 group shadow-2xl">
-            {/* Base glowing backdrop */}
-            <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(120,119,198,0.15),rgba(255,255,255,0))]" />
+    <div className="min-h-screen bg-[#F5F4F0] py-10">
+      <div className="w-full max-w-5xl mx-auto px-4 space-y-5">
+        {/* ── Hero / Banner Card ─────────────────────────────────── */}
+        <div className="relative bg-white rounded-3xl overflow-hidden shadow-[0_2px_20px_rgba(0,0,0,0.06)] border border-stone-100">
+          {/* Banner */}
+          <div className="relative h-48 overflow-hidden select-none">
+            <div className="absolute inset-0 bg-gradient-to-br from-amber-50 via-orange-50/70 to-rose-50" />
 
-            {/* Animated Aurora/Glows (Slow moving blobs) */}
-            <div className="absolute top-0 right-1/4 w-[400px] h-[400px] bg-primary/20 rounded-full blur-[100px] mix-blend-screen animate-pulse" />
+            {/* Dot matrix */}
             <div
-              className="absolute bottom-0 left-1/4 w-[500px] h-[400px] bg-blue-600/15 rounded-full blur-[120px] mix-blend-screen animate-pulse"
-              style={{ animationDelay: "1.5s", animationDuration: "5s" }}
-            />
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] bg-purple-500/15 rounded-full blur-[150px] mix-blend-screen" />
-
-            {/* Grid Pattern Overlay (Tech feel) */}
-            <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff0a_1px,transparent_1px),linear-gradient(to_bottom,#ffffff0a_1px,transparent_1px)] bg-size-[32px_32px] mask-[radial-gradient(ellipse_60%_60%_at_50%_40%,#000_70%,transparent_100%)] opacity-70" />
-
-            {/* Starry dust (static small particles) */}
-            <div
-              className="absolute inset-0 opacity-40 mix-blend-screen"
+              className="absolute inset-0 opacity-[0.18]"
               style={{
                 backgroundImage:
-                  "radial-gradient(circle at 15% 50%, white 1px, transparent 1px), radial-gradient(circle at 85% 30%, rgba(255,255,255,0.8) 1.5px, transparent 1.5px), radial-gradient(circle at 65% 80%, rgba(255,255,255,0.6) 1px, transparent 1px), radial-gradient(circle at 35% 20%, white 2px, transparent 2px)",
-                backgroundSize: "120px 120px",
+                  "radial-gradient(circle, #a8a29e 1px, transparent 1px)",
+                backgroundSize: "18px 18px",
               }}
             />
 
-            {/* Floating glowing orbs / particles */}
+            {/* Soft glow orbs */}
             <div
-              className="absolute top-12 left-1/3 w-2 h-2 rounded-full bg-primary/80 shadow-[0_0_15px_3px_rgba(var(--primary),0.8)] animate-bounce"
-              style={{ animationDuration: "3s" }}
+              className="absolute -top-8 right-16 w-64 h-64 rounded-full opacity-25"
+              style={{
+                background: "radial-gradient(circle, #fb923c, transparent 70%)",
+              }}
             />
             <div
-              className="absolute bottom-20 right-1/4 w-3 h-3 rounded-full bg-blue-400/80 shadow-[0_0_20px_4px_rgba(96,165,250,0.6)] animate-pulse"
-              style={{ animationDuration: "4s" }}
-            />
-            <div
-              className="absolute top-24 right-1/3 w-1.5 h-1.5 rounded-full bg-purple-400/80 shadow-[0_0_10px_2px_rgba(192,132,252,0.6)] animate-bounce"
-              style={{ animationDuration: "2.5s", animationDelay: "1s" }}
-            />
-            <div
-              className="absolute bottom-1/4 left-1/4 w-2 h-2 rounded-full bg-indigo-400/80 shadow-[0_0_12px_2px_rgba(129,140,248,0.6)] animate-pulse"
-              style={{ animationDuration: "5s", animationDelay: "0.5s" }}
+              className="absolute top-4 left-1/4 w-80 h-48 rounded-full opacity-15"
+              style={{
+                background: "radial-gradient(circle, #fbbf24, transparent 70%)",
+              }}
             />
 
-            {/* Glowing horizontal line effect crossing the banner */}
-            <div className="absolute top-1/2 left-0 right-0 h-px bg-linear-to-r from-transparent via-primary/40 to-transparent shadow-[0_0_20px_2px_rgba(var(--primary),0.3)] opacity-50" />
+            {/* Grid lines */}
+            <svg
+              className="absolute inset-0 w-full h-full opacity-[0.06]"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <defs>
+                <pattern
+                  id="pg"
+                  width="48"
+                  height="48"
+                  patternUnits="userSpaceOnUse"
+                >
+                  <path
+                    d="M 48 0 L 0 0 0 48"
+                    fill="none"
+                    stroke="#78716c"
+                    strokeWidth="0.6"
+                  />
+                </pattern>
+              </defs>
+              <rect width="100%" height="100%" fill="url(#pg)" />
+            </svg>
 
-            {/* Smooth bottom fade to blend with page */}
-            <div className="absolute inset-0 bg-linear-to-t from-background via-background/20 to-transparent" />
+            {/* Bottom fade into white */}
+            <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-white to-transparent" />
           </div>
 
-          {/* Avatar Container */}
-          <div className="absolute -bottom-20 left-8">
+          {/* Avatar row */}
+          <div className="px-8 -mt-16 pb-6 flex items-end gap-5">
             <div
-              className="relative w-40 h-40 cursor-pointer group"
+              className="relative shrink-0 cursor-pointer"
               onMouseEnter={() => setHovered(true)}
               onMouseLeave={() => setHovered(false)}
               onClick={() => fileInputRef.current?.click()}
             >
-              <Avatar className="w-40 h-40 ring-8 ring-background group-hover:ring-primary/30 transition-all duration-300">
-                <AvatarImage
-                  src={
-                    profile?.picture
-                      ? `data:image/jpeg;base64,${profile.picture}`
-                      : undefined
-                  }
-                  alt="profile img"
-                  className="object-cover"
-                />
-                <AvatarFallback className="bg-primary/20 text-primary text-4xl font-bold w-full h-full">
-                  {initials}
-                </AvatarFallback>
-              </Avatar>
-
-              {/* Hover overlay — replaces Mantine <Overlay> */}
-              {hovered && (
-                <div className="absolute inset-0 rounded-full bg-black/80 flex items-center justify-center z-10 pointer-events-none transition-opacity duration-200">
-                  <IconEdit className="w-12 h-12 text-primary" />
-                </div>
-              )}
-
-              {/* Hidden file input — replaces Mantine <FileInput> */}
+              {/* White border frame */}
+              <div className="p-[3px] bg-white rounded-2xl shadow-[0_4px_24px_rgba(0,0,0,0.13)]">
+                <Avatar className="w-28 h-28 rounded-[14px]">
+                  <AvatarImage
+                    src={
+                      profile?.picture
+                        ? `data:image/jpeg;base64,${profile.picture}`
+                        : undefined
+                    }
+                    alt="profile img"
+                    className="object-cover rounded-[14px]"
+                  />
+                  <AvatarFallback className="bg-gradient-to-br from-amber-100 to-orange-200 text-amber-700 text-3xl font-bold rounded-[14px] w-full h-full">
+                    {initials}
+                  </AvatarFallback>
+                </Avatar>
+                {hovered && (
+                  <div className="absolute inset-[3px] rounded-[14px] bg-black/55 flex items-center justify-center z-10 pointer-events-none">
+                    <IconEdit className="w-7 h-7 text-white" />
+                  </div>
+                )}
+              </div>
               <input
                 key={fileInputKey}
                 ref={fileInputRef}
@@ -140,51 +181,41 @@ export const ProfileView = (props: any) => {
                 className="hidden"
               />
             </div>
-          </div>
-        </div>
 
-        {/* Content Sections */}
-        <div className="space-y-6">
-          {/* Info Card */}
-          <div className="backdrop-blur-xl bg-popover/60 border border-white/10 rounded-2xl p-8 shadow-2xl hover:border-primary/30 transition-all duration-300">
+            {/* right-side spacer — Info component fills the card below */}
+            <div className="flex-1" />
+          </div>
+
+          {/* Info section */}
+          <div className="px-8 pb-8 pt-0">
             <Info profile={profile} edit={!props.id} />
           </div>
-
-          <hr className="border-white/5" />
-
-          {/* About Card */}
-          <div className="backdrop-blur-xl bg-popover/60 border border-white/10 rounded-2xl p-8 shadow-2xl hover:border-primary/30 transition-all duration-300">
-            <About profile={profile} edit={!props.id} />
-          </div>
-
-          <hr className="border-white/5" />
-
-          {/* Skills Card */}
-          <div className="backdrop-blur-xl bg-popover/60 border border-white/10 rounded-2xl p-8 shadow-2xl hover:border-primary/30 transition-all duration-300">
-            <Skills profile={profile} edit={!props.id} />
-          </div>
-
-          <hr className="border-white/5" />
-
-          {/* Resume Card */}
-          <div className="backdrop-blur-xl bg-popover/60 border border-white/10 rounded-2xl p-8 shadow-2xl hover:border-primary/30 transition-all duration-300">
-            <ResumeSection profile={profile} edit={!props.id} />
-          </div>
-
-          <hr className="border-white/5" />
-
-          {/* Experience Card */}
-          <div className="backdrop-blur-xl bg-popover/60 border border-white/10 rounded-2xl p-8 shadow-2xl hover:border-primary/30 transition-all duration-300">
-            <Experience profile={profile} edit={!props.id} />
-          </div>
-
-          <hr className="border-white/5" />
-
-          {/* Certificate Card */}
-          <div className="backdrop-blur-xl bg-popover/60 border border-white/10 rounded-2xl p-8 shadow-2xl hover:border-primary/30 transition-all duration-300">
-            <Certificate profile={profile} edit={!props.id} />
-          </div>
         </div>
+
+        {/* ── About ─────────────────────────────────────────────── */}
+        <ProfileCard accent="amber">
+          <About profile={profile} edit={!props.id} />
+        </ProfileCard>
+
+        {/* ── Skills ────────────────────────────────────────────── */}
+        <ProfileCard accent="orange">
+          <Skills profile={profile} edit={!props.id} />
+        </ProfileCard>
+
+        {/* ── Resume ────────────────────────────────────────────── */}
+        <ProfileCard accent="rose">
+          <ResumeSection profile={profile} edit={!props.id} />
+        </ProfileCard>
+
+        {/* ── Experience ────────────────────────────────────────── */}
+        <ProfileCard accent="amber">
+          <Experience profile={profile} edit={!props.id} />
+        </ProfileCard>
+
+        {/* ── Certificates ──────────────────────────────────────── */}
+        <ProfileCard accent="sky">
+          <Certificate profile={profile} edit={!props.id} />
+        </ProfileCard>
       </div>
     </div>
   );

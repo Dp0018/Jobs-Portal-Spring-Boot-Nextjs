@@ -1,34 +1,33 @@
+"use client";
+
 import { Talents } from "../ui/talent";
 import { SearchBar } from "../ui/talent-search-bar";
+import { Users } from "lucide-react";
 
 export const FindTalentsView = () => {
   return (
-    <div className="min-h-screen bg-background">
-      <div className="relative overflow-hidden">
-        {/* Background blobs */}
-        <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <div className="absolute -top-40 -right-40 w-80 h-80 bg-primary/8 rounded-full blur-3xl animate-pulse" />
-          <div
-            className="absolute -bottom-40 -left-40 w-80 h-80 bg-primary/6 rounded-full blur-3xl animate-pulse"
-            style={{ animationDelay: "1s" }}
-          />
-        </div>
-
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 pb-12">
-          {/* Header */}
-          <div className="text-center mb-12">
-            <h1 className="text-5xl md:text-6xl font-bold text-foreground mb-4 bg-linear-to-r from-foreground via-primary/80 to-foreground bg-clip-text text-transparent">
-              Find Your Dream Talent
+    <div className="min-h-screen bg-[#F8FAFC]">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* ── Page Header ── */}
+        <div className="mb-6">
+          <div className="flex items-center gap-3 mb-1">
+            <div className="w-9 h-9 rounded-xl bg-[#EFF6FF] border border-[#BFDBFE] flex items-center justify-center shrink-0">
+              <Users className="w-4.5 h-4.5 text-[#2563EB]" strokeWidth={1.8} />
+            </div>
+            <h1 className="text-2xl font-bold text-[#0F172A] tracking-tight">
+              Find Talent
             </h1>
-            <p className="text-muted-foreground text-lg md:text-xl max-w-2xl mx-auto">
-              Discover top talents from around the world and connect with them
-              to get started on your journey to success.
-            </p>
           </div>
-
-          <SearchBar />
-          <Talents />
+          <p className="text-sm text-[#475569] ml-12">
+            Discover top professionals and connect with the best candidates.
+          </p>
         </div>
+
+        {/* ── Search / Filter Bar ── */}
+        <SearchBar />
+
+        {/* ── Results ── */}
+        <Talents />
       </div>
     </div>
   );

@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Briefcase, Calendar } from "lucide-react";
+import { Calendar, MapPin } from "lucide-react";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { changeProfile } from "@/modules/landing/server/profile-slice";
@@ -22,83 +22,85 @@ export const ExpCard = (props: any) => {
     successNotification("Success", "Experience deleted successfully");
   };
 
+  if (edit) return <ExpInput {...props} setEdit={setEdit} />;
+
   return (
-    <>
-      {!edit ? (
-        <div className="group relative bg-muted/20 backdrop-blur-sm border border-border/20 rounded-xl p-6 hover:border-primary/30 transition-all duration-300 hover:shadow-lg hover:shadow-primary/5">
-          {/* Company Header */}
-          <div className="flex items-start justify-between mb-4">
-            <div className="flex gap-4 items-start flex-1">
-              {/* Company Logo */}
-              <div className="p-3 bg-white rounded-xl shadow-lg shrink-0 flex items-center justify-center overflow-hidden">
-                <CompanyLogo
-                  company={props.company}
-                  className="h-10 w-10"
-                  fallbackClassName="h-10 w-10 rounded-lg"
-                />
-              </div>
+    <div className="group relative flex gap-4 bg-stone-50 rounded-2xl p-5 border border-stone-100 hover:border-amber-200 hover:bg-amber-50/30 transition-all duration-200">
+      {/* Timeline dot */}
+      <div className="absolute left-0 top-1/2 -translate-x-1/2 -translate-y-1/2 w-2.5 h-2.5 rounded-full bg-amber-400 border-2 border-white shadow-sm hidden" />
 
-              {/* Job Info */}
-              <div className="flex-1">
-                <h3 className="text-xl font-bold text-foreground mb-1">
-                  {props.title}
-                </h3>
-                <div className="flex items-center gap-2 text-muted-foreground mb-2">
-                  <Briefcase className="w-4 h-4" />
-                  <span className="font-medium">{props.company}</span>
-                  <span className="text-border">•</span>
-                  <span>{props.location}</span>
-                </div>
-              </div>
-            </div>
+      {/* Logo */}
+      <div className="shrink-0 w-12 h-12 bg-white rounded-xl shadow-sm border border-stone-100 flex items-center justify-center overflow-hidden">
+        <CompanyLogo
+          company={props.company}
+          className="h-8 w-8"
+          fallbackClassName="h-8 w-8 rounded-lg"
+        />
+      </div>
 
-            {/* Date Range */}
-            <div className="flex items-center gap-2 text-muted-foreground text-sm bg-muted/30 px-3 py-1.5 rounded-lg border border-border/20">
-              <Calendar className="w-4 h-4" />
-              <span>
-                {formatDate(props.startDate)} -{" "}
-                {props.working ? (
-                  <span className="text-primary font-medium">Present</span>
-                ) : (
-                  formatDate(props.endDate)
-                )}
+      {/* Content */}
+      <div className="flex-1 min-w-0">
+        <div className="flex items-start justify-between gap-3 flex-wrap">
+          <div>
+            <h3 className="font-semibold text-stone-800 text-[0.9375rem] leading-snug">
+              {props.title}
+            </h3>
+            <div className="flex items-center gap-2 text-stone-500 text-sm mt-0.5 flex-wrap">
+              <span className="font-medium text-stone-600">
+                {props.company}
               </span>
+              {props.location && (
+                <>
+                  <span className="text-stone-300">·</span>
+                  <span className="flex items-center gap-0.5">
+                    <MapPin className="w-3 h-3" />
+                    {props.location}
+                  </span>
+                </>
+              )}
             </div>
           </div>
 
-          {/* Description */}
-          <div className="text-muted-foreground text-sm leading-relaxed mb-4 pl-[72px]">
-            {props.description}
-          </div>
-
-          {/* Action Buttons */}
-          {props.edit && (
-            <div className="flex gap-3 pl-[72px]">
-              <Button
-                onClick={() => setEdit(true)}
-                variant="ghost"
-                size="sm"
-                className="text-green-400 hover:text-green-400 hover:bg-green-400/10 hover:scale-105 transition-all"
-              >
-                Edit
-              </Button>
-              <Button
-                onClick={handleDelete}
-                variant="ghost"
-                size="sm"
-                className="text-destructive hover:text-destructive hover:bg-destructive/10 hover:scale-105 transition-all"
-              >
-                Delete
-              </Button>
-            </div>
-          )}
-
-          {/* Hover Effect */}
-          <div className="absolute inset-0 bg-linear-to-r from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-xl pointer-events-none" />
+          {/* Date badge */}
+          <span className="shrink-0 inline-flex items-center gap-1.5 px-2.5 py-1 bg-white border border-stone-200 text-stone-500 text-xs rounded-lg">
+            <Calendar className="w-3 h-3" />
+            {formatDate(props.startDate)} —{" "}
+            {props.working ? (
+              <span className="text-amber-600 font-medium">Present</span>
+            ) : (
+              formatDate(props.endDate)
+            )}
+          </span>
         </div>
-      ) : (
-        <ExpInput {...props} setEdit={setEdit} />
-      )}
-    </>
+
+        {props.description && (
+          <p className="mt-2.5 text-stone-500 text-sm leading-relaxed line-clamp-3">
+            {props.description}
+          </p>
+        )}
+
+        {/* Edit / Delete — only visible when parent is in edit mode */}
+        {props.edit && (
+          <div className="flex gap-2 mt-3">
+            <Button
+              onClick={() => setEdit(true)}
+              variant="ghost"
+              size="sm"
+              className="h-7 px-3 text-xs text-amber-700 bg-amber-50 hover:bg-amber-100 border border-amber-200 rounded-lg"
+            >
+              Edit
+            </Button>
+            <Button
+              onClick={handleDelete}
+              variant="ghost"
+              size="sm"
+              className="h-7 px-3 text-xs text-red-600 bg-red-50 hover:bg-red-100 border border-red-200 rounded-lg"
+            >
+              Delete
+            </Button>
+          </div>
+        )}
+      </div>
+    </div>
   );
 };

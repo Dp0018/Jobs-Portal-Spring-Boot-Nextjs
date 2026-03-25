@@ -3,11 +3,18 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { IconBriefcase, IconCheck, IconMapPin, IconPencil, IconX } from "@tabler/icons-react";
+import {
+  IconBriefcase,
+  IconBuilding,
+  IconCheck,
+  IconMapPin,
+  IconPencil,
+  IconX,
+} from "@tabler/icons-react";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { fields } from "../Data/PostJob";
-import {SelectInput} from "./select-input";
+import { SelectInput } from "./select-input";
 import { changeProfile } from "@/modules/landing/server/profile-slice";
 import { successNotification } from "@/modules/notifications/server/notification-service";
 
@@ -47,40 +54,54 @@ export const Info = ({ profile, edit }: any) => {
 
   return (
     <div className="space-y-4">
-      {/* Header */}
-      <div className="flex justify-between items-start">
-        <h1 className="text-4xl font-bold text-foreground">{profile?.name}</h1>
-        <div className="flex gap-2">
+      {/* Name + action buttons */}
+      <div className="flex items-start justify-between gap-4">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight text-stone-900 leading-tight">
+            {profile?.name}
+          </h1>
+        </div>
+
+        <div className="flex gap-1.5 shrink-0 mt-1">
           {isEditing && (
             <Button
-              size="icon"
+              size="sm"
               variant="ghost"
               onClick={handleSave}
-              className="h-10 w-10 text-green-400 hover:text-green-400 hover:bg-green-400/10 hover:scale-110 transition-all"
+              className="h-8 px-3 gap-1.5 text-emerald-700 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 rounded-lg text-xs font-medium"
             >
-              <IconCheck className="h-5 w-5" />
+              <IconCheck className="h-3.5 w-3.5" />
+              Save
             </Button>
           )}
           {edit && (
             <Button
-              size="icon"
+              size="sm"
               variant="ghost"
               onClick={handleEdit}
-              className={`h-10 w-10 hover:scale-110 transition-all ${
+              className={`h-8 px-3 gap-1.5 rounded-lg text-xs font-medium border ${
                 isEditing
-                  ? "text-destructive hover:text-destructive hover:bg-destructive/10"
-                  : "text-primary hover:text-primary hover:bg-primary/10"
+                  ? "text-red-600 bg-red-50 hover:bg-red-100 border-red-200"
+                  : "text-stone-600 bg-stone-50 hover:bg-stone-100 border-stone-200"
               }`}
             >
-              {isEditing ? <IconX className="h-5 w-5" /> : <IconPencil className="h-5 w-5" />}
+              {isEditing ? (
+                <>
+                  <IconX className="h-3.5 w-3.5" /> Cancel
+                </>
+              ) : (
+                <>
+                  <IconPencil className="h-3.5 w-3.5" /> Edit
+                </>
+              )}
             </Button>
           )}
         </div>
       </div>
 
-      {/* Edit Mode */}
+      {/* Edit mode */}
       {isEditing ? (
-        <div className="space-y-4 mt-6">
+        <div className="space-y-4 pt-2">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <SelectInput
               form={{
@@ -114,9 +135,10 @@ export const Info = ({ profile, edit }: any) => {
               name="location"
               {...select[2]}
             />
-            {/* Replaces Mantine NumberInput */}
             <div className="space-y-1.5">
-              <Label className="text-foreground/80 font-medium">Years of Experience</Label>
+              <Label className="text-stone-600 text-sm font-medium">
+                Years of Experience
+              </Label>
               <Input
                 type="number"
                 min={0}
@@ -124,33 +146,41 @@ export const Info = ({ profile, edit }: any) => {
                 value={form.totalExp}
                 onChange={(e) => setField("totalExp", Number(e.target.value))}
                 placeholder="Enter experience in years"
-                className="bg-input/20 border-border focus-visible:ring-primary focus-visible:border-primary text-foreground placeholder:text-muted-foreground"
+                className="bg-stone-50 border-stone-200 focus-visible:ring-amber-400 focus-visible:border-amber-400 text-stone-800 placeholder:text-stone-400"
               />
             </div>
           </div>
         </div>
       ) : (
-        /* View Mode */
-        <div className="space-y-3 mt-6">
-          {/* Job Title & Experience */}
-          <div className="flex flex-wrap items-center gap-3 text-lg text-foreground">
-            <div className="p-2 rounded-lg bg-primary/10">
-              <IconBriefcase className="w-5 h-5 text-primary" />
-            </div>
-            <span className="font-medium">{profile?.jobTitle}</span>
-            <span className="text-muted-foreground">•</span>
-            <span className="text-muted-foreground">{profile?.totalExp} Year(s) Experience</span>
-            <span className="text-muted-foreground">•</span>
-            <span className="text-muted-foreground">{profile?.company}</span>
-          </div>
-
-          {/* Location */}
-          <div className="flex items-center gap-3 text-lg text-foreground">
-            <div className="p-2 rounded-lg bg-destructive/10">
-              <IconMapPin className="w-5 h-5 text-destructive" />
-            </div>
-            <span className="text-muted-foreground">{profile?.location}</span>
-          </div>
+        /* View mode */
+        <div className="flex flex-wrap gap-3 pt-1">
+          {/* Job title pill */}
+          {profile?.jobTitle && (
+            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-amber-50 border border-amber-200 text-amber-800 text-sm font-medium rounded-full">
+              <IconBriefcase className="w-3.5 h-3.5" />
+              {profile.jobTitle}
+            </span>
+          )}
+          {/* Company pill */}
+          {profile?.company && (
+            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-stone-100 border border-stone-200 text-stone-700 text-sm font-medium rounded-full">
+              <IconBuilding className="w-3.5 h-3.5" />
+              {profile.company}
+            </span>
+          )}
+          {/* Experience pill */}
+          {profile?.totalExp !== undefined && (
+            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-orange-50 border border-orange-200 text-orange-800 text-sm font-medium rounded-full">
+              {profile.totalExp} yr{profile.totalExp !== 1 ? "s" : ""} exp
+            </span>
+          )}
+          {/* Location pill */}
+          {profile?.location && (
+            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-rose-50 border border-rose-200 text-rose-700 text-sm font-medium rounded-full">
+              <IconMapPin className="w-3.5 h-3.5" />
+              {profile.location}
+            </span>
+          )}
         </div>
       )}
     </div>

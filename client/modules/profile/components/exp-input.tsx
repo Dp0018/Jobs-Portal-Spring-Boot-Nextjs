@@ -12,7 +12,6 @@ import { successNotification } from "@/modules/notifications/server/notification
 import { fields } from "../Data/PostJob";
 import { SelectInput } from "./select-input";
 
-/* Helpers to convert between ISO date string and <input type="month"> value (YYYY-MM) */
 const toMonthValue = (date: Date | string) => {
   const d = new Date(date);
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
@@ -83,17 +82,12 @@ export const ExpInput = (props: any) => {
   };
 
   return (
-    <div className="bg-muted/20 backdrop-blur-sm border border-primary/30 rounded-xl p-6 space-y-5">
-      {/* Header */}
-      <div className="flex items-center gap-3">
-        <span className="w-1 h-6 bg-linear-to-b from-primary to-destructive rounded-full" />
-        <h3 className="text-xl font-bold text-foreground">
-          {props.add ? "Add" : "Edit"} Experience
-        </h3>
-      </div>
+    <div className="bg-amber-50/60 border border-amber-200 rounded-2xl p-6 space-y-5">
+      <h3 className="text-sm font-semibold text-amber-800 uppercase tracking-wider">
+        {props.add ? "Add Experience" : "Edit Experience"}
+      </h3>
 
       <div className="space-y-4">
-        {/* Title & Company */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <SelectInput
             form={{
@@ -119,7 +113,6 @@ export const ExpInput = (props: any) => {
           />
         </div>
 
-        {/* Location */}
         <SelectInput
           form={{
             getInputProps: () => ({
@@ -132,40 +125,38 @@ export const ExpInput = (props: any) => {
           error={errors.location}
         />
 
-        {/* Description — replaces Mantine Textarea */}
         <div className="space-y-1.5">
-          <Label className="text-foreground/80 font-medium">
-            Job Summary <span className="text-primary">*</span>
+          <Label className="text-stone-600 text-sm font-medium">
+            Job Summary <span className="text-amber-600">*</span>
           </Label>
           <Textarea
             value={form.description}
             onChange={(e) => setField("description", e.target.value)}
             placeholder="Describe your role and achievements..."
             rows={3}
-            className="bg-input/20 border-border focus-visible:ring-primary focus-visible:border-primary placeholder:text-muted-foreground text-foreground resize-none"
+            className="bg-white border-stone-200 focus-visible:ring-amber-300 focus-visible:border-amber-400 placeholder:text-stone-400 text-stone-700 resize-none"
           />
           {errors.description && (
-            <p className="text-xs text-destructive">{errors.description}</p>
+            <p className="text-xs text-red-500">{errors.description}</p>
           )}
         </div>
 
-        {/* Dates — replaces Mantine MonthPickerInput */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-1.5">
-            <Label className="text-foreground/80 font-medium">
-              Start Date <span className="text-primary">*</span>
+            <Label className="text-stone-600 text-sm font-medium">
+              Start Date <span className="text-amber-600">*</span>
             </Label>
             <Input
               type="month"
               value={form.startDate}
               max={form.endDate || undefined}
               onChange={(e) => setField("startDate", e.target.value)}
-              className="bg-input/20 border-border focus-visible:ring-primary focus-visible:border-primary text-foreground"
+              className="bg-white border-stone-200 focus-visible:ring-amber-300 focus-visible:border-amber-400 text-stone-700"
             />
           </div>
           <div className="space-y-1.5">
-            <Label className="text-foreground/80 font-medium">
-              End Date <span className="text-primary">*</span>
+            <Label className="text-stone-600 text-sm font-medium">
+              End Date <span className="text-amber-600">*</span>
             </Label>
             <Input
               type="month"
@@ -174,39 +165,39 @@ export const ExpInput = (props: any) => {
               max={toMonthValue(new Date())}
               disabled={form.working}
               onChange={(e) => setField("endDate", e.target.value)}
-              className="bg-input/20 border-border focus-visible:ring-primary focus-visible:border-primary text-foreground disabled:opacity-50"
+              className="bg-white border-stone-200 focus-visible:ring-amber-300 focus-visible:border-amber-400 text-stone-700 disabled:opacity-50"
             />
           </div>
         </div>
 
-        {/* Currently Working — replaces Mantine Checkbox */}
         <div className="flex items-center gap-2">
           <Checkbox
             id="working"
             checked={form.working}
             onCheckedChange={(checked) => setField("working", !!checked)}
-            className="border-border data-[state=checked]:bg-primary data-[state=checked]:border-primary"
+            className="border-stone-300 data-[state=checked]:bg-amber-500 data-[state=checked]:border-amber-500"
           />
           <label
             htmlFor="working"
-            className="text-muted-foreground text-sm cursor-pointer select-none"
+            className="text-stone-600 text-sm cursor-pointer select-none"
           >
             Currently working here
           </label>
         </div>
 
-        {/* Action Buttons */}
-        <div className="flex gap-3 pt-2">
+        <div className="flex gap-2 pt-1">
           <Button
             onClick={handleSave}
-            className="bg-green-600 hover:bg-green-700 text-white hover:scale-105 transition-all"
+            size="sm"
+            className="bg-amber-500 hover:bg-amber-600 text-white border-0 rounded-lg px-5"
           >
             Save
           </Button>
           <Button
             onClick={() => props.setEdit(false)}
             variant="ghost"
-            className="text-destructive hover:text-destructive hover:bg-destructive/10 hover:scale-105 transition-all"
+            size="sm"
+            className="text-stone-500 hover:text-stone-700 hover:bg-stone-100 rounded-lg"
           >
             Cancel
           </Button>

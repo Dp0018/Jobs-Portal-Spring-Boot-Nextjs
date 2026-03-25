@@ -6,7 +6,7 @@ import { Label } from "@/components/ui/label";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fields } from "../Data/PostJob";
-import {SelectInput} from "./select-input";
+import { SelectInput } from "./select-input";
 import { changeProfile } from "@/modules/landing/server/profile-slice";
 import { successNotification } from "@/modules/notifications/server/notification-service";
 
@@ -56,81 +56,86 @@ export const CertificationInput = (props: any) => {
   };
 
   return (
-    <div className="bg-muted/20 backdrop-blur-sm border border-primary/30 rounded-xl p-6 space-y-5">
-      {/* Header */}
-      <div className="flex items-center gap-3">
-        <span className="w-1 h-6 bg-linear-to-b from-primary to-primary/50 rounded-full" />
-        <h3 className="text-xl font-bold text-foreground capitalize">Add Certificate</h3>
-      </div>
+    <div className="bg-sky-50/60 border border-sky-200 rounded-2xl p-6 space-y-5">
+      <h3 className="text-sm font-semibold text-sky-800 uppercase tracking-wider">
+        Add Certificate
+      </h3>
 
       <div className="space-y-4">
-        {/* Title & Issuer */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {/* Replaces Mantine TextInput */}
           <div className="space-y-1.5">
-            <Label className="text-foreground/80 font-medium">
-              Certificate Title <span className="text-primary">*</span>
+            <Label className="text-stone-600 text-sm font-medium">
+              Certificate Title <span className="text-sky-600">*</span>
             </Label>
             <Input
               value={form.name}
               onChange={(e) => setField("name", e.target.value)}
               placeholder="Enter certificate name"
-              className="bg-input/20 border-border focus-visible:ring-primary focus-visible:border-primary placeholder:text-muted-foreground text-foreground"
+              className="bg-white border-stone-200 focus-visible:ring-sky-300 focus-visible:border-sky-400 placeholder:text-stone-400 text-stone-700"
             />
-            {errors.name && <p className="text-xs text-destructive">{errors.name}</p>}
+            {errors.name && (
+              <p className="text-xs text-red-500">{errors.name}</p>
+            )}
           </div>
           <SelectInput
-            form={{ getInputProps: () => ({ value: form.issuer, onChange: (v: any) => setField("issuer", v) }) }}
+            form={{
+              getInputProps: () => ({
+                value: form.issuer,
+                onChange: (v: any) => setField("issuer", v),
+              }),
+            }}
             name="issuer"
             {...select[1]}
             error={errors.issuer}
           />
         </div>
 
-        {/* Issue Date & Certificate ID */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {/* Replaces Mantine MonthPickerInput */}
           <div className="space-y-1.5">
-            <Label className="text-foreground/80 font-medium">
-              Issue Date <span className="text-primary">*</span>
+            <Label className="text-stone-600 text-sm font-medium">
+              Issue Date <span className="text-sky-600">*</span>
             </Label>
             <Input
               type="month"
               value={form.issueDate}
               max={toMonthValue(new Date())}
               onChange={(e) => setField("issueDate", e.target.value)}
-              className="bg-input/20 border-border focus-visible:ring-primary focus-visible:border-primary text-foreground"
+              className="bg-white border-stone-200 focus-visible:ring-sky-300 focus-visible:border-sky-400 text-stone-700"
             />
-            {errors.issueDate && <p className="text-xs text-destructive">{errors.issueDate}</p>}
+            {errors.issueDate && (
+              <p className="text-xs text-red-500">{errors.issueDate}</p>
+            )}
           </div>
 
-          {/* Replaces Mantine TextInput */}
           <div className="space-y-1.5">
-            <Label className="text-foreground/80 font-medium">
-              Certificate ID <span className="text-primary">*</span>
+            <Label className="text-stone-600 text-sm font-medium">
+              Certificate ID <span className="text-sky-600">*</span>
             </Label>
             <Input
               value={form.certificateId}
               onChange={(e) => setField("certificateId", e.target.value)}
               placeholder="Enter certificate ID"
-              className="bg-input/20 border-border focus-visible:ring-primary focus-visible:border-primary placeholder:text-muted-foreground text-foreground"
+              className="bg-white border-stone-200 focus-visible:ring-sky-300 focus-visible:border-sky-400 placeholder:text-stone-400 text-stone-700"
             />
-            {errors.certificateId && <p className="text-xs text-destructive">{errors.certificateId}</p>}
+            {errors.certificateId && (
+              <p className="text-xs text-red-500">{errors.certificateId}</p>
+            )}
           </div>
         </div>
 
-        {/* Action Buttons */}
-        <div className="flex gap-3 pt-2">
+        <div className="flex gap-2 pt-1">
           <Button
             onClick={handleSave}
-            className="bg-green-600 hover:bg-green-700 text-white hover:scale-105 transition-all"
+            size="sm"
+            className="bg-sky-500 hover:bg-sky-600 text-white border-0 rounded-lg px-5"
           >
             Save
           </Button>
           <Button
             onClick={() => props.setEdit(false)}
             variant="ghost"
-            className="text-destructive hover:text-destructive hover:bg-destructive/10 hover:scale-105 transition-all"
+            size="sm"
+            className="text-stone-500 hover:text-stone-700 hover:bg-stone-100 rounded-lg"
           >
             Cancel
           </Button>

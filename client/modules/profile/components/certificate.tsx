@@ -11,50 +11,59 @@ export const Certificate = ({ profile, edit }: any) => {
   const [addCerti, setAddCerti] = useState(false);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-5">
       {/* Header */}
       <div className="flex justify-between items-center">
-        <h2 className="text-2xl font-bold text-foreground flex items-center gap-3">
-          <span className="w-1 h-8 bg-linear-to-b from-primary to-primary/50 rounded-full" />
+        <h2 className="text-lg font-bold text-stone-800 tracking-tight">
           Certifications
         </h2>
-        <div className="flex gap-2">
+        <div className="flex gap-1.5">
           {edit && (
             <Button
-              size="icon"
+              size="sm"
               variant="ghost"
               onClick={() => setAddCerti(true)}
-              className="h-9 w-9 text-green-400 hover:text-green-400 hover:bg-green-400/10 hover:scale-110 transition-all"
+              className="h-8 px-3 gap-1.5 text-emerald-700 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 rounded-lg text-xs font-medium"
             >
-              <IconPlus className="h-5 w-5" />
+              <IconPlus className="h-3.5 w-3.5" /> Add
             </Button>
           )}
           {edit && (
             <Button
-              size="icon"
+              size="sm"
               variant="ghost"
               onClick={() => setIsEditing((v) => !v)}
-              className={`h-9 w-9 hover:scale-110 transition-all ${
+              className={`h-8 px-3 gap-1.5 rounded-lg text-xs font-medium border ${
                 isEditing
-                  ? "text-destructive hover:text-destructive hover:bg-destructive/10"
-                  : "text-primary hover:text-primary hover:bg-primary/10"
+                  ? "text-red-600 bg-red-50 hover:bg-red-100 border-red-200"
+                  : "text-stone-600 bg-stone-50 hover:bg-stone-100 border-stone-200"
               }`}
             >
-              {isEditing ? <IconX className="h-5 w-5" /> : <IconPencil className="h-5 w-5" />}
+              {isEditing ? (
+                <>
+                  <IconX className="h-3.5 w-3.5" /> Done
+                </>
+              ) : (
+                <>
+                  <IconPencil className="h-3.5 w-3.5" /> Edit
+                </>
+              )}
             </Button>
           )}
         </div>
       </div>
 
-      {/* Certifications List */}
-      <div className="space-y-4">
+      {/* List */}
+      <div className="space-y-3">
         {profile?.certifications?.map((certify: any, id: number) => (
           <CertificationCard key={id} idx={id} {...certify} edit={isEditing} />
         ))}
         {addCerti && <CertificationInput setEdit={setAddCerti} />}
         {!profile?.certifications?.length && !addCerti && (
-          <div className="text-center py-12 bg-muted/20 rounded-xl border border-border/20">
-            <p className="text-muted-foreground text-sm">No certifications added yet.</p>
+          <div className="text-center py-10 bg-stone-50 rounded-2xl border border-dashed border-stone-200">
+            <p className="text-stone-400 text-sm">
+              No certifications added yet.
+            </p>
           </div>
         )}
       </div>

@@ -11,18 +11,18 @@ import {
   IconHeart,
   IconSparkles,
   IconArrowRight,
-  IconBrandLinkedin,
-  IconBrandTwitter,
   IconStar,
   IconWorld,
   IconCode,
   IconTargetArrow,
 } from "@tabler/icons-react";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
 
 /* ─────────────────────────────────────────────
-   Intersection observer hook
+   Intersection observer hook — UNCHANGED
 ───────────────────────────────────────────── */
 const useInView = (threshold = 0.2) => {
   const ref = useRef(null);
@@ -31,8 +31,10 @@ const useInView = (threshold = 0.2) => {
     const el = ref.current;
     if (!el) return;
     const obs = new IntersectionObserver(
-      ([entry]) => { if (entry.isIntersecting) setInView(true); },
-      { threshold }
+      ([entry]) => {
+        if (entry.isIntersecting) setInView(true);
+      },
+      { threshold },
     );
     obs.observe(el);
     return () => obs.disconnect();
@@ -41,7 +43,7 @@ const useInView = (threshold = 0.2) => {
 };
 
 /* ─────────────────────────────────────────────
-   Value card
+   Value card — redesigned for light theme
 ───────────────────────────────────────────── */
 const ValueCard = ({
   icon: Icon,
@@ -52,21 +54,21 @@ const ValueCard = ({
   title: string;
   desc: string;
 }) => (
-  <div className="group relative p-5 rounded-xl border border-border/20 bg-muted/10 backdrop-blur-sm hover:border-primary/30 hover:bg-primary/5 transition-all duration-300 overflow-hidden">
+  <div className="group p-5 rounded-xl border border-[#E2E8F0] bg-white hover:border-primary/30 hover:shadow-md transition-all duration-200 cursor-default">
     <div className="flex items-start gap-4">
-      <div className="shrink-0 p-2.5 bg-primary/10 border border-primary/20 rounded-lg group-hover:scale-105 transition-transform duration-300">
-        <Icon size={18} className="text-primary" />
+      <div className="shrink-0 w-9 h-9 rounded-xl bg-primary/10 border border-primary/15 flex items-center justify-center group-hover:bg-primary/15 transition-colors">
+        <Icon size={17} className="text-primary" />
       </div>
       <div>
-        <h3 className="text-sm font-bold text-foreground mb-1">{title}</h3>
-        <p className="text-xs text-muted-foreground leading-relaxed">{desc}</p>
+        <h3 className="text-sm font-semibold text-[#0F172A] mb-1.5">{title}</h3>
+        <p className="text-xs text-[#64748B] leading-relaxed">{desc}</p>
       </div>
     </div>
   </div>
 );
 
 /* ─────────────────────────────────────────────
-   Timeline item — alternating desktop, stacked mobile
+   Timeline item — redesigned for light theme
 ───────────────────────────────────────────── */
 const TimelineItem = ({
   year,
@@ -92,17 +94,17 @@ const TimelineItem = ({
         align === "right" ? "text-left" : "text-right",
       )}
     >
-      <span className="inline-block px-2.5 py-0.5 bg-primary/10 border border-primary/20 rounded-full text-primary text-[10px] font-bold tracking-widest mb-1.5">
+      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full bg-primary/10 border border-primary/20 text-primary text-[10px] font-bold tracking-widest mb-2">
         {year}
       </span>
-      <h4 className="text-sm font-bold text-foreground mb-1">{title}</h4>
-      <p className="text-xs text-muted-foreground leading-relaxed">{desc}</p>
+      <h4 className="text-sm font-semibold text-[#0F172A] mb-1">{title}</h4>
+      <p className="text-xs text-[#64748B] leading-relaxed">{desc}</p>
     </div>
 
     {/* Dot + line */}
     <div className="flex flex-col items-center shrink-0 w-5">
-      <div className="w-3.5 h-3.5 rounded-full bg-primary border-[3px] border-background ring-2 ring-primary/30 z-10 mt-1" />
-      <div className="w-px flex-1 bg-linear-to-b from-primary/40 to-border/10 mt-1" />
+      <div className="w-3 h-3 rounded-full bg-primary border-[3px] border-white ring-2 ring-primary/25 z-10 mt-1.5" />
+      <div className="w-px flex-1 bg-[#E2E8F0] mt-1" />
     </div>
 
     {/* Empty side */}
@@ -111,7 +113,7 @@ const TimelineItem = ({
 );
 
 /* ─────────────────────────────────────────────
-   DATA
+   DATA — UNCHANGED
 ───────────────────────────────────────────── */
 const VALUES = [
   {
@@ -186,200 +188,170 @@ const HERO_STATS = [
 ═══════════════════════════════════════════ */
 const AboutPage = () => {
   return (
-    <div className="min-h-screen bg-background overflow-x-hidden">
-      {/* Noise texture */}
-      <div
-        className="fixed inset-0 pointer-events-none z-0 opacity-[0.025]"
-        style={{
-          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E")`,
-          backgroundSize: "180px 180px",
-        }}
-      />
-
-      <div className="relative z-10">
-        {/* ════════════════════════════════════
-            HERO
-        ════════════════════════════════════ */}
-        <section className="relative flex items-center overflow-hidden pt-16 pb-12">
-          {/* Background blobs */}
-          <div className="absolute inset-0 pointer-events-none">
-            <div className="absolute top-1/4 -left-32 w-[400px] h-[400px] bg-primary/8 rounded-full blur-[120px] animate-pulse" />
-            <div
-              className="absolute bottom-1/4 -right-32 w-[300px] h-[300px] bg-primary/6 rounded-full blur-[100px] animate-pulse"
-              style={{ animationDelay: "1.5s" }}
-            />
-            <svg
-              className="absolute inset-0 w-full h-full opacity-[0.04]"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <defs>
-                <pattern
-                  id="grid"
-                  width="60"
-                  height="60"
-                  patternUnits="userSpaceOnUse"
-                >
-                  <path
-                    d="M 60 0 L 0 0 0 60"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="0.5"
-                    className="text-primary"
-                  />
-                </pattern>
-              </defs>
-              <rect width="100%" height="100%" fill="url(#grid)" />
-            </svg>
-          </div>
-
-          <div className="relative w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-              {/* Left — copy */}
+    <div className="min-h-screen bg-[#F8FAFC] overflow-x-hidden">
+      {/* ════════════════════════════════════
+          HERO SECTION
+      ════════════════════════════════════ */}
+      <section className="bg-white border-b border-[#E2E8F0]">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-20">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+            {/* Left — copy */}
+            <div className="space-y-6">
               <div>
-                <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-primary/30 bg-primary/10 text-primary text-[10px] font-bold uppercase tracking-widest mb-5 animate-in fade-in slide-in-from-bottom-2 duration-500">
-                  <IconSparkles size={12} />
+                <Badge
+                  variant="outline"
+                  className="mb-4 border-primary/30 bg-primary/8 text-primary text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full gap-1.5"
+                >
+                  <IconSparkles size={11} />
                   Our Story
-                </div>
-
-                <h1 className="text-5xl md:text-6xl lg:text-7xl font-black text-foreground leading-[0.9] tracking-tight mb-5 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-100 fill-mode-forwards">
-                  We're{" "}
-                  <span className="relative inline-block">
-                    <span className="bg-linear-to-r from-primary via-primary/80 to-primary/60 bg-clip-text text-transparent">
-                      Joblify.
-                    </span>
-                    <span className="absolute -bottom-1.5 left-0 right-0 h-[3px] bg-linear-to-r from-primary to-primary/20 rounded-full" />
+                </Badge>
+                <h1 className="text-4xl md:text-5xl lg:text-[3.25rem] font-black text-[#0F172A] leading-[1.05] tracking-tight">
+                  We&apos;re{" "}
+                  <span className="relative">
+                    <span className="text-primary">Joblify.</span>
+                    <span className="absolute -bottom-1 left-0 right-0 h-[3px] bg-primary/30 rounded-full" />
                   </span>
                 </h1>
-
-                <p className="text-base text-muted-foreground leading-relaxed mb-7 max-w-md animate-in fade-in slide-in-from-bottom-4 duration-700 delay-200 fill-mode-forwards">
-                  We're on a mission to make finding the right job and the right
-                  talent feel{" "}
-                  <em className="text-foreground not-italic font-semibold">
-                    effortless
-                  </em>
-                  . Not exhausting. Not overwhelming. Just clear, human, and
-                  fast.
-                </p>
-
-                <div className="flex flex-wrap gap-3 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-300 fill-mode-forwards">
-                  <Link href="/find-jobs">
-                    <Button className="gap-2 bg-primary hover:bg-primary/90 text-primary-foreground px-5 py-4 text-sm font-semibold shadow-lg shadow-primary/20 hover:shadow-primary/30 hover:scale-[1.02] transition-all">
-                      Explore Jobs
-                      <IconArrowRight size={16} />
-                    </Button>
-                  </Link>
-                  <Link href="/find-talent">
-                    <Button
-                      variant="outline"
-                      className="gap-2 border-border/40 hover:border-primary/40 hover:bg-primary/5 px-5 py-4 text-sm transition-all"
-                    >
-                      Hire Talent
-                    </Button>
-                  </Link>
-                </div>
               </div>
 
-              {/* Right — quick stats grid */}
-              <div className="grid grid-cols-2 gap-3">
-                {HERO_STATS.map(({ icon: Icon, label, val }, i) => (
-                  <div
-                    key={label}
-                    className="p-4 rounded-xl border border-border/20 bg-muted/10 backdrop-blur-sm hover:border-primary/30 hover:bg-primary/5 transition-all animate-in fade-in slide-in-from-right-4 fill-mode-forwards"
-                    style={{
-                      animationDelay: `${0.2 + i * 0.1}s`,
-                      animationDuration: "0.6s",
-                    }}
+              <p className="text-base text-[#475569] leading-relaxed max-w-md">
+                We&apos;re on a mission to make finding the right job and the
+                right talent feel{" "}
+                <strong className="text-[#0F172A] font-semibold">
+                  effortless
+                </strong>
+                . Not exhausting. Not overwhelming. Just clear, human, and fast.
+              </p>
+
+              <div className="flex flex-wrap gap-3 pt-1">
+                <Link href="/find-jobs">
+                  <Button className="bg-primary hover:bg-primary/90 text-white font-semibold px-5 h-10 shadow-sm hover:shadow-md transition-all gap-2">
+                    Explore Jobs
+                    <IconArrowRight size={15} />
+                  </Button>
+                </Link>
+                <Link href="/find-talent">
+                  <Button
+                    variant="outline"
+                    className="border-[#E2E8F0] text-[#475569] hover:text-primary hover:border-primary/30 hover:bg-primary/5 font-medium px-5 h-10 transition-all gap-2"
                   >
-                    <div className="p-2 bg-primary/10 border border-primary/20 rounded-lg w-fit mb-2.5">
-                      <Icon size={16} className="text-primary" />
-                    </div>
-                    <div className="text-2xl font-black text-foreground tracking-tight">
-                      {val}
-                    </div>
-                    <div className="text-xs text-muted-foreground font-medium mt-0.5">
-                      {label}
-                    </div>
+                    Hire Talent
+                  </Button>
+                </Link>
+              </div>
+            </div>
+
+            {/* Right — stats grid */}
+            <div className="grid grid-cols-2 gap-3">
+              {HERO_STATS.map(({ icon: Icon, label, val }, i) => (
+                <div
+                  key={label}
+                  className="p-5 rounded-xl border border-[#E2E8F0] bg-white hover:border-primary/30 hover:shadow-md transition-all duration-200 group"
+                  style={{
+                    animationDelay: `${i * 0.1}s`,
+                  }}
+                >
+                  <div className="w-9 h-9 rounded-xl bg-[#F8FAFC] border border-[#E2E8F0] flex items-center justify-center mb-3 group-hover:bg-primary/10 group-hover:border-primary/20 transition-colors">
+                    <Icon
+                      size={17}
+                      className="text-[#64748B] group-hover:text-primary transition-colors"
+                    />
                   </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* ════════════════════════════════════
-            MISSION
-        ════════════════════════════════════ */}
-        <section className="py-14 border-y border-border/20 relative overflow-hidden">
-          <div className="absolute inset-0 bg-linear-to-r from-primary/5 via-transparent to-primary/5 pointer-events-none" />
-          <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-primary mb-4">
-              Our Mission
-            </p>
-            <blockquote className="text-2xl md:text-3xl lg:text-4xl font-bold text-foreground leading-snug">
-              "To <span className="text-primary">eliminate the friction</span>{" "}
-              between great people and great opportunities for everyone,
-              everywhere."
-            </blockquote>
-          </div>
-        </section>
-
-        {/* ════════════════════════════════════
-            VALUES
-        ════════════════════════════════════ */}
-        <section className="py-16 relative">
-          <div className="absolute inset-0 bg-linear-to-b from-transparent via-primary/3 to-transparent pointer-events-none" />
-          <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            {/* Header row */}
-            <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-10">
-              <div>
-                <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-primary mb-2">
-                  What drives us
-                </p>
-                <h2 className="text-3xl md:text-4xl font-black text-foreground leading-tight">
-                  Our values,
-                  <br />
-                  not just words.
-                </h2>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-              {VALUES.map((v) => (
-                <ValueCard key={v.title} {...v} />
+                  <div className="text-2xl font-black text-[#0F172A] tracking-tight leading-none">
+                    {val}
+                  </div>
+                  <div className="text-xs text-[#64748B] font-medium mt-1.5">
+                    {label}
+                  </div>
+                </div>
               ))}
             </div>
           </div>
-        </section>
+        </div>
+      </section>
 
-        {/* ════════════════════════════════════
-            TIMELINE
-        ════════════════════════════════════ */}
-        <section className="py-16 max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-10">
+      {/* ════════════════════════════════════
+          MISSION STATEMENT
+      ════════════════════════════════════ */}
+      <section className="py-14 bg-primary">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-white/60 mb-4">
+            Our Mission
+          </p>
+          <blockquote className="text-2xl md:text-3xl font-bold text-white leading-snug">
+            "To{" "}
+            <span className="text-white/70 italic">eliminate the friction</span>{" "}
+            between great people and great opportunities for everyone,
+            everywhere."
+          </blockquote>
+        </div>
+      </section>
+
+      {/* ════════════════════════════════════
+          VALUES
+      ════════════════════════════════════ */}
+      <section className="py-16 bg-[#F8FAFC]">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          {/* Section header */}
+          <div className="mb-10">
+            <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-primary mb-2">
+              What drives us
+            </p>
+            <h2 className="text-3xl md:text-4xl font-black text-[#0F172A] leading-tight">
+              Our values,
+              <br />
+              <span className="text-[#475569] font-semibold">
+                not just words.
+              </span>
+            </h2>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {VALUES.map((v) => (
+              <ValueCard key={v.title} {...v} />
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <Separator className="bg-[#E2E8F0]" />
+
+      {/* ════════════════════════════════════
+          TIMELINE
+      ════════════════════════════════════ */}
+      <section className="py-16 bg-white">
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+          {/* Section header */}
+          <div className="text-center mb-12">
             <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-primary mb-2">
               How we got here
             </p>
-            <h2 className="text-3xl md:text-4xl font-black text-foreground">
+            <h2 className="text-3xl md:text-4xl font-black text-[#0F172A]">
               Our journey
             </h2>
           </div>
 
-          {/* Mobile */}
-          <div className="md:hidden space-y-6">
-            {TIMELINE.map(({ year, title, desc }) => (
+          {/* Mobile timeline */}
+          <div className="md:hidden space-y-0">
+            {TIMELINE.map(({ year, title, desc }, i) => (
               <div key={year} className="flex gap-4">
                 <div className="flex flex-col items-center shrink-0">
-                  <div className="w-3 h-3 rounded-full bg-primary ring-4 ring-primary/20 mt-1" />
-                  <div className="w-px flex-1 bg-border/30 mt-1" />
+                  <div className="w-3 h-3 rounded-full bg-primary ring-4 ring-primary/15 mt-1.5 shrink-0" />
+                  {i < TIMELINE.length - 1 && (
+                    <div className="w-px flex-1 bg-[#E2E8F0] mt-1" />
+                  )}
                 </div>
-                <div className="pb-4">
-                  <span className="inline-block px-2.5 py-0.5 bg-primary/10 border border-primary/20 rounded-full text-primary text-[10px] font-bold tracking-widest mb-1">
+                <div className="pb-7">
+                  <Badge
+                    variant="outline"
+                    className="mb-1.5 border-primary/25 bg-primary/8 text-primary text-[10px] font-bold tracking-widest rounded-full px-2.5 py-0.5"
+                  >
                     {year}
-                  </span>
-                  <h4 className="text-sm font-bold text-foreground mb-0.5">
+                  </Badge>
+                  <h4 className="text-sm font-semibold text-[#0F172A] mb-1">
                     {title}
                   </h4>
-                  <p className="text-xs text-muted-foreground leading-relaxed">
+                  <p className="text-xs text-[#64748B] leading-relaxed">
                     {desc}
                   </p>
                 </div>
@@ -387,9 +359,9 @@ const AboutPage = () => {
             ))}
           </div>
 
-          {/* Desktop — alternating */}
+          {/* Desktop alternating timeline */}
           <div className="hidden md:block relative">
-            <div className="absolute left-1/2 -translate-x-1/2 top-0 bottom-0 w-px bg-linear-to-b from-primary/40 via-border/30 to-transparent" />
+            <div className="absolute left-1/2 -translate-x-1/2 top-0 bottom-0 w-px bg-[#E2E8F0]" />
             {TIMELINE.map(({ year, title, desc }, i) => (
               <TimelineItem
                 key={year}
@@ -400,46 +372,70 @@ const AboutPage = () => {
               />
             ))}
           </div>
-        </section>
+        </div>
+      </section>
 
-        {/* ════════════════════════════════════
-            WE'RE HIRING BANNER
-        ════════════════════════════════════ */}
-        <section className="pb-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="relative overflow-hidden rounded-2xl border border-primary/20 bg-linear-to-br from-primary/10 via-primary/5 to-transparent p-8 md:p-12">
-            {/* Decorations */}
-            <div className="absolute -top-16 -right-16 w-56 h-56 bg-primary/15 rounded-full blur-3xl pointer-events-none" />
-            <div className="absolute -bottom-12 -left-12 w-44 h-44 bg-primary/10 rounded-full blur-2xl pointer-events-none" />
+      {/* ════════════════════════════════════
+          WE'RE HIRING BANNER
+      ════════════════════════════════════ */}
+      <section className="py-12 bg-[#F8FAFC]">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="relative overflow-hidden rounded-2xl border border-[#E2E8F0] bg-white p-8 md:p-10">
+            {/* Decorative accent */}
+            <div className="absolute top-0 left-0 right-0 h-1 bg-primary rounded-t-2xl" />
+            <div className="absolute top-0 right-0 w-48 h-48 bg-primary/5 rounded-full -translate-y-1/2 translate-x-1/2 pointer-events-none" />
 
             <div className="relative flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
-              <div>
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-primary/30 bg-primary/10 text-primary text-[10px] font-bold uppercase tracking-widest mb-3">
-                  <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
-                  We're hiring
+              <div className="space-y-3">
+                {/* "We're hiring" badge */}
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-green-200 bg-green-50 text-green-700 text-[10px] font-bold uppercase tracking-widest">
+                  <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
+                  We&apos;re hiring
                 </div>
-                <h2 className="text-2xl md:text-3xl font-black text-foreground mb-2 leading-tight">
+
+                <h2 className="text-2xl md:text-3xl font-black text-[#0F172A] leading-tight">
                   Join us and build
                   <br />
                   <span className="text-primary">the future of work.</span>
                 </h2>
-                <p className="text-xs text-muted-foreground max-w-sm leading-relaxed">
-                  We're a remote-first team that values autonomy, craft, and
-                  deep focus. If you care about meaningful work and real impact,
-                  let's talk.
+
+                <p className="text-sm text-[#64748B] max-w-sm leading-relaxed">
+                  We&apos;re a remote-first team that values autonomy, craft,
+                  and deep focus. If you care about meaningful work and real
+                  impact, let&apos;s talk.
                 </p>
+
+                {/* Perks row */}
+                <div className="flex flex-wrap gap-2 pt-1">
+                  {[
+                    "Remote-first",
+                    "Competitive pay",
+                    "Equity",
+                    "Great team",
+                  ].map((perk) => (
+                    <Badge
+                      key={perk}
+                      variant="outline"
+                      className="border-[#E2E8F0] bg-[#F8FAFC] text-[#475569] text-xs font-medium px-2.5 py-0.5 rounded-full"
+                    >
+                      {perk}
+                    </Badge>
+                  ))}
+                </div>
               </div>
+
               <div className="shrink-0">
                 <Link href="/find-jobs">
-                  <Button className="gap-2 bg-primary hover:bg-primary/90 text-primary-foreground px-6 py-4 text-sm font-semibold shadow-lg shadow-primary/25 hover:shadow-primary/35 hover:scale-[1.02] transition-all">
+                  <Button className="bg-primary hover:bg-primary/90 text-white font-semibold px-6 h-11 shadow-sm hover:shadow-md transition-all gap-2 text-sm">
                     View Open Roles
-                    <IconArrowRight size={16} />
+                    <IconArrowRight size={15} />
                   </Button>
                 </Link>
               </div>
             </div>
           </div>
-        </section>
-      </div>
+        </div>
+      </section>
     </div>
   );
 };
