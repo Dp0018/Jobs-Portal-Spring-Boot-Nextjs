@@ -12,10 +12,17 @@ import {
   ArrowRight,
   Activity,
   Briefcase,
+  BarChart3,
+  ChevronRight,
 } from "lucide-react";
 import Link from "next/link";
 import { getAllUsers } from "@/modules/admin/server/admin-service";
 import { getAllJobs } from "@/modules/job/server/job-service";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Separator } from "@/components/ui/separator";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Button } from "@/components/ui/button";
 
 export default function AdminDashboard() {
   const [stats, setStats] = useState({
@@ -50,16 +57,36 @@ export default function AdminDashboard() {
       .finally(() => setLoading(false));
   }, []);
 
+  // ── Skeleton Loading State ──
   if (loading) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4">
-        <div className="relative">
-          <div className="absolute inset-0 rounded-full bg-primary/20 animate-ping" />
-          <Loader2 className="w-10 h-10 text-primary animate-spin relative" />
+      <div className="space-y-8 animate-in fade-in duration-500">
+        {/* Header skeleton */}
+        <div className="flex items-start justify-between">
+          <div className="space-y-2">
+            <Skeleton className="h-8 w-52 bg-[#E2E8F0]" />
+            <Skeleton className="h-4 w-72 bg-[#F1F5F9]" />
+          </div>
+          <Skeleton className="h-8 w-20 rounded-lg bg-[#F1F5F9]" />
         </div>
-        <p className="text-muted-foreground text-sm animate-pulse">
-          Loading dashboard...
-        </p>
+        {/* KPI skeleton */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+          {[...Array(4)].map((_, i) => (
+            <Skeleton key={i} className="h-28 rounded-2xl bg-[#F1F5F9]" />
+          ))}
+        </div>
+        {/* Job stats skeleton */}
+        <div className="grid grid-cols-3 gap-4">
+          {[...Array(3)].map((_, i) => (
+            <Skeleton key={i} className="h-24 rounded-2xl bg-[#F1F5F9]" />
+          ))}
+        </div>
+        {/* Quick actions skeleton */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {[...Array(4)].map((_, i) => (
+            <Skeleton key={i} className="h-20 rounded-2xl bg-[#F1F5F9]" />
+          ))}
+        </div>
       </div>
     );
   }
@@ -69,37 +96,45 @@ export default function AdminDashboard() {
       title: "Total Users",
       value: stats.totalUsers,
       icon: Users,
-      gradient: "from-primary/15 to-primary/5",
-      iconBg: "bg-primary/15",
-      iconColor: "text-primary",
-      valueColor: "text-primary",
+      change: "+12%",
+      changePositive: true,
+      iconBg: "bg-[#EFF6FF]",
+      iconColor: "text-[#2563EB]",
+      valueColor: "text-[#0F172A]",
+      accentBar: "bg-[#2563EB]",
     },
     {
       title: "Applicants",
       value: stats.applicants,
       icon: Users,
-      gradient: "from-chart-2/15 to-chart-2/5",
-      iconBg: "bg-chart-2/15",
-      iconColor: "text-chart-2",
-      valueColor: "text-chart-2",
+      change: "+8%",
+      changePositive: true,
+      iconBg: "bg-[#ECFDF5]",
+      iconColor: "text-emerald-600",
+      valueColor: "text-[#0F172A]",
+      accentBar: "bg-emerald-500",
     },
     {
       title: "Employers",
       value: stats.employers,
       icon: Briefcase,
-      gradient: "from-chart-3/15 to-chart-3/5",
-      iconBg: "bg-chart-3/15",
-      iconColor: "text-chart-3",
-      valueColor: "text-chart-3",
+      change: "+5%",
+      changePositive: true,
+      iconBg: "bg-[#FFF7ED]",
+      iconColor: "text-orange-500",
+      valueColor: "text-[#0F172A]",
+      accentBar: "bg-orange-400",
     },
     {
       title: "Admins",
       value: stats.admins,
       icon: Shield,
-      gradient: "from-chart-4/15 to-chart-4/5",
-      iconBg: "bg-chart-4/15",
-      iconColor: "text-chart-4",
-      valueColor: "text-chart-4",
+      change: "0%",
+      changePositive: true,
+      iconBg: "bg-[#F5F3FF]",
+      iconColor: "text-violet-600",
+      valueColor: "text-[#0F172A]",
+      accentBar: "bg-violet-500",
     },
   ];
 
@@ -107,26 +142,32 @@ export default function AdminDashboard() {
     {
       title: "Total Jobs",
       value: stats.totalJobs,
+      label: "All listings",
       icon: FileText,
-      color: "text-primary",
-      bg: "bg-primary/10",
-      border: "border-primary/20",
+      iconBg: "bg-[#EFF6FF]",
+      iconColor: "text-[#2563EB]",
+      valueColor: "text-[#0F172A]",
+      borderAccent: "border-l-[#2563EB]",
     },
     {
       title: "Active Jobs",
       value: stats.activeJobs,
+      label: "Currently live",
       icon: Activity,
-      color: "text-chart-2",
-      bg: "bg-chart-2/10",
-      border: "border-chart-2/20",
+      iconBg: "bg-[#ECFDF5]",
+      iconColor: "text-emerald-600",
+      valueColor: "text-[#0F172A]",
+      borderAccent: "border-l-emerald-500",
     },
     {
       title: "Flagged Jobs",
       value: stats.flaggedJobs,
+      label: "Needs review",
       icon: ShieldAlert,
-      color: "text-destructive",
-      bg: "bg-destructive/10",
-      border: "border-destructive/20",
+      iconBg: "bg-[#FEF2F2]",
+      iconColor: "text-red-500",
+      valueColor: "text-red-600",
+      borderAccent: "border-l-red-500",
     },
   ];
 
@@ -136,156 +177,262 @@ export default function AdminDashboard() {
       href: "/admin/users",
       icon: Users,
       desc: "View, search, and manage platform users",
-      color: "group-hover:text-primary",
-      iconBg: "bg-primary/10 group-hover:bg-primary/20",
+      iconBg: "bg-[#EFF6FF]",
+      iconColor: "text-[#2563EB]",
+      badge: null,
     },
     {
       label: "Platform Jobs",
       href: "/admin/jobs",
       icon: FileText,
       desc: "Moderate and manage all job listings",
-      color: "group-hover:text-chart-2",
-      iconBg: "bg-chart-2/10 group-hover:bg-chart-2/20",
+      iconBg: "bg-[#ECFDF5]",
+      iconColor: "text-emerald-600",
+      badge: null,
     },
     {
       label: "Fraud Monitor",
       href: "/admin/fraud-monitor",
       icon: ShieldAlert,
       desc: "Review AI-flagged suspicious job postings",
-      color: "group-hover:text-destructive",
-      iconBg: "bg-destructive/10 group-hover:bg-destructive/20",
+      iconBg: "bg-[#FEF2F2]",
+      iconColor: "text-red-500",
+      badge: stats.flaggedJobs > 0 ? stats.flaggedJobs.toString() : null,
     },
     {
       label: "Add Admin",
       href: "/admin/add-admin",
       icon: UserPlus,
       desc: "Create new administrator accounts",
-      color: "group-hover:text-chart-4",
-      iconBg: "bg-chart-4/10 group-hover:bg-chart-4/20",
+      iconBg: "bg-[#F5F3FF]",
+      iconColor: "text-violet-600",
+      badge: null,
     },
   ];
 
   return (
-    <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
-      {/* Header */}
-      <div className="flex items-start justify-between">
+    <div className="space-y-8 animate-in fade-in slide-in-from-bottom-3 duration-500">
+      {/* ── Page Header ── */}
+      <div className="flex items-start justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight text-foreground mb-1">
-            Admin Dashboard
+          <h1 className="text-2xl font-bold text-[#0F172A] tracking-tight">
+            Dashboard Overview
           </h1>
-          <p className="text-muted-foreground">
-            Platform overview and quick actions
+          <p className="text-sm text-[#475569] mt-1">
+            Welcome back. Here's what's happening on the platform.
           </p>
         </div>
-        <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-card border border-border text-xs text-muted-foreground">
-          <Activity className="w-3.5 h-3.5 text-primary animate-pulse" />
-          Live
+        <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white border border-[#E2E8F0] text-xs text-[#475569] shadow-sm shrink-0">
+          <Activity className="w-3.5 h-3.5 text-emerald-500 animate-pulse" />
+          <span className="font-medium">Live</span>
         </div>
       </div>
 
       {/* ── User KPI Cards ── */}
-      <div>
-        <div className="flex items-center gap-2 mb-4">
-          <TrendingUp className="w-4 h-4 text-primary" />
-          <h2 className="text-sm font-bold text-muted-foreground uppercase tracking-wider">
-            User Analytics
-          </h2>
+      <section>
+        {/* Section Label */}
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-2">
+            <div className="w-5 h-5 rounded-md bg-[#EFF6FF] flex items-center justify-center">
+              <TrendingUp className="w-3 h-3 text-[#2563EB]" />
+            </div>
+            <h2 className="text-xs font-bold text-[#94A3B8] uppercase tracking-[0.08em]">
+              User Analytics
+            </h2>
+          </div>
         </div>
+
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
           {kpiCards.map((card, idx) => (
             <div
               key={card.title}
-              className={`relative overflow-hidden rounded-xl border border-border bg-gradient-to-br ${card.gradient} p-5 shadow-sm hover:shadow-md hover:scale-[1.02] transition-all duration-300`}
-              style={{ animationDelay: `${idx * 100}ms` }}
+              className="relative bg-white rounded-2xl border border-[#E2E8F0] p-5 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 overflow-hidden"
+              style={{ animationDelay: `${idx * 60}ms` }}
             >
-              <div className="flex items-start justify-between mb-4">
-                <div
-                  className={`w-10 h-10 rounded-xl ${card.iconBg} flex items-center justify-center`}
-                >
-                  <card.icon className={`w-5 h-5 ${card.iconColor}`} />
-                </div>
-              </div>
-              <div className={`text-3xl font-bold ${card.valueColor} mb-1`}>
-                {card.value.toLocaleString()}
-              </div>
-              <div className="text-xs text-muted-foreground font-medium uppercase tracking-wider">
-                {card.title}
+              {/* Top accent bar */}
+              <div
+                className={`absolute top-0 left-5 right-5 h-0.5 rounded-b-full ${card.accentBar} opacity-70`}
+              />
+
+              {/* Icon */}
+              <div
+                className={`w-9 h-9 rounded-xl ${card.iconBg} flex items-center justify-center mb-4`}
+              >
+                <card.icon
+                  className={`w-4.5 h-4.5 ${card.iconColor}`}
+                  strokeWidth={1.8}
+                />
               </div>
 
-              {/* Decorative corner circle */}
+              {/* Value */}
               <div
-                className={`absolute -top-6 -right-6 w-20 h-20 rounded-full ${card.iconBg} opacity-40`}
-              />
+                className={`text-2xl font-bold ${card.valueColor} leading-none mb-1`}
+              >
+                {card.value.toLocaleString()}
+              </div>
+
+              {/* Title + Change */}
+              <div className="flex items-end justify-between gap-2 mt-2">
+                <p className="text-xs text-[#94A3B8] font-medium leading-tight">
+                  {card.title}
+                </p>
+                {card.change !== "0%" && (
+                  <span className="text-[10px] font-semibold text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded-md shrink-0">
+                    {card.change}
+                  </span>
+                )}
+              </div>
             </div>
           ))}
         </div>
-      </div>
+      </section>
 
       {/* ── Job Stats ── */}
-      <div>
+      <section>
         <div className="flex items-center gap-2 mb-4">
-          <FileText className="w-4 h-4 text-primary" />
-          <h2 className="text-sm font-bold text-muted-foreground uppercase tracking-wider">
+          <div className="w-5 h-5 rounded-md bg-[#EFF6FF] flex items-center justify-center">
+            <BarChart3 className="w-3 h-3 text-[#2563EB]" />
+          </div>
+          <h2 className="text-xs font-bold text-[#94A3B8] uppercase tracking-[0.08em]">
             Job Analytics
           </h2>
         </div>
-        <div className="grid grid-cols-3 gap-4">
+
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           {jobCards.map((card) => (
             <div
               key={card.title}
-              className={`rounded-xl border ${card.border} ${card.bg} p-5 text-center hover:shadow-md transition-all duration-300`}
+              className={`bg-white rounded-2xl border border-[#E2E8F0] border-l-4 ${card.borderAccent} p-5 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 flex items-center gap-4`}
             >
               <div
-                className={`w-10 h-10 mx-auto rounded-xl ${card.bg} flex items-center justify-center mb-3`}
+                className={`w-10 h-10 rounded-xl ${card.iconBg} flex items-center justify-center shrink-0`}
               >
-                <card.icon className={`w-5 h-5 ${card.color}`} />
+                <card.icon
+                  className={`w-5 h-5 ${card.iconColor}`}
+                  strokeWidth={1.8}
+                />
               </div>
-              <div className={`text-3xl font-bold ${card.color} mb-1`}>
-                {card.value}
-              </div>
-              <div className="text-xs text-muted-foreground font-medium uppercase tracking-wider">
-                {card.title}
+              <div className="min-w-0">
+                <div
+                  className={`text-2xl font-bold ${card.valueColor} leading-none`}
+                >
+                  {card.value.toLocaleString()}
+                </div>
+                <div className="text-xs font-semibold text-[#0F172A] mt-0.5">
+                  {card.title}
+                </div>
+                <div className="text-[11px] text-[#94A3B8] mt-0.5">
+                  {card.label}
+                </div>
               </div>
             </div>
           ))}
         </div>
-      </div>
+      </section>
 
       {/* ── Quick Actions ── */}
-      <div>
-        <div className="flex items-center gap-2 mb-4">
-          <ArrowRight className="w-4 h-4 text-primary" />
-          <h2 className="text-sm font-bold text-muted-foreground uppercase tracking-wider">
-            Quick Actions
-          </h2>
+      <section>
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-2">
+            <div className="w-5 h-5 rounded-md bg-[#EFF6FF] flex items-center justify-center">
+              <ArrowRight className="w-3 h-3 text-[#2563EB]" />
+            </div>
+            <h2 className="text-xs font-bold text-[#94A3B8] uppercase tracking-[0.08em]">
+              Quick Actions
+            </h2>
+          </div>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
           {quickLinks.map((link) => (
             <Link
               key={link.href}
               href={link.href}
-              className="group bg-card border border-border rounded-xl p-5 hover:border-primary/30 hover:shadow-lg transition-all duration-300 flex items-start gap-4"
+              className="group bg-white border border-[#E2E8F0] rounded-2xl p-4 hover:border-[#BFDBFE] hover:shadow-md transition-all duration-300 flex items-center gap-4"
             >
+              {/* Icon */}
               <div
-                className={`w-11 h-11 rounded-xl ${link.iconBg} flex items-center justify-center shrink-0 transition-colors duration-300`}
+                className={`w-11 h-11 rounded-xl ${link.iconBg} flex items-center justify-center shrink-0 transition-transform duration-200 group-hover:scale-105`}
               >
                 <link.icon
-                  className={`w-5 h-5 text-muted-foreground ${link.color} transition-colors duration-300`}
+                  className={`w-5 h-5 ${link.iconColor}`}
+                  strokeWidth={1.8}
                 />
               </div>
+
+              {/* Text */}
               <div className="flex-1 min-w-0">
-                <h3
-                  className={`font-semibold text-foreground mb-0.5 ${link.color} transition-colors`}
-                >
-                  {link.label}
-                </h3>
-                <p className="text-sm text-muted-foreground line-clamp-1">
+                <div className="flex items-center gap-2">
+                  <h3 className="text-sm font-semibold text-[#0F172A] group-hover:text-[#2563EB] transition-colors duration-200">
+                    {link.label}
+                  </h3>
+                  {link.badge && (
+                    <Badge
+                      variant="destructive"
+                      className="text-[10px] px-1.5 py-0 h-4 rounded-md"
+                    >
+                      {link.badge}
+                    </Badge>
+                  )}
+                </div>
+                <p className="text-xs text-[#94A3B8] mt-0.5 truncate">
                   {link.desc}
                 </p>
               </div>
-              <ArrowRight className="w-4 h-4 text-muted-foreground/40 group-hover:text-primary group-hover:translate-x-1 transition-all duration-300 mt-1 shrink-0" />
+
+              {/* Arrow */}
+              <ChevronRight className="w-4 h-4 text-[#CBD5E1] group-hover:text-[#2563EB] group-hover:translate-x-0.5 transition-all duration-200 shrink-0" />
             </Link>
           ))}
+        </div>
+      </section>
+
+      {/* ── Platform Health Footer Strip ── */}
+      <div className="bg-white border border-[#E2E8F0] rounded-2xl px-5 py-4 shadow-sm">
+        <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
+          <div className="flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+            <span className="text-xs font-medium text-[#475569]">
+              Platform Online
+            </span>
+          </div>
+          <Separator
+            orientation="vertical"
+            className="h-4 bg-[#E2E8F0] hidden sm:block"
+          />
+          <div className="flex items-center gap-1.5">
+            <span className="text-xs text-[#94A3B8]">Total Users:</span>
+            <span className="text-xs font-bold text-[#0F172A]">
+              {stats.totalUsers.toLocaleString()}
+            </span>
+          </div>
+          <div className="flex items-center gap-1.5">
+            <span className="text-xs text-[#94A3B8]">Active Jobs:</span>
+            <span className="text-xs font-bold text-[#0F172A]">
+              {stats.activeJobs.toLocaleString()}
+            </span>
+          </div>
+          {stats.flaggedJobs > 0 && (
+            <>
+              <Separator
+                orientation="vertical"
+                className="h-4 bg-[#E2E8F0] hidden sm:block"
+              />
+              <Link
+                href="/admin/fraud-monitor"
+                className="flex items-center gap-1.5 text-xs font-medium text-red-500 hover:text-red-600 transition-colors"
+              >
+                <ShieldAlert className="w-3.5 h-3.5" strokeWidth={2} />
+                {stats.flaggedJobs} job
+                {stats.flaggedJobs > 1 ? "s" : ""} need review
+              </Link>
+            </>
+          )}
+          <div className="ml-auto">
+            <span className="text-[11px] text-[#CBD5E1]">
+              Last refreshed just now
+            </span>
+          </div>
         </div>
       </div>
     </div>

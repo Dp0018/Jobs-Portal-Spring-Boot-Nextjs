@@ -15,6 +15,7 @@ import {
   CommandList,
 } from "@/components/ui/command";
 import { IconAdjustments, IconCheck } from "@tabler/icons-react";
+import { ChevronDown } from "lucide-react";
 import { useDispatch } from "react-redux";
 import { cn } from "@/lib/utils";
 import { updateSort } from "@/modules/redux/sort-slice";
@@ -41,7 +42,7 @@ export const Sort = (props: any) => {
   const sortOptions = props.sort === "job" ? jobSortOptions : talentSortOptions;
 
   const filtered = sortOptions.filter((item) =>
-    item.toLowerCase().includes(search.toLowerCase().trim())
+    item.toLowerCase().includes(search.toLowerCase().trim()),
   );
 
   const handleSelect = (val: string) => {
@@ -54,40 +55,50 @@ export const Sort = (props: any) => {
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
-        {/* Trigger — replaces Combobox.Target */}
         <button
           type="button"
-          className="flex items-center gap-2 px-4 py-2.5 bg-muted/30 hover:bg-muted/50 border border-border/30 hover:border-primary/30 rounded-lg transition-all duration-300 group backdrop-blur-sm"
+          className={cn(
+            "flex items-center gap-2 h-9 px-3.5 rounded-xl border text-sm font-medium transition-all duration-200",
+            open
+              ? "bg-white border-[#2563EB] text-[#2563EB] ring-2 ring-[#2563EB]/10"
+              : "bg-white border-[#E2E8F0] text-[#475569] hover:border-[#2563EB]/40 hover:text-[#0F172A]",
+          )}
         >
           <IconAdjustments
             className={cn(
-              "w-5 h-5 text-primary transition-transform duration-300",
-              open && "rotate-90",
+              "w-4 h-4 transition-all duration-200",
+              open ? "text-[#2563EB] rotate-90" : "text-[#94A3B8]",
             )}
+            stroke={1.8}
           />
-          <span className="text-foreground font-medium capitalize text-sm">
-            {selected}
-          </span>
+          <span className="capitalize hidden sm:inline">{selected}</span>
+          <ChevronDown
+            className={cn(
+              "w-3.5 h-3.5 transition-transform duration-200",
+              open ? "rotate-180 text-[#2563EB]" : "text-[#CBD5E1]",
+            )}
+            strokeWidth={2}
+          />
         </button>
       </PopoverTrigger>
 
       <PopoverContent
         align="end"
-        sideOffset={8}
-        className="p-0 w-72 bg-popover border border-border/30 rounded-xl shadow-2xl overflow-hidden backdrop-blur-xl"
+        sideOffset={6}
+        className="p-0 w-56 bg-white border border-[#E2E8F0] rounded-xl shadow-lg overflow-hidden"
       >
         <Command className="bg-transparent">
-          <div className="border-b border-border/30">
+          <div className="border-b border-[#F1F5F9]">
             <CommandInput
               value={search}
               onValueChange={setSearch}
               placeholder="Search options…"
-              className="h-9 bg-accent/50 text-foreground placeholder:text-muted-foreground text-sm"
+              className="h-9 bg-[#F8FAFC] text-[#0F172A] placeholder:text-[#CBD5E1] text-sm"
             />
           </div>
 
-          <CommandList className="max-h-[200px] py-1">
-            <CommandEmpty className="py-4 text-center text-sm text-muted-foreground">
+          <CommandList className="max-h-[200px] py-1.5">
+            <CommandEmpty className="py-6 text-center text-xs text-[#94A3B8]">
               No options found
             </CommandEmpty>
 
@@ -97,11 +108,15 @@ export const Sort = (props: any) => {
                   key={item}
                   value={item}
                   onSelect={() => handleSelect(item)}
-                  className="flex items-center justify-between mx-1 px-3 py-2.5 rounded-lg cursor-pointer text-sm capitalize text-foreground hover:bg-primary/10 aria-selected:bg-primary/10 transition-colors"
+                  className="flex items-center justify-between mx-1.5 px-2.5 py-2 rounded-lg cursor-pointer text-xs capitalize text-[#0F172A] hover:bg-[#F8FAFC] aria-selected:bg-[#F8FAFC] transition-colors"
                 >
                   <span>{item}</span>
                   {selected === item && (
-                    <IconCheck size={14} className="text-primary shrink-0" />
+                    <IconCheck
+                      size={13}
+                      className="text-[#2563EB] shrink-0"
+                      stroke={2.5}
+                    />
                   )}
                 </CommandItem>
               ))}

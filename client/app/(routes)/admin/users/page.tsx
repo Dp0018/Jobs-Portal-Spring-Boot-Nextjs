@@ -1,7 +1,13 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Loader2, Search, Trash2, Shield, Users as UsersIcon } from "lucide-react";
+import {
+  Loader2,
+  Search,
+  Trash2,
+  Shield,
+  Users as UsersIcon,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { getAllUsers, deleteUser } from "@/modules/admin/server/admin-service";
@@ -30,7 +36,12 @@ export default function AdminUsersPage() {
   }, [roleFilter]);
 
   const handleDelete = (id: number, name: string) => {
-    if (!confirm(`Are you sure you want to delete user "${name}"? This action cannot be undone.`)) return;
+    if (
+      !confirm(
+        `Are you sure you want to delete user "${name}"? This action cannot be undone.`,
+      )
+    )
+      return;
     deleteUser(id)
       .then(() => {
         successNotification("User Deleted", `${name} has been removed.`);
@@ -41,25 +52,34 @@ export default function AdminUsersPage() {
       });
   };
 
-  const filtered = users.filter((u) =>
-    (u.name || "").toLowerCase().includes(search.toLowerCase()) ||
-    (u.email || "").toLowerCase().includes(search.toLowerCase())
+  const filtered = users.filter(
+    (u) =>
+      (u.name || "").toLowerCase().includes(search.toLowerCase()) ||
+      (u.email || "").toLowerCase().includes(search.toLowerCase()),
   );
 
   const roleBadgeStyle = (role: string) => {
     switch (role) {
-      case "ADMIN": return "bg-chart-4/10 text-chart-4 border-chart-4/20";
-      case "EMPLOYER": return "bg-chart-1/10 text-chart-1 border-chart-1/20";
-      case "APPLICANT": return "bg-chart-2/10 text-chart-2 border-chart-2/20";
-      default: return "bg-muted text-muted-foreground";
+      case "ADMIN":
+        return "bg-chart-4/10 text-chart-4 border-chart-4/20";
+      case "EMPLOYER":
+        return "bg-chart-1/10 text-chart-1 border-chart-1/20";
+      case "APPLICANT":
+        return "bg-chart-2/10 text-chart-2 border-chart-2/20";
+      default:
+        return "bg-muted text-muted-foreground";
     }
   };
 
   return (
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight text-foreground mb-2">User Management</h1>
-        <p className="text-muted-foreground">View and manage all platform users.</p>
+        <h1 className="text-3xl font-bold tracking-tight text-foreground mb-2">
+          User Management
+        </h1>
+        <p className="text-muted-foreground">
+          View and manage all platform users.
+        </p>
       </div>
 
       {/* Filters */}
@@ -97,22 +117,46 @@ export default function AdminUsersPage() {
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-border bg-muted/50">
-                  <th className="text-left px-6 py-4 font-semibold text-muted-foreground uppercase tracking-wider text-xs">ID</th>
-                  <th className="text-left px-6 py-4 font-semibold text-muted-foreground uppercase tracking-wider text-xs">Name</th>
-                  <th className="text-left px-6 py-4 font-semibold text-muted-foreground uppercase tracking-wider text-xs">Email</th>
-                  <th className="text-left px-6 py-4 font-semibold text-muted-foreground uppercase tracking-wider text-xs">Role</th>
-                  <th className="text-right px-6 py-4 font-semibold text-muted-foreground uppercase tracking-wider text-xs">Actions</th>
+                  <th className="text-left px-6 py-4 font-semibold text-muted-foreground uppercase tracking-wider text-xs">
+                    ID
+                  </th>
+                  <th className="text-left px-6 py-4 font-semibold text-muted-foreground uppercase tracking-wider text-xs">
+                    Name
+                  </th>
+                  <th className="text-left px-6 py-4 font-semibold text-muted-foreground uppercase tracking-wider text-xs">
+                    Email
+                  </th>
+                  <th className="text-left px-6 py-4 font-semibold text-muted-foreground uppercase tracking-wider text-xs">
+                    Role
+                  </th>
+                  <th className="text-right px-6 py-4 font-semibold text-muted-foreground uppercase tracking-wider text-xs">
+                    Actions
+                  </th>
                 </tr>
               </thead>
               <tbody>
                 {filtered.map((user) => (
-                  <tr key={user.id} className="border-b border-border/50 hover:bg-accent/50 transition-colors">
-                    <td className="px-6 py-4 font-mono text-xs text-muted-foreground">#{user.id}</td>
-                    <td className="px-6 py-4 font-medium text-foreground capitalize">{user.name}</td>
-                    <td className="px-6 py-4 text-muted-foreground">{user.email}</td>
+                  <tr
+                    key={user.id}
+                    className="border-b border-border/50 hover:bg-accent/50 transition-colors"
+                  >
+                    <td className="px-6 py-4 font-mono text-xs text-muted-foreground">
+                      #{user.id}
+                    </td>
+                    <td className="px-6 py-4 font-medium text-foreground capitalize">
+                      {user.name}
+                    </td>
+                    <td className="px-6 py-4 text-muted-foreground">
+                      {user.email}
+                    </td>
                     <td className="px-6 py-4">
-                      <Badge variant="outline" className={`${roleBadgeStyle(user.accountType)} text-xs font-bold`}>
-                        {user.accountType === "ADMIN" && <Shield className="w-3 h-3 mr-1" />}
+                      <Badge
+                        variant="outline"
+                        className={`${roleBadgeStyle(user.accountType)} text-xs font-bold`}
+                      >
+                        {user.accountType === "ADMIN" && (
+                          <Shield className="w-3 h-3 mr-1" />
+                        )}
                         {user.accountType}
                       </Badge>
                     </td>
@@ -138,9 +182,13 @@ export default function AdminUsersPage() {
       ) : (
         <div className="p-12 text-center border-2 border-dashed border-border rounded-xl bg-card">
           <UsersIcon className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-          <h3 className="text-xl font-bold text-foreground mb-2">No Users Found</h3>
+          <h3 className="text-xl font-bold text-foreground mb-2">
+            No Users Found
+          </h3>
           <p className="text-muted-foreground">
-            {search ? "No users match your search criteria." : "No users on the platform yet."}
+            {search
+              ? "No users match your search criteria."
+              : "No users on the platform yet."}
           </p>
         </div>
       )}

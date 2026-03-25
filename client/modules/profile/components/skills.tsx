@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { changeProfile } from "@/modules/landing/server/profile-slice";
 import { successNotification } from "@/modules/notifications/server/notification-service";
 import { IconCheck, IconPencil, IconX } from "@tabler/icons-react";
-import { useState, useRef } from "react";
+import { useRef, useState } from "react";
 import { useDispatch } from "react-redux";
 
 export const Skills = ({ profile, edit }: any) => {
@@ -29,7 +29,6 @@ export const Skills = ({ profile, edit }: any) => {
     successNotification("Success", "Skills updated Successfully");
   };
 
-  /* Tag input helpers — replicates Mantine TagsInput with splitChars=[',',' ','|'] */
   const addSkill = (raw: string) => {
     const trimmed = raw.trim();
     if (trimmed && !skills.includes(trimmed)) {
@@ -42,7 +41,11 @@ export const Skills = ({ profile, edit }: any) => {
     if (e.key === "Enter" || e.key === "," || e.key === "|") {
       e.preventDefault();
       addSkill(inputValue);
-    } else if (e.key === "Backspace" && inputValue === "" && skills.length > 0) {
+    } else if (
+      e.key === "Backspace" &&
+      inputValue === "" &&
+      skills.length > 0
+    ) {
       setSkills((prev) => prev.slice(0, -1));
     }
   };
@@ -54,60 +57,63 @@ export const Skills = ({ profile, edit }: any) => {
     <div className="space-y-4">
       {/* Header */}
       <div className="flex justify-between items-center">
-        <h2 className="text-2xl font-bold text-foreground flex items-center gap-3">
-          <span className="w-1 h-8 bg-linear-to-b from-primary to-primary/50 rounded-full" />
+        <h2 className="text-lg font-bold text-stone-800 tracking-tight">
           Skills
         </h2>
-        <div className="flex gap-2">
+        <div className="flex gap-1.5">
           {isEditing && (
             <Button
-              size="icon"
+              size="sm"
               variant="ghost"
               onClick={handleSave}
-              className="h-9 w-9 text-green-400 hover:text-green-400 hover:bg-green-400/10 hover:scale-110 transition-all"
+              className="h-8 px-3 gap-1.5 text-emerald-700 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 rounded-lg text-xs font-medium"
             >
-              <IconCheck className="h-5 w-5" />
+              <IconCheck className="h-3.5 w-3.5" /> Save
             </Button>
           )}
           {edit && (
             <Button
-              size="icon"
+              size="sm"
               variant="ghost"
               onClick={handleEdit}
-              className={`h-9 w-9 hover:scale-110 transition-all ${
+              className={`h-8 px-3 gap-1.5 rounded-lg text-xs font-medium border ${
                 isEditing
-                  ? "text-destructive hover:text-destructive hover:bg-destructive/10"
-                  : "text-primary hover:text-primary hover:bg-primary/10"
+                  ? "text-red-600 bg-red-50 hover:bg-red-100 border-red-200"
+                  : "text-stone-600 bg-stone-50 hover:bg-stone-100 border-stone-200"
               }`}
             >
               {isEditing ? (
-                <IconX className="h-5 w-5" />
+                <>
+                  <IconX className="h-3.5 w-3.5" /> Cancel
+                </>
               ) : (
-                <IconPencil className="h-5 w-5" />
+                <>
+                  <IconPencil className="h-3.5 w-3.5" /> Edit
+                </>
               )}
             </Button>
           )}
         </div>
       </div>
 
-      {/* Tag Input — replaces Mantine TagsInput */}
+      {/* Tag Input */}
       {isEditing ? (
         <div
-          className="min-h-[48px] flex flex-wrap gap-2 p-3 rounded-lg bg-input/20 border border-border focus-within:ring-1 focus-within:ring-primary focus-within:border-primary cursor-text transition-all"
+          className="min-h-[48px] flex flex-wrap gap-2 p-3 rounded-xl bg-stone-50 border border-stone-200 focus-within:ring-2 focus-within:ring-amber-300 focus-within:border-amber-400 cursor-text transition-all"
           onClick={() => inputRef.current?.focus()}
         >
           {skills.map((skill, idx) => (
             <span
               key={idx}
-              className="inline-flex items-center gap-1.5 px-3 py-1 bg-primary/20 border border-primary/30 text-primary text-sm rounded-lg"
+              className="inline-flex items-center gap-1.5 px-3 py-1 bg-amber-100 border border-amber-300 text-amber-800 text-sm rounded-lg font-medium"
             >
               {skill}
               <button
                 type="button"
                 onClick={() => removeSkill(idx)}
-                className="text-primary/60 hover:text-primary transition-colors"
+                className="text-amber-500 hover:text-amber-700 transition-colors"
               >
-                <IconX size={12} />
+                <IconX size={11} />
               </button>
             </span>
           ))}
@@ -118,28 +124,29 @@ export const Skills = ({ profile, edit }: any) => {
             onKeyDown={handleKeyDown}
             onBlur={() => inputValue.trim() && addSkill(inputValue)}
             placeholder={
-              skills.length === 0 ? "Add skill (Enter or comma)" : ""
+              skills.length === 0
+                ? "Add skills — press Enter or comma to add"
+                : ""
             }
-            className="flex-1 min-w-[180px] bg-transparent outline-none text-sm text-foreground placeholder:text-muted-foreground"
+            className="flex-1 min-w-[200px] bg-transparent outline-none text-sm text-stone-700 placeholder:text-stone-400"
           />
         </div>
       ) : (
         /* View mode */
-        <div className="flex flex-wrap gap-3">
+        <div className="flex flex-wrap gap-2">
           {profile?.skills?.length > 0 ? (
             profile.skills.map((skill: string, id: number) => (
-              <div
+              <span
                 key={id}
-                className="group relative px-4 py-2 bg-linear-to-r from-primary/20 to-primary/10 border border-primary/30 rounded-xl text-primary font-medium text-sm hover:from-primary/30 hover:to-primary/20 hover:border-primary/50 transition-all duration-300 hover:scale-105 cursor-default"
+                className="px-3.5 py-1.5 bg-stone-100 border border-stone-200 text-stone-700 text-sm font-medium rounded-lg hover:bg-amber-50 hover:border-amber-300 hover:text-amber-800 transition-colors duration-200 cursor-default"
               >
-                <span className="relative z-10">{skill}</span>
-                <div className="absolute inset-0 bg-linear-to-r from-primary/5 to-transparent rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-              </div>
+                {skill}
+              </span>
             ))
           ) : (
-            <div className="text-muted-foreground text-sm italic">
+            <span className="text-stone-400 italic text-sm">
               No skills added yet.
-            </div>
+            </span>
           )}
         </div>
       )}

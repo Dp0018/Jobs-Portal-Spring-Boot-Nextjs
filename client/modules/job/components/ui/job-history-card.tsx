@@ -47,10 +47,18 @@ const getStatusIcon = (status: string) => {
   }
 };
 
-export const JobHistoryCard = ({ job, applicant }: { job: any; applicant: any }) => {
+export const JobHistoryCard = ({
+  job,
+  applicant,
+}: {
+  job: any;
+  applicant: any;
+}) => {
   // We use applicant's status if provided by the backend, otherwise default to APPLIED
   const status = applicant?.applicationStatus || "APPLIED";
-  const appliedDate = applicant?.dateConfig ? new Date(applicant?.dateConfig).toLocaleDateString() : timeAgo(job.postTime); // fallback
+  const appliedDate = applicant?.dateConfig
+    ? new Date(applicant?.dateConfig).toLocaleDateString()
+    : timeAgo(job.postTime); // fallback
 
   return (
     <div className="group bg-card/50 backdrop-blur-md border border-border/40 rounded-2xl p-5 hover:bg-card hover:border-primary/30 hover:shadow-lg hover:shadow-primary/5 transition-all duration-300 relative overflow-hidden flex flex-col sm:flex-row gap-5">

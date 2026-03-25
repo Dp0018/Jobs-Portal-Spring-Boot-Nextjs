@@ -37,7 +37,12 @@ export const ProfileMenu = () => {
   };
 
   const initials = user?.name
-    ? user.name.split(" ").map((n: string) => n[0]).join("").toUpperCase().slice(0, 2)
+    ? user.name
+        .split(" ")
+        .map((n: string) => n[0])
+        .join("")
+        .toUpperCase()
+        .slice(0, 2)
     : "U";
 
   return (
@@ -133,12 +138,14 @@ export const ProfileMenu = () => {
           </Link>
         )}
 
-        <Link href="/jhistory">
-          <DropdownMenuItem className="text-foreground hover:bg-accent focus:bg-accent focus:text-foreground rounded-lg transition-all duration-200 my-1 cursor-pointer gap-2">
-            <IconHistory size={18} stroke={1.5} />
-            <span className="font-medium">History</span>
-          </DropdownMenuItem>
-        </Link>
+        {user?.accountType === "APPLICANT" && (
+          <Link href="/jhistory">
+            <DropdownMenuItem className="text-foreground hover:bg-accent focus:bg-accent focus:text-foreground rounded-lg transition-all duration-200 my-1 cursor-pointer gap-2">
+              <IconHistory size={18} stroke={1.5} />
+              <span className="font-medium">History</span>
+            </DropdownMenuItem>
+          </Link>
+        )}
 
         <Link href="/profile">
           <DropdownMenuItem className="text-foreground hover:bg-accent focus:bg-accent focus:text-foreground rounded-lg transition-all duration-200 my-1 cursor-pointer gap-2">

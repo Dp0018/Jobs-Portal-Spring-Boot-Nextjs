@@ -4,7 +4,12 @@ import { Button } from "@/components/ui/button";
 import { formatDate } from "@/lib/format-date";
 import { changeProfile } from "@/modules/landing/server/profile-slice";
 import { successNotification } from "@/modules/notifications/server/notification-service";
-import { IconTrash, IconCalendar, IconId } from "@tabler/icons-react";
+import {
+  IconTrash,
+  IconCalendar,
+  IconId,
+  IconCertificate,
+} from "@tabler/icons-react";
 import { useDispatch, useSelector } from "react-redux";
 
 export const CertificationCard = (props: any) => {
@@ -19,62 +24,57 @@ export const CertificationCard = (props: any) => {
   };
 
   return (
-    <div className="group relative bg-linear-to-br from-muted/30 to-muted/20 backdrop-blur-sm border border-border/20 rounded-xl p-5 hover:border-primary/30 transition-all duration-300 hover:shadow-lg hover:shadow-primary/5">
-      <div className="flex items-center justify-between">
+    <div className="group flex items-center gap-4 bg-stone-50 rounded-2xl p-5 border border-stone-100 hover:border-sky-200 hover:bg-sky-50/30 transition-all duration-200">
+      {/* Issuer logo */}
+      <div className="shrink-0 w-12 h-12 bg-white rounded-xl shadow-sm border border-stone-100 flex items-center justify-center overflow-hidden">
+        <img
+          className="h-8 w-8 object-contain"
+          src={`/icons/${props.issuer}.png`}
+          alt={props.issuer}
+          onError={(e) => {
+            e.currentTarget.style.display = "none";
+            (e.currentTarget.nextSibling as HTMLElement).style.display = "flex";
+          }}
+        />
+        <span className="hidden w-full h-full items-center justify-center">
+          <IconCertificate className="w-5 h-5 text-sky-400" />
+        </span>
+      </div>
 
-        {/* Certificate Info */}
-        <div className="flex items-center gap-4 flex-1">
-          {/* Issuer Logo */}
-          <div className="p-3 bg-white rounded-xl shadow-lg shrink-0">
-            <img
-              className="h-10 w-10 object-contain"
-              src={`/icons/${props.issuer}.png`}
-              alt={props.issuer}
-              onError={(e) => { e.currentTarget.src = "/icons/default.png"; }}
-            />
-          </div>
+      {/* Details */}
+      <div className="flex-1 min-w-0">
+        <h3 className="font-semibold text-stone-800 text-[0.9375rem] leading-snug capitalize truncate">
+          {props.name}
+        </h3>
+        <p className="text-stone-500 text-sm capitalize mt-0.5">
+          {props.issuer}
+        </p>
 
-          {/* Certificate Details */}
-          <div className="flex-1">
-            <h3 className="text-lg font-bold text-foreground mb-1 capitalize">
-              {props.name}
-            </h3>
-            <p className="text-muted-foreground text-sm capitalize">{props.issuer}</p>
-          </div>
-        </div>
-
-        {/* Date, ID & Delete */}
-        <div className="flex items-center gap-4">
-          <div className="flex flex-col items-end gap-2">
-            {/* Issue Date */}
-            <div className="flex items-center gap-2 text-muted-foreground text-sm bg-muted/30 px-3 py-1.5 rounded-lg border border-border/20">
-              <IconCalendar className="w-4 h-4" />
-              <span>{formatDate(props.issueDate)}</span>
-            </div>
-
-            {/* Certificate ID */}
-            <div className="flex items-center gap-2 text-primary text-xs bg-primary/10 px-3 py-1.5 rounded-lg border border-primary/20">
-              <IconId className="w-3.5 h-3.5" />
-              <span className="font-mono">ID: {props.certificateId}</span>
-            </div>
-          </div>
-
-          {/* Delete — replaces Mantine ActionIcon color="red" */}
-          {props.edit && (
-            <Button
-              size="icon"
-              variant="ghost"
-              onClick={handleDelete}
-              className="h-9 w-9 text-destructive hover:text-destructive hover:bg-destructive/10 hover:scale-110 transition-all"
-            >
-              <IconTrash className="h-5 w-5" />
-            </Button>
-          )}
+        {/* Badges row */}
+        <div className="flex flex-wrap gap-2 mt-2.5">
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-white border border-stone-200 text-stone-500 text-xs rounded-lg">
+            <IconCalendar className="w-3 h-3" />
+            {formatDate(props.issueDate)}
+          </span>
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-sky-50 border border-sky-200 text-sky-700 text-xs rounded-lg font-mono">
+            <IconId className="w-3 h-3" />
+            {props.certificateId}
+          </span>
         </div>
       </div>
 
-      {/* Hover Effect */}
-      <div className="absolute inset-0 bg-linear-to-r from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-xl pointer-events-none" />
+      {/* Delete */}
+      {props.edit && (
+        <Button
+          size="sm"
+          variant="ghost"
+          onClick={handleDelete}
+          className="shrink-0 h-8 px-3 gap-1.5 text-red-500 bg-red-50 hover:bg-red-100 border border-red-200 rounded-lg text-xs font-medium opacity-0 group-hover:opacity-100 transition-opacity"
+        >
+          <IconTrash className="h-3.5 w-3.5" />
+          Delete
+        </Button>
+      )}
     </div>
   );
 };

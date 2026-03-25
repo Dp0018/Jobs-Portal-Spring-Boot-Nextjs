@@ -4,6 +4,7 @@ import {
   IconArrowNarrowLeft,
   IconBriefcase,
   IconUsers,
+  IconStar,
 } from "@tabler/icons-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
@@ -36,148 +37,168 @@ export const SignUpView = () => {
   const isSignup = pathname === "/signup";
 
   return (
-    <div className="relative min-h-screen overflow-hidden bg-background">
-      {/* Animated background blobs */}
-      <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute -top-40 -right-40 w-[600px] h-[600px] bg-primary/10 rounded-full blur-3xl animate-pulse" />
+    <div className="relative min-h-screen overflow-hidden bg-[#F0F4FF]">
+      {/* Subtle decorative background */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        {/* Top-right soft blob */}
+        <div className="absolute -top-32 -right-32 w-[500px] h-[500px] rounded-full bg-primary/8 blur-[80px]" />
+        {/* Bottom-left soft blob */}
+        <div className="absolute -bottom-32 -left-32 w-[500px] h-[500px] rounded-full bg-primary/6 blur-[80px]" />
+        {/* Dot grid pattern */}
         <div
-          className="absolute -bottom-40 -left-40 w-[600px] h-[600px] bg-primary/10 rounded-full blur-3xl animate-pulse"
-          style={{ animationDelay: "1.5s" }}
-        />
-        <div
-          className="absolute top-1/3 right-1/4 w-[400px] h-[400px] bg-primary/5 rounded-full blur-3xl animate-pulse"
-          style={{ animationDelay: "3s" }}
+          className="absolute inset-0 opacity-[0.35]"
+          style={{
+            backgroundImage: `radial-gradient(circle, #2563EB18 1px, transparent 1px)`,
+            backgroundSize: "28px 28px",
+          }}
         />
       </div>
 
-      {/* Grid pattern */}
-      <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(0,0,0,0.04)_1px,transparent_1px),linear-gradient(to_bottom,rgba(0,0,0,0.04)_1px,transparent_1px)] dark:bg-[linear-gradient(to_right,rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:40px_40px]" />
-
-      {/* Home button */}
+      {/* Back to Home button */}
       <Button
         onClick={() => router.push("/")}
         variant="outline"
-        className="absolute left-4 sm:left-6 top-4 sm:top-6 z-10 bg-card/60 backdrop-blur-md border-border/50 hover:bg-card hover:border-primary/40 transition-all duration-300 text-foreground"
+        className="absolute left-4 sm:left-6 top-4 sm:top-6 z-20 bg-white/90 border-[#E2E8F0] hover:bg-white hover:border-primary/40 hover:text-primary transition-all duration-200 text-[#475569] shadow-sm text-sm font-medium"
       >
-        <IconArrowNarrowLeft size={18} className="mr-1" />
+        <IconArrowNarrowLeft size={16} className="mr-1.5" />
         Home
       </Button>
 
-      {/* Main container */}
+      {/* Main wrapper — centers the auth card */}
       <div className="relative w-full min-h-screen flex items-center justify-center p-4 md:p-8">
-        <div className="w-full max-w-7xl min-h-[500px] lg:h-[680px] flex flex-col lg:flex-row rounded-2xl lg:rounded-[2.5rem] overflow-hidden shadow-[0_20px_60px_rgba(0,0,0,0.5)] border border-border/50">
-          {/* Mobile Layout */}
+        <div
+          className="w-full max-w-5xl min-h-[540px] lg:h-[660px] flex flex-col lg:flex-row rounded-2xl overflow-hidden"
+          style={{
+            boxShadow:
+              "0 4px 6px -1px rgba(0,0,0,0.07), 0 20px 50px -10px rgba(37,99,235,0.15), 0 0 0 1px rgba(226,232,240,0.8)",
+          }}
+        >
+          {/* ── MOBILE LAYOUT ── */}
           <div className="lg:hidden w-full flex flex-col">
-            <div className="bg-linear-to-r from-primary to-primary/80 p-6 text-center">
-              <div className="flex gap-2 items-center justify-center mb-2">
+            {/* Mobile brand header */}
+            <div className="bg-primary px-6 py-5 flex items-center justify-between">
+              <div className="flex items-center gap-2.5">
                 <Image
                   src="/Logo.svg"
                   alt="Joblify Logo"
-                  width={32}
-                  height={32}
+                  width={28}
+                  height={28}
                 />
-                <span className="text-2xl font-bold font-roboto text-primary-foreground">
+                <span className="text-xl font-bold text-white tracking-tight">
                   Joblify
                 </span>
               </div>
-              <p className="text-primary-foreground/90 text-sm">
-                {isSignup ? "Create your account" : "Sign in to continue"}
-              </p>
+              <span className="text-white/70 text-sm">
+                {isSignup ? "Create account" : "Sign in"}
+              </span>
             </div>
-            <div className="flex-1 bg-card/40 backdrop-blur-xl">
+            {/* Mobile form */}
+            <div className="flex-1 bg-white">
               {isSignup ? <Signup /> : <Login />}
             </div>
           </div>
 
-          {/* Desktop Layout - Sliding animation */}
+          {/* ── DESKTOP LAYOUT — sliding panels ── */}
           <div
-            className={`hidden lg:flex w-full h-full transition-transform duration-1000 ease-in-out ${
+            className={`hidden lg:flex w-full h-full transition-transform duration-700 ease-in-out ${
               isSignup ? "-translate-x-1/2" : "translate-x-0"
             }`}
           >
-            {/* Login Form */}
-            <div className="w-1/2 shrink-0 bg-card/40 backdrop-blur-xl border-r border-border/30">
+            {/* Panel 1 — Login Form */}
+            <div className="w-1/2 shrink-0 bg-white border-r border-[#E2E8F0]">
               <Login />
             </div>
 
-            {/* Center Branding Panel */}
-            <div className="relative w-1/2 shrink-0 bg-linear-to-br from-primary to-primary/80 transition-all duration-700 ease-in-out overflow-hidden">
-              <div className="absolute inset-0">
-                <div className="absolute -top-20 -right-20 w-80 h-80 rounded-full blur-3xl bg-white/10 transition-all duration-700" />
-                <div className="absolute -bottom-20 -left-20 w-80 h-80 rounded-full blur-3xl bg-black/20 transition-all duration-700" />
+            {/* Panel 2 — Center Branding (always visible, switches sides) */}
+            <div className="relative w-1/2 shrink-0 bg-primary overflow-hidden">
+              {/* Decorative shapes */}
+              <div className="absolute inset-0 pointer-events-none">
+                <div className="absolute -top-24 -right-24 w-72 h-72 rounded-full bg-white/10 blur-2xl" />
+                <div className="absolute -bottom-24 -left-24 w-72 h-72 rounded-full bg-black/15 blur-2xl" />
+                <div
+                  className="absolute inset-0 opacity-[0.07]"
+                  style={{
+                    backgroundImage: `repeating-linear-gradient(
+                      -45deg,
+                      transparent,
+                      transparent 18px,
+                      rgba(255,255,255,0.6) 18px,
+                      rgba(255,255,255,0.6) 19px
+                    )`,
+                  }}
+                />
               </div>
 
-              <div
-                className="absolute inset-0 opacity-10"
-                style={{
-                  backgroundImage: `repeating-linear-gradient(
-                      45deg, transparent, transparent 20px,
-                      rgba(255,255,255,0.1) 20px, rgba(255,255,255,0.1) 40px
-                    )`,
-                }}
-              />
-
-              <div className="relative h-full flex flex-col items-center justify-center gap-8 p-12 text-primary-foreground">
+              <div className="relative h-full flex flex-col items-center justify-center gap-7 px-10 py-12 text-white">
                 {/* Logo */}
-                <div className="relative group">
-                  <div className="absolute inset-0 bg-white/20 rounded-full blur-xl group-hover:blur-2xl transition-all" />
-                  <div className="flex gap-3 items-center hover:scale-105 transition-transform duration-300">
+                <div className="flex items-center gap-3">
+                  <div className="w-12 h-12 rounded-2xl bg-white/20 flex items-center justify-center backdrop-blur-sm border border-white/25">
                     <Image
                       src="/Logo.svg"
-                      alt="Joblify Logo"
-                      width={48}
-                      height={48}
+                      alt="Joblify"
+                      width={28}
+                      height={28}
                     />
-                    <div className="text-5xl font-bold font-roboto tracking-tight drop-shadow-lg">
-                      <Link
-                        href="/"
-                        className="hover:opacity-90 transition-opacity"
-                      >
-                        Joblify
-                      </Link>
-                    </div>
                   </div>
+                  <Link
+                    href="/"
+                    className="text-4xl font-bold tracking-tight hover:opacity-90 transition-opacity"
+                  >
+                    Joblify
+                  </Link>
                 </div>
 
-                {/* Heading */}
-                <div className="text-center space-y-3 max-w-md">
-                  <h2 className="text-4xl font-bold font-nunito leading-tight">
+                {/* Headline */}
+                <div className="text-center space-y-2.5 max-w-xs">
+                  <h2 className="text-3xl font-bold leading-snug">
                     {isSignup ? "Start Your Journey" : "Welcome Back!"}
                   </h2>
-                  <p className="text-lg text-primary-foreground/90 leading-relaxed">
+                  <p className="text-white/75 text-sm leading-relaxed">
                     {isSignup
                       ? "Join thousands of professionals finding their dream careers"
                       : "Continue your path to amazing opportunities"}
                   </p>
                 </div>
 
-                {/* Stats cards */}
-                <div className="grid grid-cols-3 gap-3 w-full max-w-lg mt-2">
-                  <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-4 text-center border border-white/20 hover:bg-white/15 transition-all hover:scale-105 duration-300">
-                    <IconBriefcase className="h-8 w-8 mx-auto mb-2 opacity-90" />
-                    <div className="text-2xl font-bold">10K+</div>
-                    <div className="text-xs text-primary-foreground/80 mt-1">
-                      Active Jobs
+                {/* Stat cards */}
+                <div className="grid grid-cols-3 gap-2.5 w-full max-w-xs">
+                  {[
+                    {
+                      icon: <IconBriefcase size={20} />,
+                      value: "10K+",
+                      label: "Active Jobs",
+                    },
+                    {
+                      icon: <IconUsers size={20} />,
+                      value: "5K+",
+                      label: "Companies",
+                    },
+                    {
+                      icon: <IconStar size={20} />,
+                      value: "98%",
+                      label: "Success Rate",
+                    },
+                  ].map((stat) => (
+                    <div
+                      key={stat.label}
+                      className="bg-white/10 border border-white/20 rounded-xl p-3 text-center hover:bg-white/15 transition-colors duration-200 backdrop-blur-sm"
+                    >
+                      <div className="flex justify-center mb-1.5 opacity-90">
+                        {stat.icon}
+                      </div>
+                      <div className="text-lg font-bold leading-none">
+                        {stat.value}
+                      </div>
+                      <div className="text-[10px] text-white/70 mt-1 leading-tight">
+                        {stat.label}
+                      </div>
                     </div>
-                  </div>
-                  <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-4 text-center border border-white/20 hover:bg-white/15 transition-all hover:scale-105 duration-300">
-                    <IconUsers className="h-8 w-8 mx-auto mb-2 opacity-90" />
-                    <div className="text-2xl font-bold">5K+</div>
-                    <div className="text-xs text-primary-foreground/80 mt-1">
-                      Companies
-                    </div>
-                  </div>
-                  <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-4 text-center border border-white/20 hover:bg-white/15 transition-all hover:scale-105 duration-300">
-                    <div className="text-2xl font-bold mb-2">98%</div>
-                    <div className="text-xs text-primary-foreground/80">
-                      Success Rate
-                    </div>
-                  </div>
+                  ))}
                 </div>
 
-                {/* Toggle prompt */}
-                <div className="absolute bottom-8 left-0 right-0 text-center">
-                  <p className="text-primary-foreground/80 text-sm font-medium">
+                {/* Toggle CTA */}
+                <div className="absolute bottom-7 left-0 right-0 text-center">
+                  <p className="text-white/70 text-sm">
                     {isSignup
                       ? "Already have an account?"
                       : "Don't have an account?"}
@@ -185,7 +206,7 @@ export const SignUpView = () => {
                       onClick={() =>
                         router.push(isSignup ? "/login" : "/signup")
                       }
-                      className="ml-2 font-bold underline hover:text-primary-foreground transition-colors underline-offset-2"
+                      className="ml-2 text-white font-semibold underline underline-offset-2 hover:text-white/90 transition-colors"
                     >
                       {isSignup ? "Login here" : "Sign up now"}
                     </button>
@@ -194,20 +215,20 @@ export const SignUpView = () => {
               </div>
             </div>
 
-            {/* Signup Form */}
-            <div className="w-1/2 shrink-0 bg-card/40 backdrop-blur-xl border-l border-border/30">
+            {/* Panel 3 — Signup Form */}
+            <div className="w-1/2 shrink-0 bg-white border-l border-[#E2E8F0]">
               <Signup />
             </div>
           </div>
         </div>
       </div>
 
-      {/* Floating particles */}
+      {/* Floating particles — very subtle in light theme */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
         {PARTICLES.map((particle) => (
           <div
             key={particle.id}
-            className="absolute w-1 h-1 bg-foreground/20 rounded-full"
+            className="absolute w-1 h-1 bg-primary/30 rounded-full"
             style={{
               left: `${particle.left}%`,
               top: `${particle.top}%`,
@@ -219,13 +240,13 @@ export const SignUpView = () => {
       </div>
 
       <style>{`
-          @keyframes float {
-            0%, 100% { transform: translateY(0) translateX(0); opacity: 0; }
-            10% { opacity: 0.3; }
-            50% { transform: translateY(-100px) translateX(50px); opacity: 0.5; }
-            90% { opacity: 0.1; }
-          }
-        `}</style>
+        @keyframes float {
+          0%, 100% { transform: translateY(0) translateX(0); opacity: 0; }
+          10% { opacity: 0.4; }
+          50% { transform: translateY(-80px) translateX(30px); opacity: 0.6; }
+          90% { opacity: 0.1; }
+        }
+      `}</style>
     </div>
   );
 };

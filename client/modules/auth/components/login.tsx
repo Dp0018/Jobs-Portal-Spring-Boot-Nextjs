@@ -1,6 +1,13 @@
 "use client";
 
-import { IconAt, IconCheck, IconEye, IconEyeOff, IconLock, IconX } from "@tabler/icons-react";
+import {
+  IconAt,
+  IconCheck,
+  IconEye,
+  IconEyeOff,
+  IconLock,
+  IconX,
+} from "@tabler/icons-react";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
@@ -8,6 +15,7 @@ import { useDispatch } from "react-redux";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Separator } from "@/components/ui/separator";
 import { loginUser } from "../server/user-service";
 import { setUser } from "../server/user-slice";
 import { ResetPassword } from "./reset-password";
@@ -60,7 +68,9 @@ export const Login = () => {
       .catch((err) => {
         setLoading(false);
         toast.error("Login failed!", {
-          description: err.response?.data?.errorMessage || "Something went wrong. Please try again.",
+          description:
+            err.response?.data?.errorMessage ||
+            "Something went wrong. Please try again.",
           icon: <IconX size={18} />,
         });
       });
@@ -70,141 +80,201 @@ export const Login = () => {
     <>
       {/* Loading overlay */}
       {loading && (
-        <div className="absolute inset-0 z-50 flex items-center justify-center bg-background/60 backdrop-blur-sm">
-          <div className="flex flex-col items-center gap-3">
-            <div className="flex gap-1">
+        <div className="absolute inset-0 z-50 flex items-center justify-center bg-white/80 backdrop-blur-sm rounded-2xl">
+          <div className="flex flex-col items-center gap-4">
+            <div className="flex gap-1.5 items-end">
               {[0, 1, 2, 3].map((i) => (
                 <div
                   key={i}
-                  className="w-1.5 h-8 bg-primary rounded-full animate-pulse"
-                  style={{ animationDelay: `${i * 0.15}s` }}
+                  className="w-1.5 bg-primary rounded-full animate-pulse"
+                  style={{
+                    height: `${20 + i * 6}px`,
+                    animationDelay: `${i * 0.15}s`,
+                  }}
                 />
               ))}
             </div>
-            <span className="text-sm text-muted-foreground">Signing in...</span>
+            <span className="text-sm font-medium text-[#475569]">
+              Signing you in…
+            </span>
           </div>
         </div>
       )}
 
-      <div className="w-full h-full px-6 sm:px-10 md:px-16 py-8 sm:py-12 flex flex-col justify-center">
-
+      <div className="w-full h-full px-8 sm:px-10 lg:px-12 py-10 flex flex-col justify-center">
         {/* Header */}
         <div className="mb-8">
-          <h2 className="text-3xl font-bold text-foreground mb-2 font-nunito">Welcome Back</h2>
-          <p className="text-muted-foreground text-sm">Sign in to continue your journey</p>
+          <h2 className="text-2xl font-bold text-[#0F172A] mb-1 tracking-tight">
+            Welcome back
+          </h2>
+          <p className="text-sm text-[#64748B]">
+            Sign in to continue to your account
+          </p>
         </div>
 
-        {/* Form */}
+        {/* Form fields */}
         <div className="space-y-5">
-
           {/* Email */}
           <div className="space-y-1.5">
-            <Label className="text-foreground/80 font-medium">
-              Email Address <span className="text-primary">*</span>
+            <Label className="text-[#374151] text-sm font-medium">
+              Email address
             </Label>
             <div className="relative">
-              <IconAt size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none" />
+              <IconAt
+                size={16}
+                className="absolute left-3 top-1/2 -translate-y-1/2 text-[#9CA3AF] pointer-events-none"
+              />
               <Input
                 value={data.email}
                 onChange={handleChange}
                 name="email"
                 type="email"
-                placeholder="your.email@example.com"
-                className="pl-9 bg-input/20 border-border focus-visible:ring-primary focus-visible:border-primary placeholder:text-muted-foreground/50 text-foreground"
+                placeholder="you@example.com"
+                className={`pl-9 h-10 bg-white border text-[#0F172A] placeholder:text-[#9CA3AF] text-sm
+                  focus-visible:ring-2 focus-visible:ring-primary/25 focus-visible:border-primary transition-colors
+                  ${formError.email ? "border-red-400 focus-visible:ring-red-200" : "border-[#E2E8F0] hover:border-[#CBD5E1]"}`}
               />
             </div>
             {formError.email && (
-              <p className="text-xs text-destructive mt-1">{formError.email}</p>
+              <p className="text-xs text-red-500 flex items-center gap-1 mt-1">
+                <span className="w-1 h-1 rounded-full bg-red-500 inline-block" />
+                {formError.email}
+              </p>
             )}
           </div>
 
           {/* Password */}
           <div className="space-y-1.5">
-            <Label className="text-foreground/80 font-medium">
-              Password <span className="text-primary">*</span>
-            </Label>
+            <div className="flex items-center justify-between">
+              <Label className="text-[#374151] text-sm font-medium">
+                Password
+              </Label>
+              <button
+                onClick={() => setResetOpen(true)}
+                className="text-xs text-primary hover:text-primary/80 font-medium transition-colors"
+              >
+                Forgot password?
+              </button>
+            </div>
             <div className="relative">
-              <IconLock size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none" />
+              <IconLock
+                size={16}
+                className="absolute left-3 top-1/2 -translate-y-1/2 text-[#9CA3AF] pointer-events-none"
+              />
               <Input
                 value={data.password}
                 onChange={handleChange}
                 name="password"
                 type={showPassword ? "text" : "password"}
                 placeholder="Enter your password"
-                className="pl-9 pr-10 bg-input/20 border-border focus-visible:ring-primary focus-visible:border-primary placeholder:text-muted-foreground/50 text-foreground"
+                className={`pl-9 pr-10 h-10 bg-white border text-[#0F172A] placeholder:text-[#9CA3AF] text-sm
+                  focus-visible:ring-2 focus-visible:ring-primary/25 focus-visible:border-primary transition-colors
+                  ${formError.password ? "border-red-400 focus-visible:ring-red-200" : "border-[#E2E8F0] hover:border-[#CBD5E1]"}`}
               />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-[#9CA3AF] hover:text-[#475569] transition-colors"
               >
-                {showPassword ? <IconEyeOff size={18} /> : <IconEye size={18} />}
+                {showPassword ? (
+                  <IconEyeOff size={16} />
+                ) : (
+                  <IconEye size={16} />
+                )}
               </button>
             </div>
             {formError.password && (
-              <p className="text-xs text-destructive mt-1">{formError.password}</p>
+              <p className="text-xs text-red-500 flex items-center gap-1 mt-1">
+                <span className="w-1 h-1 rounded-full bg-red-500 inline-block" />
+                {formError.password}
+              </p>
             )}
           </div>
 
-          {/* Forgot Password */}
-          <div className="flex justify-end">
-            <button
-              onClick={() => setResetOpen(true)}
-              className="text-sm text-primary hover:text-primary/80 transition-colors font-medium"
-            >
-              Forgot password?
-            </button>
-          </div>
-
-          {/* Submit Button */}
+          {/* Submit */}
           <Button
             onClick={handleSubmit}
             disabled={loading}
-            className="w-full bg-linear-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 border-0 mt-6 font-semibold text-base text-primary-foreground"
-            size="lg"
+            className="w-full h-10 bg-primary hover:bg-primary/90 text-white font-semibold text-sm rounded-lg shadow-sm transition-all duration-200 hover:shadow-md mt-2"
           >
-            {loading ? "Signing in..." : "Sign In"}
+            {loading ? "Signing in…" : "Sign In"}
           </Button>
 
-          {/* Signup Link */}
-          <div className="text-center pt-4">
-            <span className="text-muted-foreground text-sm">
-              Don&apos;t have an account?{" "}
-              <span
-                onClick={() => {
-                  router.push("/signup");
-                  setFormError(form);
-                  setData(form);
-                }}
-                className="text-primary hover:text-primary/80 font-semibold cursor-pointer transition-colors"
-              >
-                Sign up now
-              </span>
+          {/* Sign up redirect */}
+          <p className="text-center text-sm text-[#64748B] pt-1">
+            Don&apos;t have an account?{" "}
+            <span
+              onClick={() => {
+                router.push("/signup");
+                setFormError(form);
+                setData(form);
+              }}
+              className="text-primary font-semibold cursor-pointer hover:underline underline-offset-2 transition-colors"
+            >
+              Create one free
             </span>
-          </div>
+          </p>
         </div>
 
         {/* Divider */}
-        <div className="relative my-8">
-          <div className="absolute inset-0 flex items-center">
-            <div className="w-full border-t border-border" />
-          </div>
-          <div className="relative flex justify-center text-sm">
-            <span className="px-4 text-muted-foreground bg-card/40">
-              Quick &amp; Secure Login
-            </span>
-          </div>
+        <div className="relative my-7">
+          <Separator className="bg-[#E2E8F0]" />
+          <span className="absolute left-1/2 -translate-x-1/2 -translate-y-1/2 px-3 bg-white text-xs text-[#94A3B8] font-medium whitespace-nowrap">
+            Trusted by professionals
+          </span>
         </div>
 
-        {/* Benefits */}
-        <div className="grid grid-cols-2 gap-3 mt-4">
-          <div className="bg-card/30 rounded-lg p-3 border border-border/50">
-            <div className="text-xs text-muted-foreground">Trusted by</div>
-            <div className="text-lg font-bold text-foreground">10K+ Users</div>
+        {/* Trust badges */}
+        <div className="grid grid-cols-2 gap-3">
+          <div className="flex items-center gap-3 bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl p-3.5">
+            <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+              <svg
+                className="w-4 h-4 text-primary"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0"
+                />
+              </svg>
+            </div>
+            <div>
+              <p className="text-xs text-[#94A3B8] leading-none mb-0.5">
+                Trusted by
+              </p>
+              <p className="text-sm font-bold text-[#0F172A] leading-none">
+                10K+ Users
+              </p>
+            </div>
           </div>
-          <div className="bg-card/30 rounded-lg p-3 border border-border/50">
-            <div className="text-xs text-muted-foreground">Security</div>
-            <div className="text-lg font-bold text-primary">100% Safe</div>
+          <div className="flex items-center gap-3 bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl p-3.5">
+            <div className="w-8 h-8 rounded-lg bg-green-50 flex items-center justify-center shrink-0">
+              <svg
+                className="w-4 h-4 text-green-600"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"
+                />
+              </svg>
+            </div>
+            <div>
+              <p className="text-xs text-[#94A3B8] leading-none mb-0.5">
+                Security
+              </p>
+              <p className="text-sm font-bold text-green-600 leading-none">
+                100% Safe
+              </p>
+            </div>
           </div>
         </div>
       </div>

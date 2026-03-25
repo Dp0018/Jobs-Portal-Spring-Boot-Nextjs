@@ -72,43 +72,43 @@ export const Jobs = () => {
     if (currentFilter["Job Title"]?.length) {
       result = result.filter((job) =>
         currentFilter["Job Title"].some((x: string) =>
-          job.jobTitle?.toLowerCase().includes(x.toLowerCase())
-        )
+          job.jobTitle?.toLowerCase().includes(x.toLowerCase()),
+        ),
       );
     }
     if (currentFilter.Location?.length) {
       result = result.filter((job) =>
         currentFilter.Location.some((x: string) =>
-          job.location?.toLowerCase().includes(x.toLowerCase())
-        )
+          job.location?.toLowerCase().includes(x.toLowerCase()),
+        ),
       );
     }
     if (currentFilter.Experience?.length) {
       result = result.filter((job) =>
         currentFilter.Experience.some((x: string) =>
-          job.experience?.toLowerCase().includes(x.toLowerCase())
-        )
+          job.experience?.toLowerCase().includes(x.toLowerCase()),
+        ),
       );
     }
     if (currentFilter["Job Type"]?.length) {
       result = result.filter((job) =>
         currentFilter["Job Type"].some((x: string) =>
-          job.jobType?.toLowerCase().includes(x.toLowerCase())
-        )
+          job.jobType?.toLowerCase().includes(x.toLowerCase()),
+        ),
       );
     }
     if (currentFilter.packageOffered?.length === 2) {
       const [minLpa, maxLpa] = currentFilter.packageOffered;
       result = result.filter(
-        (job) =>
-          job.packageOffered >= minLpa && job.packageOffered <= maxLpa
+        (job) => job.packageOffered >= minLpa && job.packageOffered <= maxLpa,
       );
     }
 
     // 2. Apply Sort to the filtered results instead of raw jobList
     if (sort === "most recent") {
       result.sort(
-        (a, b) => new Date(b.postTime).getTime() - new Date(a.postTime).getTime()
+        (a, b) =>
+          new Date(b.postTime).getTime() - new Date(a.postTime).getTime(),
       );
     } else if (sort === "salary (low-high)") {
       result.sort((a, b) => a.packageOffered - b.packageOffered);
@@ -121,7 +121,6 @@ export const Jobs = () => {
 
   return (
     <div className="py-12 px-4">
-
       {/* ── Header ── */}
       <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-8 pb-6 border-b border-border/20">
         <div className="flex items-center gap-4 mb-4 md:mb-0">
@@ -130,7 +129,7 @@ export const Jobs = () => {
           </div>
           <div>
             <h2 className="text-3xl font-bold text-foreground mb-1">
-              Recommended Jobs
+              Find Jobs For You
             </h2>
             <p className="text-muted-foreground text-sm">
               {loading

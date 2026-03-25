@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, Nunito_Sans } from "next/font/google";
+import { Nunito_Sans } from "next/font/google";
 import "./globals.css";
-import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { StoreProvider } from "@/modules/redux/store-provider";
@@ -24,17 +23,10 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`${nunitoSans.className}  antialiased`}>
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="dark"
-          enableSystem
-          disableTransitionOnChange
-        >
-          <Toaster position="bottom-right" richColors />
-          <StoreProvider>
-            <TooltipProvider>{children}</TooltipProvider>
-          </StoreProvider>
-        </ThemeProvider>
+        <Toaster position="bottom-right" richColors />
+        <StoreProvider>
+          <TooltipProvider>{children}</TooltipProvider>
+        </StoreProvider>
       </body>
     </html>
   );

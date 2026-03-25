@@ -10,6 +10,8 @@ import {
   IconX,
   IconMailForward,
   IconShieldCheck,
+  IconBriefcase,
+  IconBuilding,
 } from "@tabler/icons-react";
 import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
@@ -18,6 +20,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Badge } from "@/components/ui/badge";
 import { registerUser, sendOtp, verifyEmail } from "../server/user-service";
 import { signupSchema, type SignupFormData } from "../validations";
 
@@ -66,7 +69,6 @@ export const Signup = () => {
       const newData = { ...data, [name]: value };
       setData(newData);
 
-      // Real-time field validation
       const result = signupSchema.safeParse(newData);
       if (result.success) {
         setFormError({
@@ -130,10 +132,8 @@ export const Signup = () => {
       });
   };
 
-  // OTP input handling
   const handleOtpChange = (index: number, value: string) => {
     if (value.length > 1) {
-      // Handle paste
       const digits = value.replace(/\D/g, "").slice(0, 6).split("");
       const newOtp = [...otp];
       digits.forEach((digit, i) => {
@@ -211,49 +211,52 @@ export const Signup = () => {
       });
   };
 
-  // OTP Verification Step
+  // ── OTP Verification Step ──
   if (showOtpStep) {
     return (
       <>
         {otpLoading && (
-          <div className="absolute inset-0 z-50 flex items-center justify-center bg-background/60 backdrop-blur-sm">
-            <div className="flex flex-col items-center gap-3">
-              <div className="flex gap-1">
+          <div className="absolute inset-0 z-50 flex items-center justify-center bg-white/80 backdrop-blur-sm rounded-2xl">
+            <div className="flex flex-col items-center gap-4">
+              <div className="flex gap-1.5 items-end">
                 {[0, 1, 2, 3].map((i) => (
                   <div
                     key={i}
-                    className="w-1.5 h-8 bg-primary rounded-full animate-pulse"
-                    style={{ animationDelay: `${i * 0.15}s` }}
+                    className="w-1.5 bg-primary rounded-full animate-pulse"
+                    style={{
+                      height: `${20 + i * 6}px`,
+                      animationDelay: `${i * 0.15}s`,
+                    }}
                   />
                 ))}
               </div>
-              <span className="text-sm text-muted-foreground">
-                Verifying...
+              <span className="text-sm font-medium text-[#475569]">
+                Verifying…
               </span>
             </div>
           </div>
         )}
 
-        <div className="w-full h-full px-6 sm:px-10 md:px-16 py-8 sm:py-12 flex flex-col justify-center overflow-y-auto">
+        <div className="w-full h-full px-8 sm:px-10 lg:px-12 py-10 flex flex-col justify-center">
           {/* Header */}
           <div className="mb-8 text-center">
-            <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-primary/10 border border-primary/25 mb-4">
-              <IconMailForward size={28} className="text-primary" />
+            <div className="w-14 h-14 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center mx-auto mb-4">
+              <IconMailForward size={24} className="text-primary" />
             </div>
-            <h2 className="text-3xl font-bold text-foreground mb-2 font-nunito">
-              Verify Your Email
+            <h2 className="text-2xl font-bold text-[#0F172A] mb-1.5 tracking-tight">
+              Check your inbox
             </h2>
-            <p className="text-muted-foreground text-sm">
-              We've sent a 6-digit code to{" "}
-              <span className="text-foreground font-semibold">
+            <p className="text-sm text-[#64748B]">
+              We sent a 6-digit code to{" "}
+              <span className="font-semibold text-[#0F172A]">
                 {registeredEmail}
               </span>
             </p>
           </div>
 
-          {/* OTP Input */}
           <div className="space-y-6">
-            <div className="flex justify-center gap-3">
+            {/* OTP input boxes */}
+            <div className="flex justify-center gap-2.5">
               {otp.map((digit, index) => (
                 <input
                   key={index}
@@ -274,39 +277,46 @@ export const Signup = () => {
                       .slice(0, 6);
                     handleOtpChange(index, pasteData);
                   }}
-                  className="w-12 h-14 text-center text-xl font-bold rounded-xl border-2 border-border bg-input/20 text-foreground outline-none transition-all duration-200 focus:border-primary focus:ring-2 focus:ring-primary/20"
+                  className={`w-11 h-13 text-center text-xl font-bold rounded-xl border-2 bg-white text-[#0F172A]
+                    outline-none transition-all duration-150
+                    focus:border-primary focus:ring-2 focus:ring-primary/20 focus:shadow-sm
+                    ${digit ? "border-primary/60 bg-primary/5" : "border-[#E2E8F0] hover:border-[#CBD5E1]"}`}
+                  style={{ height: "52px" }}
                 />
               ))}
             </div>
 
-            {/* Verify Button */}
+            {/* Verify button */}
             <Button
               onClick={handleVerifyOtp}
               disabled={otpLoading || otp.join("").length !== 6}
-              className="w-full bg-linear-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 border-0 font-semibold text-base text-primary-foreground"
-              size="lg"
+              className="w-full h-10 bg-primary hover:bg-primary/90 text-white font-semibold text-sm rounded-lg shadow-sm transition-all duration-200 hover:shadow-md"
             >
-              <IconShieldCheck size={20} className="mr-2" />
+              <IconShieldCheck size={17} className="mr-2" />
               Verify Email
             </Button>
 
             {/* Resend */}
-            <div className="text-center">
-              <span className="text-muted-foreground text-sm">
-                Didn't receive the code?{" "}
-                {resendTimer > 0 ? (
-                  <span className="text-muted-foreground/70">
-                    Resend in {resendTimer}s
-                  </span>
-                ) : (
-                  <span
-                    onClick={handleResendOtp}
-                    className="text-primary hover:text-primary/80 font-semibold cursor-pointer transition-colors"
-                  >
-                    Resend OTP
-                  </span>
-                )}
-              </span>
+            <p className="text-center text-sm text-[#64748B]">
+              Didn&apos;t receive the code?{" "}
+              {resendTimer > 0 ? (
+                <span className="text-[#94A3B8]">Resend in {resendTimer}s</span>
+              ) : (
+                <span
+                  onClick={handleResendOtp}
+                  className="text-primary font-semibold cursor-pointer hover:underline underline-offset-2"
+                >
+                  Resend OTP
+                </span>
+              )}
+            </p>
+
+            {/* Security note */}
+            <div className="flex items-center justify-center gap-2 py-3 px-4 bg-[#F8FAFC] rounded-xl border border-[#E2E8F0]">
+              <IconShieldCheck size={15} className="text-[#94A3B8] shrink-0" />
+              <p className="text-xs text-[#94A3B8]">
+                OTP is valid for 10 minutes. Do not share with anyone.
+              </p>
             </div>
           </div>
         </div>
@@ -314,97 +324,103 @@ export const Signup = () => {
     );
   }
 
+  // ── Signup Form ──
   return (
     <>
-      {/* Loading overlay */}
       {loading && (
-        <div className="absolute inset-0 z-50 flex items-center justify-center bg-background/60 backdrop-blur-sm">
-          <div className="flex flex-col items-center gap-3">
-            <div className="flex gap-1">
+        <div className="absolute inset-0 z-50 flex items-center justify-center bg-white/80 backdrop-blur-sm rounded-2xl">
+          <div className="flex flex-col items-center gap-4">
+            <div className="flex gap-1.5 items-end">
               {[0, 1, 2, 3].map((i) => (
                 <div
                   key={i}
-                  className="w-1.5 h-8 bg-primary rounded-full animate-pulse"
-                  style={{ animationDelay: `${i * 0.15}s` }}
+                  className="w-1.5 bg-primary rounded-full animate-pulse"
+                  style={{
+                    height: `${20 + i * 6}px`,
+                    animationDelay: `${i * 0.15}s`,
+                  }}
                 />
               ))}
             </div>
-            <span className="text-sm text-muted-foreground">
-              Creating account...
+            <span className="text-sm font-medium text-[#475569]">
+              Creating your account…
             </span>
           </div>
         </div>
       )}
 
-      <div className="w-full h-full px-6 sm:px-10 md:px-16 py-8 sm:py-12 flex flex-col justify-center overflow-y-auto">
+      <div className="w-full h-full px-8 sm:px-10 lg:px-12 py-8 flex flex-col justify-center overflow-y-auto">
         {/* Header */}
         <div className="mb-6">
-          <h2 className="text-3xl font-bold text-foreground mb-2 font-nunito">
-            Create Account
+          <h2 className="text-2xl font-bold text-[#0F172A] mb-1 tracking-tight">
+            Create your account
           </h2>
-          <p className="text-muted-foreground text-sm">
-            Fill in your details to get started
+          <p className="text-sm text-[#64748B]">
+            Join thousands of professionals on Joblify
           </p>
         </div>
 
-        {/* Form */}
         <div className="space-y-4">
           {/* Full Name */}
           <div className="space-y-1.5">
-            <Label className="text-foreground/80 font-medium">
-              Full Name <span className="text-primary">*</span>
+            <Label className="text-[#374151] text-sm font-medium">
+              Full Name
             </Label>
             <div className="relative">
               <IconUser
-                size={18}
-                className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none"
+                size={16}
+                className="absolute left-3 top-1/2 -translate-y-1/2 text-[#9CA3AF] pointer-events-none"
               />
               <Input
                 value={data.name}
                 onChange={handleChange}
                 name="name"
-                placeholder="Enter your full name"
-                className="pl-9 bg-input/20 border-border focus-visible:ring-primary focus-visible:border-primary placeholder:text-muted-foreground/50 text-foreground"
+                placeholder="Your full name"
+                className={`pl-9 h-10 bg-white border text-[#0F172A] placeholder:text-[#9CA3AF] text-sm
+                  focus-visible:ring-2 focus-visible:ring-primary/25 focus-visible:border-primary transition-colors
+                  ${formError.name ? "border-red-400" : "border-[#E2E8F0] hover:border-[#CBD5E1]"}`}
               />
             </div>
             {formError.name && (
-              <p className="text-xs text-destructive">{formError.name}</p>
+              <p className="text-xs text-red-500 mt-1">{formError.name}</p>
             )}
           </div>
 
           {/* Email */}
           <div className="space-y-1.5">
-            <Label className="text-foreground/80 font-medium">
-              Email Address <span className="text-primary">*</span>
+            <Label className="text-[#374151] text-sm font-medium">
+              Email address
             </Label>
             <div className="relative">
               <IconAt
-                size={18}
-                className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none"
+                size={16}
+                className="absolute left-3 top-1/2 -translate-y-1/2 text-[#9CA3AF] pointer-events-none"
               />
               <Input
                 value={data.email}
                 onChange={handleChange}
                 name="email"
                 type="email"
-                placeholder="your.email@example.com"
-                className="pl-9 bg-input/20 border-border focus-visible:ring-primary focus-visible:border-primary placeholder:text-muted-foreground/50 text-foreground"
+                placeholder="you@example.com"
+                className={`pl-9 h-10 bg-white border text-[#0F172A] placeholder:text-[#9CA3AF] text-sm
+                  focus-visible:ring-2 focus-visible:ring-primary/25 focus-visible:border-primary transition-colors
+                  ${formError.email ? "border-red-400" : "border-[#E2E8F0] hover:border-[#CBD5E1]"}`}
               />
             </div>
             {formError.email && (
-              <p className="text-xs text-destructive">{formError.email}</p>
+              <p className="text-xs text-red-500 mt-1">{formError.email}</p>
             )}
           </div>
 
           {/* Password */}
           <div className="space-y-1.5">
-            <Label className="text-foreground/80 font-medium">
-              Password <span className="text-primary">*</span>
+            <Label className="text-[#374151] text-sm font-medium">
+              Password
             </Label>
             <div className="relative">
               <IconLock
-                size={18}
-                className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none"
+                size={16}
+                className="absolute left-3 top-1/2 -translate-y-1/2 text-[#9CA3AF] pointer-events-none"
               />
               <Input
                 value={data.password}
@@ -412,34 +428,36 @@ export const Signup = () => {
                 name="password"
                 type={showPassword ? "text" : "password"}
                 placeholder="Create a strong password"
-                className="pl-9 pr-10 bg-input/20 border-border focus-visible:ring-primary focus-visible:border-primary placeholder:text-muted-foreground/50 text-foreground"
+                className={`pl-9 pr-10 h-10 bg-white border text-[#0F172A] placeholder:text-[#9CA3AF] text-sm
+                  focus-visible:ring-2 focus-visible:ring-primary/25 focus-visible:border-primary transition-colors
+                  ${formError.password ? "border-red-400" : "border-[#E2E8F0] hover:border-[#CBD5E1]"}`}
               />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-[#9CA3AF] hover:text-[#475569] transition-colors"
               >
                 {showPassword ? (
-                  <IconEyeOff size={18} />
+                  <IconEyeOff size={16} />
                 ) : (
-                  <IconEye size={18} />
+                  <IconEye size={16} />
                 )}
               </button>
             </div>
             {formError.password && (
-              <p className="text-xs text-destructive">{formError.password}</p>
+              <p className="text-xs text-red-500 mt-1">{formError.password}</p>
             )}
           </div>
 
           {/* Confirm Password */}
           <div className="space-y-1.5">
-            <Label className="text-foreground/80 font-medium">
-              Confirm Password <span className="text-primary">*</span>
+            <Label className="text-[#374151] text-sm font-medium">
+              Confirm Password
             </Label>
             <div className="relative">
               <IconLock
-                size={18}
-                className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none"
+                size={16}
+                className="absolute left-3 top-1/2 -translate-y-1/2 text-[#9CA3AF] pointer-events-none"
               />
               <Input
                 value={data.confirmPassword}
@@ -447,22 +465,24 @@ export const Signup = () => {
                 name="confirmPassword"
                 type={showConfirmPassword ? "text" : "password"}
                 placeholder="Re-enter your password"
-                className="pl-9 pr-10 bg-input/20 border-border focus-visible:ring-primary focus-visible:border-primary placeholder:text-muted-foreground/50 text-foreground"
+                className={`pl-9 pr-10 h-10 bg-white border text-[#0F172A] placeholder:text-[#9CA3AF] text-sm
+                  focus-visible:ring-2 focus-visible:ring-primary/25 focus-visible:border-primary transition-colors
+                  ${formError.confirmPassword ? "border-red-400" : "border-[#E2E8F0] hover:border-[#CBD5E1]"}`}
               />
               <button
                 type="button"
                 onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-[#9CA3AF] hover:text-[#475569] transition-colors"
               >
                 {showConfirmPassword ? (
-                  <IconEyeOff size={18} />
+                  <IconEyeOff size={16} />
                 ) : (
-                  <IconEye size={18} />
+                  <IconEye size={16} />
                 )}
               </button>
             </div>
             {formError.confirmPassword && (
-              <p className="text-xs text-destructive">
+              <p className="text-xs text-red-500 mt-1">
                 {formError.confirmPassword}
               </p>
             )}
@@ -470,75 +490,88 @@ export const Signup = () => {
 
           {/* Account Type */}
           <div className="space-y-2">
-            <Label className="text-foreground/80 font-medium">
-              Account Type <span className="text-primary">*</span>
+            <Label className="text-[#374151] text-sm font-medium">
+              I am a…
             </Label>
-            <div className="flex gap-3 mt-1">
-              {["APPLICANT", "EMPLOYER"].map((type) => (
+            <div className="grid grid-cols-2 gap-2.5">
+              {[
+                {
+                  type: "APPLICANT",
+                  label: "Job Seeker",
+                  icon: <IconBriefcase size={16} />,
+                },
+                {
+                  type: "EMPLOYER",
+                  label: "Employer",
+                  icon: <IconBuilding size={16} />,
+                },
+              ].map(({ type, label, icon }) => (
                 <button
                   key={type}
                   type="button"
                   onClick={() => handleChange(type)}
-                  className={`flex-1 py-3 px-5 rounded-xl border-2 font-medium transition-all duration-200 cursor-pointer text-sm
+                  className={`flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl border-2 text-sm font-medium transition-all duration-150 cursor-pointer
                     ${
                       data.accountType === type
-                        ? "border-primary bg-primary/10 text-foreground"
-                        : "border-border bg-muted/20 hover:border-border/80 text-muted-foreground hover:text-foreground"
+                        ? "border-primary bg-primary/8 text-primary shadow-sm"
+                        : "border-[#E2E8F0] bg-white text-[#64748B] hover:border-[#CBD5E1] hover:text-[#374151]"
                     }`}
                 >
-                  {type.charAt(0) + type.slice(1).toLowerCase()}
+                  {icon}
+                  {label}
                 </button>
               ))}
             </div>
           </div>
 
-          {/* Terms Checkbox */}
-          <div className="flex items-center gap-2 pt-1">
+          {/* Terms */}
+          <div className="flex items-start gap-2.5 pt-1">
             <Checkbox
               id="terms"
               checked={termsAccepted}
               onCheckedChange={(checked) => setTermsAccepted(!!checked)}
-              className="border-border data-[state=checked]:bg-primary data-[state=checked]:border-primary"
+              className="mt-0.5 border-[#CBD5E1] data-[state=checked]:bg-primary data-[state=checked]:border-primary"
             />
             <label
               htmlFor="terms"
-              className="text-muted-foreground text-sm cursor-pointer"
+              className="text-sm text-[#64748B] cursor-pointer leading-relaxed"
             >
-              I accept the{" "}
-              <span className="text-primary hover:text-primary/80 cursor-pointer transition-colors underline underline-offset-2">
-                Terms and Conditions
+              I agree to the{" "}
+              <span className="text-primary font-medium hover:underline underline-offset-2 cursor-pointer transition-colors">
+                Terms of Service
+              </span>{" "}
+              and{" "}
+              <span className="text-primary font-medium hover:underline underline-offset-2 cursor-pointer transition-colors">
+                Privacy Policy
               </span>
             </label>
           </div>
 
-          {/* Submit Button */}
+          {/* Submit */}
           <Button
             onClick={handleSubmit}
             disabled={loading || !termsAccepted}
-            className="w-full bg-linear-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 border-0 mt-6 font-semibold text-base text-primary-foreground"
-            size="lg"
+            className="w-full h-10 bg-primary hover:bg-primary/90 text-white font-semibold text-sm rounded-lg shadow-sm transition-all duration-200 hover:shadow-md mt-1"
           >
-            {loading ? "Creating Account..." : "Create Account"}
+            {loading ? "Creating account…" : "Create Account"}
           </Button>
 
-          {/* Login Link */}
-          <div className="text-center pt-2">
-            <span className="text-muted-foreground text-sm">
-              Already have an account?{" "}
-              <span
-                onClick={() => {
-                  router.push("/login");
-                  setFormError(form);
-                  setData(form);
-                }}
-                className="text-primary hover:text-primary/80 font-semibold cursor-pointer transition-colors"
-              >
-                Login here
-              </span>
+          {/* Login link */}
+          <p className="text-center text-sm text-[#64748B]">
+            Already have an account?{" "}
+            <span
+              onClick={() => {
+                router.push("/login");
+                setFormError(form);
+                setData(form);
+              }}
+              className="text-primary font-semibold cursor-pointer hover:underline underline-offset-2 transition-colors"
+            >
+              Sign in
             </span>
-          </div>
+          </p>
         </div>
       </div>
     </>
   );
-};;
+};
