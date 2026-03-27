@@ -14,6 +14,7 @@ import {
   Menu,
   X,
   ChevronRight,
+  LucideIcon,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
@@ -22,7 +23,14 @@ import { Badge } from "@/components/ui/badge";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 
-const navItems = [
+interface NavItem {
+  label: string;
+  href: string;
+  icon: LucideIcon; // Lucide icon component
+  badge?: string;
+}
+
+const navItems: { section: string; items: NavItem[] }[] = [
   {
     section: "Main",
     items: [
@@ -58,7 +66,7 @@ function NavLink({
   active,
   onClick,
 }: {
-  item: (typeof allNavItems)[0];
+  item: NavItem;
   active: boolean;
   onClick?: () => void;
 }) {
