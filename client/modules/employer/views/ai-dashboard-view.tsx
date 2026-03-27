@@ -9,6 +9,7 @@ import {
   SkillGapChart,
   HiringSuccessChart,
 } from "../components/dashboard-charts";
+import Link from "next/link";
 
 /* ═══════════════════════════════════════════════════════════════════
  * AI Accuracy Dashboard View
@@ -252,6 +253,35 @@ export default function AIDashboardView() {
             candidates are scanned, your AI accuracy charts and insights will
             appear here.
           </p>
+        </div>
+      )}
+
+      {/* Recruiter Pro Upgrade Wall */}
+      {user?.subscriptionPlan === "FREE" && (
+        <div className="absolute inset-0 z-50 flex items-center justify-center bg-background/60 backdrop-blur-md rounded-2xl border border-border mt-0">
+          <div className="bg-card border border-border shadow-2xl rounded-2xl p-8 max-w-md w-full text-center slide-in-from-bottom-5 animate-in">
+            <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-5 shadow-inner">
+              <BrainCircuit className="w-8 h-8 text-primary" />
+            </div>
+            <h2 className="text-2xl font-bold text-foreground mb-3">
+              Unlock Advanced AI Analytics
+            </h2>
+            <p className="text-muted-foreground text-sm mb-8 leading-relaxed">
+              Visualize your hiring success, pinpoint skill gaps in your talent pool, and track AI match score accuracy. Upgrade to <strong>Recruiter Pro</strong> to unlock the AI Accuracy Dashboard.
+            </p>
+            <div className="flex gap-4 sm:flex-row flex-col">
+              <Link href="/employer/jobs" className="flex-1">
+                <button className="w-full px-4 py-2.5 rounded-xl border border-border text-foreground text-sm font-semibold hover:bg-muted transition-colors">
+                  Go Back
+                </button>
+              </Link>
+              <Link href="/pricing" className="flex-1">
+                <button className="w-full px-4 py-2.5 rounded-xl bg-primary text-primary-foreground text-sm font-semibold hover:opacity-90 transition-opacity shadow-md shadow-primary/20">
+                  Upgrade to Pro
+                </button>
+              </Link>
+            </div>
+          </div>
         </div>
       )}
     </div>

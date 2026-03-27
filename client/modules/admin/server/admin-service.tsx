@@ -38,3 +38,17 @@ export const deleteJobAdmin = async (id: number) => {
     .then((res) => res.data)
     .catch((err) => { throw err; });
 };
+
+export const getEarnings = async () => {
+  return axios
+    .get(`${base_url}/earnings`)
+    .then((res) => res.data)
+    .catch((err) => { throw err; });
+};
+
+export const getPremiumUsers = async () => {
+  return axios
+    .get(`${base_url}/premium-users`)
+    .then((res) => res.data)
+    .catch((err) => { throw err; });
+};

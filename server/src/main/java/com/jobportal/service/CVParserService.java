@@ -22,7 +22,6 @@ public class CVParserService {
             String extractedText = stripper.getText(document);
             // Redact PII to ensure AI fairness and GDPR compliance
             return redactPII(extractedText);
-
         } catch (Exception e) {
             e.printStackTrace();
             return "Error extracting text: " + e.getMessage();
@@ -42,37 +41,40 @@ public class CVParserService {
                 PDFTextStripper stripper = new PDFTextStripper();
                 String extractedText = stripper.getText(document);
                 // Redact PII to ensure AI fairness and GDPR compliance
-                return redactPII(extractedText);
-            }
+                return redactPII(extractedText);            }
         } catch (Exception e) {
             e.printStackTrace();
             return "Error extracting text: " + e.getMessage();
         }
     }
 
-    /**
-     * Redacts Personally Identifiable Information (PII) from the resume text.
-     * This includes emails, phone numbers, and potentially other identifying
-     * markers
-     * to prevent AI bias (gender, location, name) and ensure GDPR/Ethical AI
-     * compliance.
-     */
-    private String redactPII(String text) {
-        if (text == null || text.isEmpty())
-            return text;
+/**
+ * Redacts Personally Identifiable Information (PII) from the resume text.
+ * This includes emails, phone numbers, and potentially other identifying
+ * markers
+ * to prevent AI bias (gender, location, name) and ensure GDPR/Ethical AI
+ * compliance.
+ */
+private String redactPII(String text) {
+    if (text == null || text.isEmpty())
+        return text;
 
-        // 1. Redact Emails (Basic Regex)
-        String redacted = text.replaceAll("[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}", "[REDACTED_EMAIL]");
+    // 1. Redact Emails (Basic Regex)
+    String redacted = text.replaceAll("[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}", "[REDACTED_EMAIL]");
 
-        // 2. Redact Phone Numbers (Basic Regex for international/local formats)
-        redacted = redacted.replaceAll("(\\+\\d{1,3}[- ]?)?\\(?\\d{3}\\)?[- ]?\\d{3}[- ]?\\d{4}", "[REDACTED_PHONE]");
+    // 2. Redact Phone Numbers (Basic Regex for international/local formats)
+    redacted = redacted.replaceAll("(\\+\\d{1,3}[- ]?)?\\(?\\d{3}\\)?[- ]?\\d{3}[- ]?\\d{4}", "[REDACTED_PHONE]");
 
-        // Note: Advanced named-entity recognition (NER) is usually required to
-        // perfectly redact
-        // Names, Genders, and Locations. Here we apply foundational redactions to
-        // explicitly instruct
-        // the RAG model to ignore any remaining demographical markers.
+    // Note: Advanced named-entity recognition (NER) is usually required to
+    // perfectly redact
+    // Names, Genders, and Locations. Here we apply foundational redactions to
+    // explicitly instruct
+    // the RAG model to ignore any remaining demographical markers.
 
-        return redacted;
+    return redacted;
+
     }
 }
+
+
+

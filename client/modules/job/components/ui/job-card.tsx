@@ -11,6 +11,7 @@ import {
   IconShieldExclamation,
   IconArrowRight,
   IconShieldCheck,
+  IconStarFilled,
 } from "@tabler/icons-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -81,10 +82,19 @@ export const JobCard = (props: any) => {
               <h3 className="text-[0.95rem] font-bold text-[#0F172A] leading-tight mb-0.5 capitalize truncate group-hover:text-primary transition-colors duration-200">
                 {props.jobTitle}
               </h3>
-              <div className="flex items-center gap-1.5 text-xs text-[#64748B]">
+              <div className="flex flex-wrap items-center gap-1.5 text-xs text-[#64748B]">
                 <span className="font-medium capitalize truncate">
                   {props.company}
                 </span>
+                {props.averageRating > 0 && (
+                  <>
+                    <span className="text-[#CBD5E1]">·</span>
+                    <span className="flex items-center gap-0.5 text-[11px] font-bold text-slate-700 bg-yellow-50 px-1.5 py-0.5 rounded-md border border-yellow-200/50" title={`${props.totalReviews} reviews`}>
+                      <IconStarFilled size={10} className="text-yellow-500" />
+                      {props.averageRating.toFixed(1)}
+                    </span>
+                  </>
+                )}
                 <span className="text-[#CBD5E1]">·</span>
                 <IconUsers size={11} className="shrink-0 text-[#94A3B8]" />
                 <span>{props.applicants?.length ?? 0} applicants</span>

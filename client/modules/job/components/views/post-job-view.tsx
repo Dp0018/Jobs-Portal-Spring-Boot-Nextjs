@@ -20,7 +20,15 @@ import {SelectInput} from "../ui/select-input";
 import { content, fields } from "../data/post-job";
 import RichTextEditor from "../ui/rich-text-editor";
 import { errorNotification, successNotification } from "@/modules/notifications/server/notification-service";
-import { getJob, postJob } from "../../server/job-service";
+import { getJob, postJob, getJobPostedBy } from "../../server/job-service";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 /* ── Section header component ── */
 export const SectionHeader = ({
@@ -144,6 +152,8 @@ export const PostJobView = () => {
   const [editorData, setEditorData] = useState(content);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(false);
+  const [showPremiumDialog, setShowPremiumDialog] = useState(false);
+  const [canPost, setCanPost] = useState(true);
 
   const [form, setForm] = useState({
     jobTitle: "",
@@ -207,6 +217,20 @@ export const PostJobView = () => {
     }
   }, [id]);
 
+  // Check subscription limits for free employers
+  useEffect(() => {
+    if (user?.id && user?.accountType === "EMPLOYER" && user?.subscriptionPlan === "FREE") {
+      if (!id || id === "0") {
+        getJobPostedBy(user.id).then((jobs: any[]) => {
+          if (jobs.length >= 3) {
+            setCanPost(false);
+            setShowPremiumDialog(true);
+          }
+        }).catch(console.error);
+      }
+    }
+  }, [user, id]);
+
   /* Validation */
   const validate = () => {
     const e: Record<string, string> = {};
@@ -235,6 +259,13 @@ export const PostJobView = () => {
 
   const submit = (status: "ACTIVE" | "DRAFT") => {
     if (loading) return;
+    
+    // Enforce client-side guard on publish/draft
+    if (!canPost && (!id || id === "0")) {
+      setShowPremiumDialog(true);
+      return;
+    }
+
     if (status === "ACTIVE" && !validate()) return;
 
     setLoading(true);
@@ -463,6 +494,36 @@ export const PostJobView = () => {
           </div>
         </div>
       </div>
+
+      {/* Subscription Guard Dialog */}
+      <Dialog open={showPremiumDialog} onOpenChange={setShowPremiumDialog}>
+        <DialogContent className="sm:max-w-md" showCloseButton={false}>
+          <DialogHeader>
+            <div className="mx-auto w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mb-4">
+              <IconSparkles className="w-6 h-6 text-primary" />
+            </div>
+            <DialogTitle className="text-center text-xl">Posting Limit Reached</DialogTitle>
+            <DialogDescription className="text-center pt-2">
+              You've reached the limit of 3 free job postings. Upgrade to <strong>Recruiter Pro</strong> to post unlimited jobs, access our advanced AI resume scanner, and reach more top talent!
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="sm:justify-center mt-6">
+            <Button
+              variant="outline"
+              onClick={() => router.push("/employer/jobs")}
+              className="w-full sm:w-auto"
+            >
+              Go Back
+            </Button>
+            <Button
+              onClick={() => router.push("/pricing")}
+              className="w-full sm:w-auto bg-primary hover:bg-primary/90"
+            >
+              Upgrade to Pro
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

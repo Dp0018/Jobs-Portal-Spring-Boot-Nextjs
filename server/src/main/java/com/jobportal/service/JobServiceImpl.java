@@ -6,6 +6,8 @@ import com.jobportal.entity.Job;
 import com.jobportal.exception.JobPortalExceeption;
 import com.jobportal.repository.JobRepository;
 import com.jobportal.repository.ProfileRepository;
+import com.jobportal.repository.ReviewRepository;
+import com.jobportal.entity.Review;
 import com.jobportal.entity.Profile;
 import com.jobportal.utility.Utilities;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,6 +43,9 @@ public class JobServiceImpl implements JobService{
     private NotificationService notificationService;
 
     @Autowired
+    private ReviewRepository reviewRepository;
+
+    @Autowired
     private CVParserService cvParserService;
 
     @Autowired
@@ -49,8 +54,52 @@ public class JobServiceImpl implements JobService{
     @Autowired
     private ProfileRepository profileRepository;
 
+    private void populateRatings(List<JobDTO> jobs) {
+        Map<Long, Double> avgCache = new HashMap<>();
+        Map<Long, Integer> countCache = new HashMap<>();
+        for (JobDTO job : jobs) {
+            Long companyId = job.getPostedBy();
+            if (companyId != null) {
+                if (!avgCache.containsKey(companyId)) {
+                    List<Review> reviews = reviewRepository.findByCompanyId(companyId);
+                    double avg = reviews.isEmpty() ? 0.0 : reviews.stream().mapToInt(Review::getRating).average().orElse(0.0);
+                    avg = Math.round(avg * 10.0) / 10.0;
+                    avgCache.put(companyId, avg);
+                    countCache.put(companyId, reviews.size());
+                }
+                job.setAverageRating(avgCache.get(companyId));
+                job.setTotalReviews(countCache.get(companyId));
+            }
+        }
+    }
+
+    private void populateRatings(JobDTO job) {
+        if (job != null) {
+            populateRatings(List.of(job));
+        }
+    }
+
     @Override
     public JobDTO postJob(JobDTO jobDTO) throws JobPortalExceeption {
+
+        // Enforce Subscription Limit for Free Employers (Max 3 Jobs)
+        try {
+            User employer = userRepository.findById(jobDTO.getPostedBy())
+                    .orElseThrow(() -> new JobPortalExceeption("USER_NOT_FOUND"));
+            if ("FREE".equalsIgnoreCase(employer.getSubscriptionPlan())) {
+                List<Job> employerJobs = jobRepository.findByPostedBy(employer.getId());
+                // Only restrict if creating a NEW job
+                if (employerJobs.size() >= 3 && (jobDTO.getId() == null || jobDTO.getId() == 0)) {
+                    throw new JobPortalExceeption("Job posting limit reached! FREE plan is limited to 3 job postings. Please upgrade to Recruiter Pro to post unlimited jobs.");
+                }
+            }
+        } catch (Exception e) {
+            // Re-throw job portal exceptions unchanged
+            if (e instanceof JobPortalExceeption) {
+                throw (JobPortalExceeption) e;
+            }
+            // Ignore if user isn't found just in case, though it shouldn't happen
+        }
 
         if(jobDTO.getId() == null || jobDTO.getId() == 0){
             jobDTO.setId(Utilities.getNextSequence("jobs"));
@@ -122,26 +171,59 @@ public class JobServiceImpl implements JobService{
 
     @Override
     public List<JobDTO> getAllJobs() {
-        return jobRepository.findAll().stream()
+        List<JobDTO> jobs = jobRepository.findAll().stream()
                 .filter(job -> job.getEndDate() == null || !job.getEndDate().isBefore(LocalDateTime.now()))
                 .map(Job::toDTO)
                 .toList();
+        populateRatings(jobs);
+        return jobs;
     }
 
     @Override
     public List<JobDTO> getAllJobsIncludingExpired() {
-        return jobRepository.findAll().stream()
+        List<JobDTO> jobs = jobRepository.findAll().stream()
                 .map(Job::toDTO)
                 .toList();
+        populateRatings(jobs);
+        return jobs;
     }
 
     @Override
     public JobDTO getJob(Long id) throws JobPortalExceeption {
-        return jobRepository.findById(id).orElseThrow(()-> new JobPortalExceeption("JOB_NOT_FOUND")).toDTO();
+        JobDTO dto = jobRepository.findById(id).orElseThrow(()-> new JobPortalExceeption("JOB_NOT_FOUND")).toDTO();
+        populateRatings(dto);
+        return dto;
     }
 
     @Override
     public void applyJob(Long id, ApplicantDTO applicantDTO) throws JobPortalExceeption {
+        // Enforce Subscription Limit for Free Applicants (Max 10 Applications)
+        try {
+            User applicantUser = userRepository.findById(applicantDTO.getApplicantId())
+                    .orElseThrow(() -> new JobPortalExceeption("USER_NOT_FOUND"));
+            if ("FREE".equalsIgnoreCase(applicantUser.getSubscriptionPlan()) && applicantUser.getAccountType() == com.jobportal.dto.AccountType.APPLICANT) {
+                long applicationCount = 0;
+                List<Job> allJobs = jobRepository.findAll();
+                for (Job j : allJobs) {
+                    if (j.getApplicants() != null) {
+                        for (Applicant a : j.getApplicants()) {
+                            if (a.getApplicantId().equals(applicantUser.getId())) {
+                                applicationCount++;
+                                break;
+                            }
+                        }
+                    }
+                }
+                if (applicationCount >= 10) {
+                    throw new JobPortalExceeption("Application limit reached! FREE plan is limited to 10 applications. Please upgrade to Pro Max for unlimited applications.");
+                }
+            }
+        } catch (Exception e) {
+            if (e instanceof JobPortalExceeption) {
+                throw (JobPortalExceeption) e;
+            }
+        }
+
         Job job = jobRepository.findById(id).orElseThrow(()-> new JobPortalExceeption("JOB_NOT_FOUND"));
 
         List<Applicant> applicants = job.getApplicants();
@@ -194,6 +276,30 @@ public class JobServiceImpl implements JobService{
     @Override
     public ApplicantDTO analyzeResume(Long jobId, Long applicantId) throws JobPortalExceeption {
         Job job = jobRepository.findById(jobId).orElseThrow(() -> new JobPortalExceeption("JOB_NOT_FOUND"));
+
+        // ENFORCE RESUME SCAN LIMIT FOR FREE EMPLOYERS
+        User employer = userRepository.findById(job.getPostedBy()).orElseThrow(() -> new JobPortalExceeption("USER_NOT_FOUND"));
+        if ("FREE".equalsIgnoreCase(employer.getSubscriptionPlan())) {
+            long scannedCount = 0;
+            if (job.getApplicants() != null) {
+                scannedCount = job.getApplicants().stream()
+                        .filter(a -> a.getMatchScore() != null)
+                        .count();
+            }
+
+            // Allow this scan if this applicant was already scanned (matchScore != null)
+            Applicant targetApp = null;
+            if (job.getApplicants() != null) {
+                targetApp = job.getApplicants().stream()
+                        .filter(a -> a.getApplicantId().equals(applicantId))
+                        .findFirst()
+                        .orElse(null);
+            }
+
+            if (scannedCount >= 5 && (targetApp == null || targetApp.getMatchScore() == null)) {
+                throw new JobPortalExceeption("Resume scanning limit reached for FREE plan. Please upgrade to PRO to scan unlimited resumes!");
+            }
+        }
 
         List<Applicant> applicants = job.getApplicants();
         if (applicants == null || applicants.isEmpty())
@@ -300,7 +406,9 @@ public class JobServiceImpl implements JobService{
 
     @Override
     public List<JobDTO> getJobsPostedBy(Long id) {
-        return jobRepository.findByPostedBy(id).stream().map((x) -> x.toDTO()).toList();
+        List<JobDTO> jobs = jobRepository.findByPostedBy(id).stream().map((x) -> x.toDTO()).toList();
+        populateRatings(jobs);
+        return jobs;
     }
 
     @Override
@@ -365,8 +473,8 @@ public class JobServiceImpl implements JobService{
                                     // Format interview time as readable string
                                     application.getInterviewTime() != null
                                             ? application.getInterviewTime().format(
-                                                    java.time.format.DateTimeFormatter
-                                                            .ofPattern("EEEE, MMMM d, yyyy 'at' hh:mm a"))
+                                            java.time.format.DateTimeFormatter
+                                                    .ofPattern("EEEE, MMMM d, yyyy 'at' hh:mm a"))
                                             : null,
                                     // Compute missing skills for rejection emails
                                     application.getApplicationStatus().equals(ApplicationStatus.REJECTED)
@@ -643,14 +751,25 @@ public class JobServiceImpl implements JobService{
             finalScores.put(job.getId(), finalScore);
         }
 
-        // Sort by final score descending and return top 6
-        return allJobs.stream()
+        // Sort by final score descending and fallback to postTime descending
+        List<JobDTO> recommendedJobs = allJobs.stream()
                 .filter(j -> finalScores.containsKey(j.getId()))
-                .sorted((a, b) -> Double.compare(
-                        finalScores.getOrDefault(b.getId(), 0.0),
-                        finalScores.getOrDefault(a.getId(), 0.0)))
+                .sorted((a, b) -> {
+                    int scoreCompare = Double.compare(
+                            finalScores.getOrDefault(b.getId(), 0.0),
+                            finalScores.getOrDefault(a.getId(), 0.0)
+                    );
+                    if (scoreCompare != 0) return scoreCompare;
+                    if (b.getPostTime() != null && a.getPostTime() != null) {
+                        return b.getPostTime().compareTo(a.getPostTime());
+                    }
+                    return 0;
+                })
                 .limit(6)
                 .map(Job::toDTO)
                 .collect(Collectors.toList());
+        
+        populateRatings(recommendedJobs);
+        return recommendedJobs;
     }
 }

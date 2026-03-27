@@ -11,6 +11,7 @@ import {
   IconPencil,
   IconX,
 } from "@tabler/icons-react";
+import { Crown } from "lucide-react";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { fields } from "../Data/PostJob";
@@ -57,8 +58,14 @@ export const Info = ({ profile, edit }: any) => {
       {/* Name + action buttons */}
       <div className="flex items-start justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight text-stone-900 leading-tight">
+          <h1 className="text-3xl font-bold tracking-tight text-stone-900 leading-tight flex items-center gap-3">
             {profile?.name}
+            {profile?.subscriptionPlan && profile.subscriptionPlan !== "FREE" && (
+              <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 bg-linear-to-r from-yellow-300 to-amber-500 text-amber-950 text-xs font-black rounded-lg shadow-sm">
+                <Crown className="w-4 h-4" />
+                PRO
+              </span>
+            )}
           </h1>
         </div>
 

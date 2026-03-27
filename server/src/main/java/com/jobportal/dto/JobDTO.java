@@ -33,6 +33,10 @@ public class JobDTO {
     private String fraudRisk;
     private List<String> fraudReasons;
 
+    // Company Reviews
+    private Double averageRating;
+    private Integer totalReviews;
+
     public Job toEntity(){
         return new Job(this.id, this.jobTitle, this.company,
                 this.applicants != null ? this.applicants.stream().map((x) -> x.toEntity()).toList() : null, this.about,

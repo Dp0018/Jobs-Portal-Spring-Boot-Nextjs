@@ -191,6 +191,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public List<UserDTO> getPremiumUsers() {
+        return userRepository.findBySubscriptionPlan("PREMIUM").stream().map(User::toDTO).toList();
+    }
+
+    @Override
     public void deleteUser(Long id) throws JobPortalExceeption {
         User user = userRepository.findById(id).orElseThrow(() -> new JobPortalExceeption("USER_NOT_FOUND"));
         userRepository.delete(user);

@@ -33,12 +33,18 @@ public class UserDTO {
 
     private Boolean emailVerified;
 
+    private String subscriptionPlan;
+
+    private String stripeCustomerId;
+
+    private String stripeSubscriptionId;
+
     private String token;
 
     private String refreshToken;
 
     public User toEntity() {
         return new User(this.id, this.name, this.email, this.password, this.accountType,
-                this.emailVerified != null ? this.emailVerified : false);
+                this.emailVerified != null ? this.emailVerified : false, this.subscriptionPlan != null ? this.subscriptionPlan : "FREE", this.stripeCustomerId, this.stripeSubscriptionId);
     }
 }

@@ -105,7 +105,7 @@ const JobDesc = (props: any) => {
   const showFraudBanner = fraudHigh || fraudMedium;
 
   return (
-    <div className="w-full lg:w-2/3 space-y-5">
+    <div className="w-full space-y-5">
       {/* ════════════════════════════════════
           HERO CARD — company + title + CTAs
       ════════════════════════════════════ */}

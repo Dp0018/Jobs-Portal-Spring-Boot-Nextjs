@@ -6,6 +6,7 @@ import com.jobportal.dto.ResponseDTO;
 import com.jobportal.dto.UserDTO;
 import com.jobportal.exception.JobPortalExceeption;
 import com.jobportal.service.JobService;
+import com.jobportal.service.SubscriptionService;
 import com.jobportal.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +30,9 @@ public class AdminAPI {
 
     @Autowired
     private JobService jobService;
+
+    @Autowired
+    private SubscriptionService subscriptionService;
 
     @GetMapping("/users")
     public ResponseEntity<List<UserDTO>> getAllUsers(
@@ -60,5 +64,20 @@ public class AdminAPI {
     public ResponseEntity<ResponseDTO> deleteJob(@PathVariable Long id) throws JobPortalExceeption {
         jobService.deleteJob(id);
         return new ResponseEntity<>(new ResponseDTO("Job deleted successfully."), HttpStatus.OK);
+    }
+
+    @GetMapping("/earnings")
+    public ResponseEntity<String> getEarnings() {
+        try {
+            com.stripe.model.Balance balance = subscriptionService.getStripeBalance();
+            return new ResponseEntity<>(balance.toJson(), HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping("/premium-users")
+    public ResponseEntity<List<UserDTO>> getPremiumUsers() {
+        return new ResponseEntity<>(userService.getPremiumUsers(), HttpStatus.OK);
     }
 }
