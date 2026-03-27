@@ -21,8 +21,8 @@ public class AIService {
     private final ObjectMapper objectMapper;
 
     public AIService(ChatClient.Builder chatClientBuilder,
-            EmbeddingModel embeddingModel,
-            VectorStore vectorStore) {
+                     EmbeddingModel embeddingModel,
+                     VectorStore vectorStore) {
         this.chatClient = chatClientBuilder.build();
         this.embeddingModel = embeddingModel;
         this.vectorStore = vectorStore;

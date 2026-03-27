@@ -12,9 +12,19 @@ import { useState, useEffect } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { useSelector } from "react-redux";
 import { getBase64 } from "@/lib/get-base64";
-import { applyJob } from "@/modules/job/server/job-service";
+import { applyJob, getAllJobsIncludingExpired } from "@/modules/job/server/job-service";
 import { errorNotification, successNotification } from "@/modules/notifications/server/notification-service";
 import { getProfile } from "@/modules/profile/server/profile-service";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { IconSparkles } from "@tabler/icons-react";
+import { Button } from "@/components/ui/button";
 
 interface ResumeItem {
   name: string;
@@ -45,6 +55,8 @@ const ApplicationForm = () => {
   const user = useSelector((state: any) => state.user);
   const [preview, setPreview] = useState(false);
   const [submit, setSubmit] = useState(false);
+  const [showPremiumDialog, setShowPremiumDialog] = useState(false);
+  const [canApply, setCanApply] = useState(true);
 
   // Saved resumes state
   const [savedResumes, setSavedResumes] = useState<ResumeItem[]>([]);
@@ -97,6 +109,23 @@ const ApplicationForm = () => {
     }
   }, [user?.id]);
 
+  // Check subscription limits for free applicants
+  useEffect(() => {
+    if (user?.id && user?.accountType === "APPLICANT" && user?.subscriptionPlan === "FREE") {
+      getAllJobsIncludingExpired()
+        .then((jobs: any[]) => {
+          const historyCount = jobs.filter((job) =>
+            job.applicants?.some((a: any) => a.applicantId == user.id),
+          ).length;
+          if (historyCount >= 10) {
+            setCanApply(false);
+            // Optionally could pop the dialog immediately, but let's wait until they try to apply or preview
+          }
+        })
+        .catch(console.error);
+    }
+  }, [user?.id]);
+
   const validate = (): boolean => {
     const newErrors: FormErrors = {};
     if (!values.name.trim()) newErrors.name = "Name is required";
@@ -118,12 +147,20 @@ const ApplicationForm = () => {
   };
 
   const handlePreview = () => {
+    if (!canApply) {
+      setShowPremiumDialog(true);
+      return;
+    }
     if (!validate()) return;
     setPreview(!preview);
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   const handleSubmit = async () => {
+    if (!canApply) {
+      setShowPremiumDialog(true);
+      return;
+    }
     if (submit) return;
     setSubmit(true);
     let resumeBase64: string;
@@ -524,6 +561,36 @@ const ApplicationForm = () => {
           </>
         )}
       </div>
+
+      {/* Subscription Guard Dialog */}
+      <Dialog open={showPremiumDialog} onOpenChange={setShowPremiumDialog}>
+        <DialogContent className="sm:max-w-md" showCloseButton={false}>
+          <DialogHeader>
+            <div className="mx-auto w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mb-4">
+              <IconSparkles className="w-6 h-6 text-primary" />
+            </div>
+            <DialogTitle className="text-center text-xl">Application Limit Reached</DialogTitle>
+            <DialogDescription className="text-center pt-2">
+              You've reached the limit of 10 free job applications. Upgrade to <strong>Job Seeker Pro Max</strong> to apply to unlimited jobs, get prioritized profile placement, and message recruiters directly!
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="sm:justify-center mt-6">
+            <Button
+              variant="outline"
+              onClick={() => router.push("/find-jobs")}
+              className="w-full sm:w-auto"
+            >
+              Go Back
+            </Button>
+            <Button
+              onClick={() => router.push("/pricing")}
+              className="w-full sm:w-auto bg-primary hover:bg-primary/90"
+            >
+              Upgrade to Pro Max
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </>
   );
 };

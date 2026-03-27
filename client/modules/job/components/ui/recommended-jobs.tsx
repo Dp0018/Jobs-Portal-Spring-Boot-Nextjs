@@ -23,7 +23,7 @@ const RecommendedJobs = () => {
   }, []);
 
   return (
-    <div className="w-full lg:w-1/3">
+    <div className="w-full h-full">
       <div className="sticky top-6">
         {/* Header */}
         <div className="bg-card border border-border rounded-2xl p-6 mb-4 shadow-lg">

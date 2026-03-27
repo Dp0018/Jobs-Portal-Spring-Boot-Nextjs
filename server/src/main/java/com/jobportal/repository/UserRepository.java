@@ -12,4 +12,6 @@ public interface UserRepository extends MongoRepository<User, Long> {
     public Optional<User> findByEmail(String email);
 
     public List<User> findByAccountType(AccountType accountType);
+
+    public List<User> findBySubscriptionPlan(String subscriptionPlan);
 }

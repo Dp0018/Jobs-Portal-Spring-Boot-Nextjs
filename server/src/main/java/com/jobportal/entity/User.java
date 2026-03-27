@@ -35,8 +35,14 @@ public class User implements UserDetails {
 
     private Boolean emailVerified = false;
 
+    private String subscriptionPlan = "FREE";
+
+    private String stripeCustomerId;
+
+    private String stripeSubscriptionId;
+
     public UserDTO toDTO() {
-        return new UserDTO(this.id, this.name, this.email, this.password, this.accountType, this.emailVerified, null,
+        return new UserDTO(this.id, this.name, this.email, this.password, this.accountType, this.emailVerified, this.subscriptionPlan, this.stripeCustomerId, this.stripeSubscriptionId, null,
                 null);
     }
 

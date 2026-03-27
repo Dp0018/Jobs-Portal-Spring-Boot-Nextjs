@@ -24,6 +24,8 @@ public interface UserService {
 
     List<UserDTO> getUsersByAccountType(AccountType accountType);
 
+    List<UserDTO> getPremiumUsers();
+
     void deleteUser(Long id) throws JobPortalExceeption;
 
     UserDTO createAdmin(UserDTO userDTO) throws JobPortalExceeption;

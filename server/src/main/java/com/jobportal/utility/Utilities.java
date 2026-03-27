@@ -27,6 +27,7 @@ public class Utilities {
         update.inc("seq", 1);
         FindAndModifyOptions options = new FindAndModifyOptions();
         options.returnNew(true);
+        options.upsert(true);
         Sequence  seq =  mongoOperation.findAndModify(query,
                 update, options, Sequence.class);
 

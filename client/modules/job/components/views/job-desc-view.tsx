@@ -8,6 +8,7 @@ import JobDesc from "../ui/job-desc";
 import RecommendedJobs from "../ui/recommended-jobs";
 import { Skeleton } from "@/components/ui/skeleton";
 import { use } from "react";
+import { ReviewSection } from "@/components/reviews/ReviewSection";
 
 interface JobDescPageProps {
   params: Promise<{ id: string }>;
@@ -17,7 +18,7 @@ interface JobDescPageProps {
    Skeleton — shown while job data loads
 ───────────────────────────────────────────── */
 const JobDescSkeleton = () => (
-  <div className="w-full lg:w-2/3 space-y-5">
+  <div className="w-full space-y-5">
     {/* Header card skeleton */}
     <div className="bg-white border border-[#E2E8F0] rounded-2xl p-6">
       <div className="flex gap-4 mb-5">
@@ -121,9 +122,14 @@ const JobDescPage = ({ params }: JobDescPageProps) => {
 
       {/* ── Page body ── */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="flex flex-col lg:flex-row gap-6">
-          {job ? <JobDesc {...job} /> : <JobDescSkeleton />}
-          <RecommendedJobs />
+        <div className="flex flex-col lg:flex-row gap-6 lg:gap-8">
+          <div className="w-full lg:flex-1 min-w-0 flex flex-col gap-6">
+            {job ? <JobDesc {...job} /> : <JobDescSkeleton />}
+            {job?.postedBy && <ReviewSection companyId={job.postedBy} />}
+          </div>
+          <div className="w-full lg:w-[380px] shrink-0">
+            <RecommendedJobs />
+          </div>
         </div>
       </div>
     </div>

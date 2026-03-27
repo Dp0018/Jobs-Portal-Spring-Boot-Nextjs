@@ -14,6 +14,7 @@ import {
   IconSparkles,
   IconArrowRight,
   IconBell,
+  IconCrown,
 } from "@tabler/icons-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -44,6 +45,7 @@ const NAV_ITEMS = [
     icon: IconBriefcase,
     show: "employer_only",
   },
+  { label: "Pricing", href: "/pricing", icon: IconCrown, show: "all" },
   { label: "About Us", href: "/about", icon: IconInfoCircle, show: "all" },
 ];
 

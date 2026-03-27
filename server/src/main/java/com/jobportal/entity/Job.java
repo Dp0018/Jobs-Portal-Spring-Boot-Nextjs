@@ -43,6 +43,6 @@ public class Job {
                 this.applicants != null ? this.applicants.stream().map((x) -> x.toDTO()).toList() : null, this.about,
                 this.experience, this.jobType, this.location, this.packageOffered, this.postTime, this.description,
                 this.skillsRequired, this.jobStatus, this.postedBy, this.endDate,
-                this.fraudScore, this.fraudRisk, this.fraudReasons);
+                this.fraudScore, this.fraudRisk, this.fraudReasons, null, null);
     }
 }

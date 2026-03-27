@@ -43,6 +43,6 @@ public class ApplicantDTO {
                 this.resume != null ? Base64.getDecoder().decode(this.resume) : null, this.coverLetter, this.timestamp,
                 this.applicationStatus, this.interviewTime, this.matchScore, this.aiExplanation,
                 this.fairnessScore, this.fairnessExplanation,
-                        this.requiredSkills, this.candidateSkills, null);
+                this.requiredSkills, this.candidateSkills, null);
     }
 }
