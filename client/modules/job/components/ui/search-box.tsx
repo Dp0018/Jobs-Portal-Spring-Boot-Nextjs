@@ -11,6 +11,7 @@ import {
   IconX,
   IconAdjustmentsHorizontal,
   IconCheck,
+  IconSearch,
 } from "@tabler/icons-react";
 import { useDispatch } from "react-redux";
 import { updateFilter } from "@/modules/redux/filter-slice";
@@ -80,34 +81,16 @@ export const SearchBar = () => {
   const isRangeActive = range[0] !== MIN_LPA || range[1] !== MAX_LPA;
 
   return (
-    <div className="relative">
-      {/* ── Filter label ── */}
-      <div className="flex items-center gap-2 mb-3">
-        <IconAdjustmentsHorizontal size={15} className="text-[#64748B]" />
-        <span className="text-xs font-semibold text-[#475569] uppercase tracking-wider">
-          Filter results
-        </span>
-        {isRangeActive && (
-          <div className="flex items-center gap-1 px-2 py-0.5 bg-primary/10 border border-primary/20 rounded-full">
-            <span className="text-[10px] text-primary font-bold">
-              1 active filter
-            </span>
-          </div>
-        )}
-      </div>
-
-      {/* ── Main filter bar ── */}
+    <div className="relative py-6">
+      {/* ── Main search bar — clean pill design ── */}
       <div
-        className="bg-white border border-[#E2E8F0] rounded-2xl overflow-visible"
+        className="bg-white rounded-2xl overflow-visible border border-[#E2E8F0]"
         style={{
           boxShadow:
-            "0 1px 4px rgba(15,23,42,0.06), 0 4px 16px rgba(15,23,42,0.04)",
+            "0 4px 24px rgba(37,99,235,0.08), 0 1px 4px rgba(15,23,42,0.06)",
         }}
       >
-        {/* ── Top accent line ── */}
-        <div className="h-[2px] w-full bg-gradient-to-r from-transparent via-primary/30 to-transparent rounded-t-2xl" />
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-0 p-2">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-0 p-2 items-center">
           {/* ── Dropdown filters ── */}
           {dropdownData.map((item, index) => (
             <div key={index} className="relative flex items-stretch">
@@ -131,7 +114,7 @@ export const SearchBar = () => {
                 ref={triggerRef}
                 type="button"
                 onClick={() => setSalaryOpen((v) => !v)}
-                className={`group w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl transition-all duration-150 cursor-pointer ${
+                className={`group w-full flex items-center gap-2 px-3 py-2.5 rounded-xl transition-all duration-150 cursor-pointer ${
                   salaryOpen || isRangeActive
                     ? "bg-primary/8 border border-primary/20"
                     : "hover:bg-[#F8FAFC] border border-transparent"
@@ -139,28 +122,25 @@ export const SearchBar = () => {
               >
                 {/* Icon */}
                 <div
-                  className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 transition-colors ${
+                  className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0 transition-colors ${
                     isRangeActive
                       ? "bg-primary text-white"
                       : "bg-[#F1F5F9] text-[#64748B] group-hover:bg-primary/10 group-hover:text-primary"
                   }`}
                 >
-                  <IconCurrencyRupee size={15} />
+                  <IconCurrencyRupee size={14} />
                 </div>
 
                 {/* Label */}
                 <div className="flex-1 text-left min-w-0">
-                  <p className="text-[10px] text-[#94A3B8] leading-none mb-0.5 uppercase tracking-wider font-semibold">
-                    Package (LPA)
-                  </p>
                   <p
-                    className={`text-sm font-semibold truncate ${
-                      isRangeActive ? "text-primary" : "text-[#0F172A]"
+                    className={`text-xs font-semibold truncate ${
+                      isRangeActive ? "text-primary" : "text-[#475569]"
                     }`}
                   >
                     {isRangeActive
                       ? `${range[0]} – ${range[1] >= MAX_LPA ? `${MAX_LPA}+` : range[1]} LPA`
-                      : "Any salary"}
+                      : "Salary"}
                   </p>
                 </div>
 
@@ -188,11 +168,7 @@ export const SearchBar = () => {
                 </div>
               </button>
 
-              {/* ── Salary dropdown via React Portal ──
-                  Renders at document.body level so it is
-                  completely outside any stacking context.
-                  position:fixed + getBoundingClientRect()
-                  pins it directly below the trigger button. */}
+              {/* ── Salary dropdown via React Portal ── */}
               {salaryOpen &&
                 mounted &&
                 createPortal(
@@ -351,6 +327,17 @@ export const SearchBar = () => {
                   document.body,
                 )}
             </div>
+          </div>
+
+          {/* ── Search Button ── */}
+          <div className="px-1">
+            <button
+              type="button"
+              className="w-full flex items-center justify-center gap-2 h-10 px-6 bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-bold text-sm rounded-xl shadow-sm hover:shadow-md hover:shadow-orange-500/20 transition-all duration-200"
+            >
+              <IconSearch size={16} />
+              Search
+            </button>
           </div>
         </div>
       </div>

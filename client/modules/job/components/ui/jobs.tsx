@@ -9,32 +9,34 @@ import { JobCard } from "./job-card";
 import { Sort } from "./sort";
 import { resetSort } from "@/modules/redux/sort-slice";
 
-/* ── Skeleton card ── */
+/* ── Skeleton card — Premium shimmer ── */
 const SkeletonCard = () => (
-  <div className="backdrop-blur-xl bg-muted/20 border border-border/20 rounded-xl p-5 h-80 animate-pulse">
+  <div className="relative bg-white border border-[#E8EDF4] rounded-2xl p-5 h-80 overflow-hidden">
+    {/* Shimmer overlay */}
+    <div className="absolute inset-0 -translate-x-full animate-[shimmer_1.5s_infinite] bg-gradient-to-r from-transparent via-[#F1F5F9]/70 to-transparent" />
     <div className="flex gap-3 mb-4">
-      <div className="w-14 h-14 bg-muted/40 rounded-lg shrink-0" />
+      <div className="w-12 h-12 bg-[#F1F5F9] rounded-xl shrink-0" />
       <div className="flex-1 space-y-2 pt-1">
-        <div className="h-5 bg-muted/40 rounded w-3/4" />
-        <div className="h-4 bg-muted/40 rounded w-1/2" />
+        <div className="h-4 bg-[#F1F5F9] rounded-lg w-3/4" />
+        <div className="h-3 bg-[#F1F5F9] rounded-lg w-1/2" />
       </div>
+      <div className="w-16 h-10 bg-[#F1F5F9] rounded-xl shrink-0" />
     </div>
     <div className="flex gap-2 mb-4">
-      <div className="h-6 bg-muted/40 rounded-full w-20" />
-      <div className="h-6 bg-muted/40 rounded-full w-24" />
-      <div className="h-6 bg-muted/40 rounded-full w-16" />
+      <div className="h-6 bg-[#F1F5F9] rounded-lg w-20" />
+      <div className="h-6 bg-[#F1F5F9] rounded-lg w-24" />
+      <div className="h-6 bg-[#F1F5F9] rounded-lg w-16" />
     </div>
     <div className="space-y-2 mb-6">
-      <div className="h-4 bg-muted/40 rounded w-full" />
-      <div className="h-4 bg-muted/40 rounded w-5/6" />
-      <div className="h-4 bg-muted/40 rounded w-4/6" />
+      <div className="h-3 bg-[#F1F5F9] rounded-lg w-full" />
+      <div className="h-3 bg-[#F1F5F9] rounded-lg w-5/6" />
+      <div className="h-3 bg-[#F1F5F9] rounded-lg w-4/6" />
     </div>
-    <div className="h-px bg-muted/30 mb-4" />
-    <div className="flex justify-between mb-4">
-      <div className="h-5 bg-muted/40 rounded w-20" />
-      <div className="h-5 bg-muted/40 rounded w-16" />
+    <div className="h-px bg-[#F1F5F9] mb-4" />
+    <div className="flex justify-between">
+      <div className="h-5 bg-[#F1F5F9] rounded-lg w-20" />
+      <div className="h-8 bg-[#F1F5F9] rounded-lg w-24" />
     </div>
-    <div className="h-10 bg-muted/40 rounded-lg" />
   </div>
 );
 
@@ -120,29 +122,31 @@ export const Jobs = () => {
   }, [filter, sort, jobList]);
 
   return (
-    <div className="py-12 px-4">
+    <div>
       {/* ── Header ── */}
-      <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-8 pb-6 border-b border-border/20">
-        <div className="flex items-center gap-4 mb-4 md:mb-0">
-          <div className="p-3 bg-primary/10 rounded-xl border border-primary/20">
-            <IconBriefcase className="w-8 h-8 text-primary" />
-          </div>
-          <div>
-            <h2 className="text-3xl font-bold text-foreground mb-1">
-              Find Jobs For You
-            </h2>
-            <p className="text-muted-foreground text-sm">
-              {loading
-                ? "Loading jobs…"
-                : `${filteredJobs.length} ${filteredJobs.length === 1 ? "job" : "jobs"} found`}
-            </p>
-          </div>
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 gap-3">
+        <div className="flex items-center gap-2">
+          <p className="text-sm text-[#64748B]">
+            {loading ? (
+              <span className="flex items-center gap-2">
+                <span className="w-3 h-3 rounded-full bg-primary/30 animate-pulse" />
+                Loading jobs…
+              </span>
+            ) : (
+              <>
+                <span className="font-bold text-[#0F172A] text-base">
+                  {filteredJobs.length}
+                </span>{" "}
+                {filteredJobs.length === 1 ? "job" : "jobs"} found
+              </>
+            )}
+          </p>
         </div>
 
         {/* Sort */}
         <div className="flex items-center gap-3">
-          <div className="hidden md:flex items-center gap-2 text-muted-foreground text-sm">
-            <IconFilter className="w-4 h-4" />
+          <div className="hidden md:flex items-center gap-2 text-[#94A3B8] text-xs">
+            <IconFilter className="w-3.5 h-3.5" />
             <span>Sort by:</span>
           </div>
           <Sort sort="job" />
@@ -151,36 +155,45 @@ export const Jobs = () => {
 
       {/* ── Jobs Grid ── */}
       {loading ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-          {Array.from({ length: 6 }).map((_, i) => (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+          {Array.from({ length: 4 }).map((_, i) => (
             <SkeletonCard key={i} />
           ))}
         </div>
       ) : filteredJobs.length > 0 ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
           {filteredJobs.map((job: any, index: number) => (
             <JobCard key={index} {...job} />
           ))}
         </div>
       ) : (
         /* ── Empty state ── */
-        <div className="text-center py-24">
-          <div className="inline-flex p-6 bg-muted/20 border border-border/20 rounded-2xl mb-6">
+        <div className="text-center py-20 bg-white border border-[#E8EDF4] rounded-2xl">
+          <div className="inline-flex p-5 bg-[#F8FAFC] border border-[#E2E8F0] rounded-2xl mb-5">
             <IconBriefcase
-              size={56}
-              className="text-muted-foreground/40"
+              size={48}
+              className="text-[#CBD5E1]"
               stroke={1.2}
             />
           </div>
-          <h3 className="text-2xl font-bold text-foreground mb-2">
+          <h3 className="text-xl font-bold text-[#0F172A] mb-2">
             No Jobs Found
           </h3>
-          <p className="text-muted-foreground max-w-md mx-auto text-sm leading-relaxed">
+          <p className="text-[#94A3B8] max-w-md mx-auto text-sm leading-relaxed">
             Try adjusting your filters or search criteria to find more
             opportunities
           </p>
         </div>
       )}
+
+      {/* Shimmer keyframes */}
+      <style jsx>{`
+        @keyframes shimmer {
+          100% {
+            transform: translateX(200%);
+          }
+        }
+      `}</style>
     </div>
   );
 };

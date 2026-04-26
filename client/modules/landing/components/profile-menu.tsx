@@ -16,6 +16,7 @@ import {
   IconChevronDown,
   IconHistory,
   IconSparkles,
+  IconCrown,
 } from "@tabler/icons-react";
 import { useDispatch, useSelector } from "react-redux";
 import Link from "next/link";
@@ -49,19 +50,26 @@ export const ProfileMenu = () => {
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg hover:bg-accent transition-all duration-300 cursor-pointer backdrop-blur-sm group border border-border hover:border-border/80 outline-none">
-          <Avatar className="h-8 w-8 ring-2 ring-border group-hover:ring-primary/50 transition-all duration-300">
-            <AvatarImage
-              src={
-                profile?.picture
-                  ? `data:image/jpeg;base64,${profile.picture}`
-                  : undefined
-              }
-              alt={user?.name}
-            />
-            <AvatarFallback className="bg-primary/20 text-primary text-xs font-semibold">
-              {initials}
-            </AvatarFallback>
-          </Avatar>
+          <div className="relative">
+            <Avatar className="h-8 w-8 ring-2 ring-border group-hover:ring-primary/50 transition-all duration-300">
+              <AvatarImage
+                src={
+                  profile?.picture
+                    ? `data:image/jpeg;base64,${profile.picture}`
+                    : undefined
+                }
+                alt={user?.name}
+              />
+              <AvatarFallback className="bg-primary/20 text-primary text-xs font-semibold">
+                {initials}
+              </AvatarFallback>
+            </Avatar>
+            {user?.subscriptionPlan === "PREMIUM" && (
+              <div className="absolute -top-1.5 -right-1.5 bg-amber-400 rounded-full p-0.5 shadow-lg border border-white">
+                <IconCrown size={10} className="text-white fill-white" />
+              </div>
+            )}
+          </div>
           <span className="text-sm font-medium hidden md:block text-foreground">
             {user?.name}
           </span>
@@ -94,8 +102,13 @@ export const ProfileMenu = () => {
               </AvatarFallback>
             </Avatar>
             <div>
-              <div className="text-foreground font-semibold text-sm">
-                {user?.name}
+              <div className="flex items-center gap-1.5">
+                <div className="text-foreground font-semibold text-sm">
+                  {user?.name}
+                </div>
+                {user?.subscriptionPlan === "PREMIUM" && (
+                  <IconCrown size={14} className="text-amber-500 fill-amber-500" />
+                )}
               </div>
               <div className="text-muted-foreground text-xs truncate max-w-[160px]">
                 {user?.email}

@@ -193,19 +193,24 @@ export const TopCompaniesSection = () => {
   };
 
   return (
-    <section className="bg-[#F8FAFC] py-12">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
+    <section className="bg-transparent py-14">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-16">
         {/* ════════════════════════════════════
             SECTION A — Category cards
         ════════════════════════════════════ */}
         <div>
           <div className="flex items-end justify-between mb-6">
-            <div>
-              <h2 className="text-2xl font-black text-[#0F172A] tracking-tight">
-                Top companies hiring now
-              </h2>
-              <p className="text-sm text-[#64748B] mt-1">
-                Explore openings across top industry segments
+            <div className="flex flex-col gap-2">
+              <div className="flex items-center gap-2">
+                <h2 className="text-2xl sm:text-3xl font-black text-[#0F172A] tracking-tight">
+                  Top companies hiring now
+                </h2>
+                <Badge variant="outline" className="bg-blue-50 text-blue-600 border-blue-200 text-[10px] font-bold px-2 py-0 h-5">
+                  FEATURED
+                </Badge>
+              </div>
+              <p className="text-[15px] text-[#64748B] font-medium">
+                Explore openings across top industry segments and MNCs
               </p>
             </div>
 
@@ -230,45 +235,47 @@ export const TopCompaniesSection = () => {
           {/* scrollable row */}
           <div
             ref={scrollRef}
-            className="flex gap-4 overflow-x-auto scrollbar-hide pb-2 -mx-1 px-1"
+            className="flex gap-5 overflow-x-auto scrollbar-hide pb-6 -mx-1 px-1"
             style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
           >
             {COMPANY_CATEGORIES.map(({ id, label, count, logos, colors }) => (
               <button
                 key={id}
                 onClick={() => router.push(`/find-jobs?category=${id}`)}
-                className="group flex-shrink-0 w-[240px] bg-white border border-[#E2E8F0] rounded-2xl p-4 text-left hover:border-primary/30 hover:shadow-md transition-all duration-200"
+                className="group flex-shrink-0 w-[280px] bg-white/80 backdrop-blur-sm border border-[#E2E8F0] rounded-2xl p-5 text-left hover:border-primary/40 hover:shadow-xl hover:shadow-blue-500/10 hover:-translate-y-1 transition-all duration-300"
               >
                 {/* header */}
-                <div className="flex items-center justify-between mb-3">
-                  <div>
-                    <p className="text-sm font-bold text-[#0F172A] flex items-center gap-1">
+                <div className="flex items-start justify-between mb-5">
+                  <div className="flex-1">
+                    <p className="text-[15px] font-bold text-[#0F172A] group-hover:text-primary transition-colors flex items-center gap-1.5 mb-1">
                       {label}
                       <IconChevronRight
                         size={14}
                         className="text-[#CBD5E1] group-hover:text-primary transition-colors"
                       />
                     </p>
-                    <p className="text-xs text-[#64748B] mt-0.5">
-                      <span className="text-green-600 font-semibold">
-                        {count}
-                      </span>{" "}
-                      are actively hiring
-                    </p>
+                    <div className="flex items-center gap-1.5 text-xs text-[#64748B]">
+                      <div className="w-1.5 h-1.5 rounded-full bg-green-500" />
+                      <span className="font-semibold text-green-700">{count}</span>
+                      <span className="opacity-80">hiring now</span>
+                    </div>
                   </div>
                 </div>
 
                 {/* logo strip */}
-                <div className="flex items-center gap-2 flex-wrap">
+                <div className="flex items-center gap-1.5">
                   {logos.map((abbr, i) => (
                     <div
                       key={i}
-                      className="w-8 h-8 rounded-lg flex items-center justify-center text-[9px] font-black text-white"
-                      style={{ backgroundColor: colors[i] }}
+                      className="w-10 h-10 rounded-xl flex items-center justify-center text-[10px] font-black text-white shadow-sm border-2 border-white -ml-2 first:ml-0 group-hover:scale-105 transition-transform"
+                      style={{ backgroundColor: colors[i], zIndex: 4 - i }}
                     >
                       {abbr}
                     </div>
                   ))}
+                  <div className="w-10 h-10 rounded-xl border-2 border-white bg-slate-50 flex items-center justify-center text-xs font-bold text-slate-400 -ml-2 z-0">
+                    +
+                  </div>
                 </div>
               </button>
             ))}
@@ -279,68 +286,74 @@ export const TopCompaniesSection = () => {
             SECTION B — Featured companies
         ════════════════════════════════════ */}
         <div>
-          <div className="flex items-end justify-between mb-6">
-            <div>
-              <h2 className="text-2xl font-black text-[#0F172A] tracking-tight">
-                Featured companies actively hiring
+          <div className="flex flex-col gap-2 mb-8">
+            <div className="flex items-center gap-2">
+              <h2 className="text-2xl sm:text-3xl font-black text-[#0F172A] tracking-tight">
+                Featured companies hiring
               </h2>
-              <p className="text-sm text-[#64748B] mt-1">
-                Verified employers with open positions right now
-              </p>
+              <IconStar className="text-amber-400 fill-amber-400" size={24} />
             </div>
+            <p className="text-[15px] text-[#64748B] font-medium">
+              Join top-tier workplaces and verified employers today
+            </p>
           </div>
 
           {/* 3-col grid → 2-col on md → 1-col on mobile */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {FEATURED_COMPANIES.map((co) => (
               <div
                 key={co.id}
-                className="group bg-white border border-[#E2E8F0] rounded-2xl p-5 flex flex-col hover:border-primary/25 hover:shadow-lg transition-all duration-200 cursor-pointer"
+                className="group relative bg-white border border-[#E2E8F0] rounded-[2rem] p-6 flex flex-col hover:border-primary/30 hover:shadow-2xl hover:shadow-blue-500/5 hover:-translate-y-1 transition-all duration-300 cursor-pointer overflow-hidden"
                 onClick={() => router.push(`/find-jobs?company=${co.id}`)}
               >
+                {/* Decorative background accent */}
+                <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl from-blue-50 to-transparent -mr-10 -mt-10 rounded-full group-hover:scale-150 transition-transform duration-500" />
+
                 {/* logo + rating row */}
-                <div className="flex items-start justify-between mb-4">
-                  <LogoPlaceholder
-                    initials={co.initials}
-                    bgColor={co.bgColor}
-                    size="lg"
-                  />
+                <div className="flex items-start justify-between mb-6">
+                  <div className="p-1 rounded-2xl bg-white shadow-sm border border-[#F1F5F9]">
+                    <LogoPlaceholder
+                      initials={co.initials}
+                      bgColor={co.bgColor}
+                      size="lg"
+                    />
+                  </div>
                   <div className="text-right">
                     <StarRating rating={co.rating} />
-                    <p className="text-[10px] text-[#94A3B8] mt-0.5">
+                    <p className="text-[11px] text-[#94A3B8] font-semibold mt-0.5 uppercase tracking-wider">
                       {co.reviews} reviews
                     </p>
                   </div>
                 </div>
 
                 {/* company info */}
-                <div className="flex-1">
-                  <h3 className="text-sm font-bold text-[#0F172A] mb-1 group-hover:text-primary transition-colors">
+                <div className="flex-1 relative z-10">
+                  <h3 className="text-lg font-black text-[#0F172A] mb-1 group-hover:text-primary transition-colors">
                     {co.name}
                   </h3>
-                  <p className="text-xs text-[#64748B] leading-relaxed mb-3">
+                  <p className="text-sm text-[#64748B] leading-relaxed mb-4 line-clamp-2 min-h-[40px]">
                     {co.tagline}
                   </p>
 
-                  {/* meta */}
-                  <div className="flex items-center gap-3 text-xs text-[#94A3B8] mb-3">
-                    <span className="flex items-center gap-1">
-                      <IconBriefcase size={12} />
-                      {co.openings.toLocaleString()} openings
+                  {/* meta strip */}
+                  <div className="flex items-center gap-4 text-xs font-semibold text-[#64748B] mb-5">
+                    <span className="flex items-center gap-1.5 px-2 py-1 bg-slate-50 rounded-lg">
+                      <IconBriefcase size={14} className="text-blue-500" />
+                      {co.openings.toLocaleString()} Jobs
                     </span>
-                    <span className="flex items-center gap-1">
-                      <IconMapPin size={12} />
+                    <span className="flex items-center gap-1.5 px-2 py-1 bg-slate-50 rounded-lg">
+                      <IconMapPin size={14} className="text-rose-500" />
                       {co.location}
                     </span>
                   </div>
 
                   {/* tags */}
-                  <div className="flex flex-wrap gap-1.5 mb-4">
+                  <div className="flex flex-wrap gap-2 mb-6">
                     {co.tags.map((tag) => (
                       <Badge
                         key={tag}
                         variant="outline"
-                        className="border-[#E2E8F0] bg-[#F8FAFC] text-[#475569] text-[10px] font-medium px-2 py-0.5 rounded-full"
+                        className="bg-white text-[#475569] text-[10px] font-bold px-3 py-1 rounded-full border-[#E8EDF2]"
                       >
                         {tag}
                       </Badge>
@@ -352,16 +365,16 @@ export const TopCompaniesSection = () => {
                 <Button
                   variant="outline"
                   size="sm"
-                  className="w-full border-[#E2E8F0] text-primary font-semibold text-xs hover:bg-primary hover:text-white hover:border-primary transition-all rounded-xl h-9 group/btn"
+                  className="w-full border-[#E2E8F0] text-primary font-bold text-xs hover:bg-primary hover:text-white hover:border-primary transition-all rounded-2xl h-11 group/btn shadow-sm"
                   onClick={(e) => {
                     e.stopPropagation();
                     router.push(`/find-jobs?company=${co.id}`);
                   }}
                 >
-                  View jobs
+                  Explore Vacancies
                   <IconArrowRight
-                    size={13}
-                    className="ml-1.5 group-hover/btn:translate-x-0.5 transition-transform"
+                    size={14}
+                    className="ml-2 group-hover/btn:translate-x-1 transition-transform"
                   />
                 </Button>
               </div>
