@@ -90,18 +90,21 @@ export const PopularRolesSection = () => {
   const current = ROLE_PAGES[activePage];
 
   return (
-    <section className="bg-white border-t border-[#E2E8F0]">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-12">
+    <section className="bg-transparent py-14">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-16">
         {/* ════════════════════════════════════
             PROMO BANNER — like Naukri Campus
         ════════════════════════════════════ */}
         <div
-          className="relative overflow-hidden rounded-2xl border border-[#E2E8F0] p-6 md:p-8"
+          className="relative overflow-hidden rounded-[2.5rem] border border-amber-200/50 p-8 md:p-12 shadow-2xl shadow-amber-500/10"
           style={{
             background:
-              "linear-gradient(135deg, #fffbeb 0%, #fef3c7 40%, #fff7ed 100%)",
+              "linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(254, 243, 199, 0.4) 40%, rgba(255, 247, 237, 0.8) 100%)",
+            backdropFilter: "blur(10px)",
           }}
         >
+          {/* Animated gradient accent */}
+          <div className="absolute top-0 right-0 w-1/2 h-full bg-gradient-to-l from-amber-100/30 to-transparent -rotate-12 translate-x-1/4 pointer-events-none" />
           {/* decorative circles */}
           <div className="absolute -right-10 -top-10 w-40 h-40 rounded-full bg-amber-200/40 pointer-events-none" />
           <div className="absolute right-20 -bottom-8 w-24 h-24 rounded-full bg-orange-200/30 pointer-events-none" />
@@ -110,16 +113,15 @@ export const PopularRolesSection = () => {
             <div className="space-y-3 flex-1">
               {/* label */}
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-100 border border-amber-300/60 text-amber-800 text-[10px] font-bold uppercase tracking-widest">
-                <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse" />
+                <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-ping" />
                 Just launched
               </div>
 
-              <h3 className="text-xl md:text-2xl font-black text-[#0F172A] leading-tight">
-                Introducing career tools for job seekers &amp; fresh grads
-              </h3>
-              <p className="text-sm text-[#64748B] max-w-lg leading-relaxed">
-                Explore resume builder, mock interviews, salary insights, and
-                career paths designed to help you land the right role faster.
+              <h2 className="text-2xl md:text-4xl font-black text-[#0F172A] leading-[1.1] tracking-tight">
+                Empower your career with <span className="text-amber-600">Premium Tools</span>
+              </h2>
+              <p className="text-base text-[#64748B] max-w-xl leading-relaxed font-medium">
+                Unlock exclusive resume builders, AI-driven mock interviews, and personalized career roadmaps designed to accelerate your growth.
               </p>
 
               {/* chips */}
@@ -139,13 +141,13 @@ export const PopularRolesSection = () => {
 
             <Button
               onClick={() => router.push("/find-jobs")}
-              className="shrink-0 h-11 px-6 font-bold text-white rounded-xl shadow-md hover:shadow-lg transition-all"
+              className="shrink-0 h-14 px-10 font-black text-white rounded-2xl shadow-xl hover:shadow-2xl hover:scale-105 transition-all duration-300 active:scale-95"
               style={{
-                background: "linear-gradient(135deg, #F59E0B 0%, #D97706 100%)",
-                boxShadow: "0 4px 14px rgba(245,158,11,0.4)",
+                background: "linear-gradient(135deg, #F59E0B 0%, #EA580C 100%)",
+                boxShadow: "0 10px 25px -5px rgba(245,158,11,0.5)",
               }}
             >
-              Explore now
+              Get Started Now
               <IconArrowRight size={16} className="ml-2" />
             </Button>
           </div>
@@ -155,122 +157,55 @@ export const PopularRolesSection = () => {
             POPULAR ROLES — paginated panels
         ════════════════════════════════════ */}
         <div>
-          <div className="flex items-end justify-between mb-6">
-            <div>
-              <h2 className="text-2xl font-black text-[#0F172A] tracking-tight">
-                Discover jobs across popular roles
+          <div className="flex flex-col gap-2 mb-10">
+            <div className="flex items-center gap-2">
+              <h2 className="text-2xl sm:text-3xl font-black text-[#0F172A] tracking-tight">
+                Discover jobs by roles
               </h2>
-              <p className="text-sm text-[#64748B] mt-1">
-                Select a role and we&apos;ll show you relevant jobs for it
-              </p>
+              <div className="flex items-center gap-1.5 px-2.5 py-1 bg-purple-50 border border-purple-100 rounded-full">
+                <IconSparkles size={12} className="text-purple-500" />
+                <span className="text-[10px] font-bold text-purple-600 uppercase tracking-tighter">AI Curated</span>
+              </div>
             </div>
+            <p className="text-[15px] text-[#64748B] font-medium">
+              Find your next career move across our most popular categories
+            </p>
           </div>
 
           <div className="flex flex-col lg:flex-row gap-4 items-stretch">
             {/* Left panel — illustration + role category tabs */}
             <div
-              className={`relative overflow-hidden rounded-2xl border border-[#E2E8F0] p-6 lg:w-64 shrink-0 bg-gradient-to-br ${current.bg} flex flex-col justify-between min-h-[280px]`}
+              className={`relative overflow-hidden rounded-[2rem] border border-[#E2E8F0] p-8 lg:w-72 shrink-0 bg-gradient-to-br ${current.bg} shadow-lg shadow-blue-500/5 flex flex-col justify-between min-h-[320px]`}
             >
               {/* decorative shapes */}
               <div
-                className="absolute -right-8 -bottom-8 w-36 h-36 rounded-full opacity-30"
+                className="absolute -right-12 -bottom-12 w-48 h-48 rounded-full opacity-20 blur-2xl"
                 style={{ background: current.accent }}
               />
-              <div
-                className="absolute -left-4 top-4 w-20 h-20 rounded-full opacity-15"
-                style={{ background: current.accent }}
-              />
-
-              {/* abstract SVG person shape */}
-              <div className="relative mb-4">
-                <svg
-                  viewBox="0 0 120 120"
-                  className="w-24 h-24 opacity-80"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <circle
-                    cx="60"
-                    cy="30"
-                    r="18"
-                    fill={current.accent}
-                    fillOpacity="0.25"
-                  />
-                  <circle
-                    cx="60"
-                    cy="28"
-                    r="14"
-                    fill={current.accent}
-                    fillOpacity="0.4"
-                  />
-                  <rect
-                    x="38"
-                    y="52"
-                    width="44"
-                    height="38"
-                    rx="22"
-                    fill={current.accent}
-                    fillOpacity="0.3"
-                  />
-                  <rect
-                    x="30"
-                    y="60"
-                    width="18"
-                    height="8"
-                    rx="4"
-                    fill={current.accent}
-                    fillOpacity="0.4"
-                    transform="rotate(-20 30 60)"
-                  />
-                  <rect
-                    x="72"
-                    y="60"
-                    width="18"
-                    height="8"
-                    rx="4"
-                    fill={current.accent}
-                    fillOpacity="0.4"
-                    transform="rotate(20 72 60)"
-                  />
-                  <rect
-                    x="46"
-                    y="86"
-                    width="12"
-                    height="22"
-                    rx="6"
-                    fill={current.accent}
-                    fillOpacity="0.35"
-                  />
-                  <rect
-                    x="62"
-                    y="86"
-                    width="12"
-                    height="22"
-                    rx="6"
-                    fill={current.accent}
-                    fillOpacity="0.35"
-                  />
-                </svg>
-              </div>
 
               <div className="relative">
-                <h3 className="text-base font-black text-[#0F172A] mb-1">
+                <div className="inline-flex items-center gap-2 px-3 py-1 bg-white/50 backdrop-blur-md rounded-full border border-white/40 mb-6 shadow-sm">
+                  <div className="w-2 h-2 rounded-full" style={{ backgroundColor: current.accent }} />
+                  <span className="text-[10px] font-bold text-[#0F172A] uppercase tracking-wider">Top Sector</span>
+                </div>
+
+                <h3 className="text-xl font-black text-[#0F172A] mb-2">
                   {current.heading}
                 </h3>
-                <p className="text-xs text-[#64748B] mb-4">
+                <p className="text-sm text-[#64748B] leading-relaxed mb-6 font-medium">
                   {current.description}
                 </p>
 
                 {/* page dots */}
-                <div className="flex items-center gap-1.5">
+                <div className="flex items-center gap-2">
                   {ROLE_PAGES.map((_, i) => (
                     <button
                       key={i}
                       onClick={() => setActivePage(i)}
-                      className={`rounded-full transition-all duration-200 ${
+                      className={`rounded-full transition-all duration-300 ${
                         i === activePage
-                          ? "w-5 h-2 bg-primary"
-                          : "w-2 h-2 bg-[#CBD5E1] hover:bg-primary/40"
+                          ? "w-8 h-2.5 bg-primary shadow-sm"
+                          : "w-2.5 h-2.5 bg-white/80 hover:bg-primary/40"
                       }`}
                     />
                   ))}
@@ -279,7 +214,7 @@ export const PopularRolesSection = () => {
             </div>
 
             {/* Right panel — 2×3 role grid */}
-            <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 gap-3 content-start">
+            <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 gap-4 content-start">
               {current.roles.map(({ label, count, icon: Icon }) => (
                 <button
                   key={label}
@@ -288,32 +223,33 @@ export const PopularRolesSection = () => {
                       `/find-jobs?role=${label.toLowerCase().replace(/\s/g, "-")}`,
                     )
                   }
-                  className="group flex items-center justify-between bg-white border border-[#E2E8F0] rounded-xl px-4 py-3.5 text-left hover:border-primary/30 hover:shadow-md transition-all duration-150"
+                  className="group flex items-center justify-between bg-white border border-[#E2E8F0] rounded-2xl px-6 py-5 text-left hover:border-primary/40 hover:shadow-xl hover:shadow-blue-500/5 hover:-translate-y-0.5 transition-all duration-300"
                 >
-                  <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-4">
                     <div
-                      className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0 transition-colors group-hover:opacity-90"
-                      style={{ backgroundColor: `${current.accent}18` }}
+                      className="w-12 h-12 rounded-xl flex items-center justify-center shrink-0 transition-all duration-300 group-hover:scale-110"
+                      style={{ backgroundColor: `${current.accent}15` }}
                     >
-                      <Icon size={15} style={{ color: current.accent }} />
+                      <Icon size={20} style={{ color: current.accent }} />
                     </div>
                     <div>
-                      <p className="text-sm font-semibold text-[#0F172A] group-hover:text-primary transition-colors leading-tight">
+                      <p className="text-base font-bold text-[#0F172A] group-hover:text-primary transition-colors leading-tight mb-1">
                         {label}
                       </p>
-                      <p className="text-xs text-[#64748B] mt-0.5">
-                        <span className="font-semibold text-[#475569]">
+                      <p className="text-xs text-[#64748B] font-semibold">
+                        <span className="text-primary font-black">
                           {count}
                         </span>{" "}
-                        Jobs
-                        <span className="ml-1">›</span>
+                        Live Openings
                       </p>
                     </div>
                   </div>
-                  <IconChevronRight
-                    size={15}
-                    className="text-[#CBD5E1] group-hover:text-primary group-hover:translate-x-0.5 transition-all"
-                  />
+                  <div className="w-8 h-8 rounded-full border border-[#F1F5F9] flex items-center justify-center group-hover:bg-primary group-hover:border-primary transition-all duration-300">
+                    <IconChevronRight
+                      size={14}
+                      className="text-[#CBD5E1] group-hover:text-white transition-colors"
+                    />
+                  </div>
                 </button>
               ))}
             </div>
@@ -325,10 +261,10 @@ export const PopularRolesSection = () => {
               <button
                 key={heading}
                 onClick={() => setActivePage(i)}
-                className={`px-4 py-2 rounded-full text-xs font-semibold transition-all ${
+                className={`px-6 py-2.5 rounded-full text-xs font-bold uppercase tracking-wider transition-all ${
                   i === activePage
-                    ? "bg-primary text-white shadow-sm"
-                    : "bg-[#F1F5F9] text-[#64748B] hover:bg-[#E2E8F0] hover:text-[#0F172A]"
+                    ? "bg-primary text-white shadow-lg shadow-blue-500/30 -translate-y-0.5"
+                    : "bg-white text-[#64748B] border border-[#E2E8F0] hover:border-primary/30 hover:text-primary"
                 }`}
               >
                 {heading}
