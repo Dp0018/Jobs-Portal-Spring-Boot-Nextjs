@@ -29,6 +29,7 @@ import {
   IconMapPin,
   IconTrendingUp,
   IconSparkles,
+  IconTarget,
 } from "@tabler/icons-react";
 import Image from "next/image";
 
@@ -171,6 +172,18 @@ const FEATURE_PILLS = [
     color: "text-amber-600",
     bg: "bg-amber-50",
   },
+  {
+    icon: Bot,
+    text: "AI Recommendation System",
+    color: "text-indigo-600",
+    bg: "bg-indigo-50",
+  },
+  {
+    icon: IconTarget,
+    text: "Skill Gap Identifier",
+    color: "text-rose-600",
+    bg: "bg-rose-50",
+  },
 ];
 
 /* ─────────────────────────────────────────────
@@ -216,27 +229,28 @@ const CATEGORIES = [
 ═══════════════════════════════════════════ */
 export const FindJobsViews = () => {
   return (
-    <div className="min-h-screen bg-[#F8FAFC]">
+    <div className="min-h-screen bg-gradient-to-b from-[#E8F0FE] via-[#F0F4FF] to-white">
+      {/* ── Global Decorative Background ── */}
+      <div className="absolute inset-0 pointer-events-none">
+        {/* subtle dot grid */}
+        <div
+          className="absolute inset-0 opacity-[0.08]"
+          style={{
+            backgroundImage: `radial-gradient(circle, #3B82F6 0.8px, transparent 0.8px)`,
+            backgroundSize: "32px 32px",
+          }}
+        />
+        {/* Global Gradient orbs */}
+        <div className="absolute top-[15%] -left-40 w-96 h-96 bg-blue-200/20 rounded-full blur-3xl" />
+        <div className="absolute top-[40%] -right-40 w-[30rem] h-[30rem] bg-indigo-200/15 rounded-full blur-3xl opacity-60" />
+        <div className="absolute top-[70%] -left-20 w-80 h-80 bg-sky-200/20 rounded-full blur-3xl" />
+        <div className="absolute bottom-[5%] right-[10%] w-96 h-96 bg-purple-200/15 rounded-full blur-3xl" />
+      </div>
+
       {/* ══════════════════════════════════════
           HERO SECTION
       ══════════════════════════════════════ */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-[#EEF4FF] via-[#F0F7FF] to-[#F8FAFC]">
-        {/* Decorative background elements */}
-        <div className="absolute inset-0 pointer-events-none">
-          {/* Subtle dot grid */}
-          <div
-            className="absolute inset-0 opacity-[0.15]"
-            style={{
-              backgroundImage: `radial-gradient(circle, #3B82F6 0.8px, transparent 0.8px)`,
-              backgroundSize: "24px 24px",
-            }}
-          />
-          {/* Gradient orbs */}
-          <div className="absolute -top-40 -left-40 w-80 h-80 bg-blue-200/30 rounded-full blur-3xl" />
-          <div className="absolute top-20 -right-20 w-96 h-96 bg-indigo-200/20 rounded-full blur-3xl" />
-          <div className="absolute -bottom-20 left-1/3 w-72 h-72 bg-sky-200/25 rounded-full blur-3xl" />
-        </div>
-
+      <section className="relative overflow-hidden">
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-10 pb-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
             {/* ── Left column: Text + CTA ── */}
@@ -289,20 +303,6 @@ export const FindJobsViews = () => {
                 {/* Glow effect */}
                 <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-green-400/20 to-emerald-400/20 blur-xl opacity-0 group-hover:opacity-100 transition-opacity -z-10" />
               </button>
-
-              {/* Feature pills row */}
-              <div className="flex flex-wrap gap-3">
-                {FEATURE_PILLS.map(({ icon: Icon, text, color, bg }) => (
-                  <div
-                    key={text}
-                    className={`flex items-center gap-2 px-3.5 py-2 ${bg} border border-opacity-20 rounded-xl text-xs font-medium ${color}`}
-                    style={{ borderColor: "rgba(0,0,0,0.07)" }}
-                  >
-                    <Icon className="w-3.5 h-3.5" />
-                    <span>{text}</span>
-                  </div>
-                ))}
-              </div>
             </div>
 
             {/* ── Right column: Hero Illustration ── */}
@@ -320,6 +320,20 @@ export const FindJobsViews = () => {
                 />
               </div>
             </div>
+          </div>
+
+          {/* Feature pills row - Centered below both columns */}
+          <div className="flex flex-wrap gap-3 justify-center mt-8">
+            {FEATURE_PILLS.map(({ icon: Icon, text, color, bg }) => (
+              <div
+                key={text}
+                className={`flex items-center gap-2 px-3.5 py-2 ${bg} border border-opacity-20 rounded-xl text-xs font-medium ${color}`}
+                style={{ borderColor: "rgba(0,0,0,0.07)" }}
+              >
+                <Icon className="w-3.5 h-3.5" />
+                <span>{text}</span>
+              </div>
+            ))}
           </div>
         </div>
       </section>
