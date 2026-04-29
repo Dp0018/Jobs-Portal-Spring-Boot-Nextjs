@@ -188,10 +188,6 @@ const Header = () => {
               <span className="text-[1.2rem] font-black text-[#0F172A] tracking-tight group-hover:text-primary transition-colors duration-200">
                 Joblify
               </span>
-              {/* beta badge */}
-              <Badge className="hidden sm:inline-flex bg-primary/10 text-primary border-primary/20 text-[9px] font-bold px-1.5 py-0 h-4 rounded-full">
-                BETA
-              </Badge>
             </Link>
 
             {/* ── DESKTOP NAV ── */}
@@ -203,6 +199,22 @@ const Header = () => {
             <div className="hidden md:flex items-center gap-2.5 shrink-0">
               {isLoggedIn ? (
                 <div className="flex items-center gap-2">
+                  {/* Crown Icon - Subscription Status */}
+                  <Link href={user?.subscriptionPlan === "PREMIUM" ? "#" : "/pricing"}>
+                    <button
+                      className={`relative w-9 h-9 flex items-center justify-center rounded-xl border transition-all duration-200 ${
+                        user?.subscriptionPlan === "PREMIUM"
+                          ? "bg-gradient-to-br from-amber-400 to-amber-500 border-amber-500 text-white shadow-lg shadow-amber-500/25"
+                          : "bg-[#F8FAFC] border-[#E2E8F0] text-[#94A3B8] hover:border-amber-400 hover:bg-amber-50 hover:text-amber-500"
+                      }`}
+                      title={user?.subscriptionPlan === "PREMIUM" ? "Premium Member" : "Upgrade to Premium"}
+                    >
+                      <IconCrown size={18} className={user?.subscriptionPlan === "PREMIUM" ? "fill-white" : ""} />
+                      {user?.subscriptionPlan === "PREMIUM" && (
+                        <span className="absolute -top-1 -right-1 w-3 h-3 bg-green-500 border-2 border-white rounded-full" />
+                      )}
+                    </button>
+                  </Link>
                   <NotificationMenu />
                   <Separator
                     orientation="vertical"
@@ -330,6 +342,22 @@ const Header = () => {
                 <div className="flex items-center justify-between">
                   <ProfileMenu />
                   <div className="flex items-center gap-2">
+                    {/* Crown Icon - Subscription Status (Mobile) */}
+                    <Link href={user?.subscriptionPlan === "PREMIUM" ? "#" : "/pricing"}>
+                      <button
+                        className={`relative w-9 h-9 flex items-center justify-center rounded-xl border transition-all duration-200 ${
+                          user?.subscriptionPlan === "PREMIUM"
+                            ? "bg-gradient-to-br from-amber-400 to-amber-500 border-amber-500 text-white shadow-lg shadow-amber-500/25"
+                            : "bg-[#F8FAFC] border-[#E2E8F0] text-[#94A3B8] hover:border-amber-400 hover:bg-amber-50 hover:text-amber-500"
+                        }`}
+                        title={user?.subscriptionPlan === "PREMIUM" ? "Premium Member" : "Upgrade to Premium"}
+                      >
+                        <IconCrown size={16} className={user?.subscriptionPlan === "PREMIUM" ? "fill-white" : ""} />
+                        {user?.subscriptionPlan === "PREMIUM" && (
+                          <span className="absolute -top-1 -right-1 w-3 h-3 bg-green-500 border-2 border-white rounded-full" />
+                        )}
+                      </button>
+                    </Link>
                     <button className="w-9 h-9 flex items-center justify-center rounded-xl border border-[#E2E8F0] bg-[#F8FAFC] text-[#64748B] hover:bg-white hover:text-[#0F172A] transition-colors">
                       <IconSettings size={16} stroke={1.5} />
                     </button>

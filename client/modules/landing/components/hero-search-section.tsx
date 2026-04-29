@@ -100,6 +100,18 @@ const FEATURE_PILLS = [
     color: "text-amber-600",
     bg: "bg-amber-50",
   },
+  {
+    icon: Bot,
+    text: "AI Recommendation System",
+    color: "text-indigo-600",
+    bg: "bg-indigo-50",
+  },
+  {
+    icon: IconTarget,
+    text: "Skill Gap Identifier",
+    color: "text-rose-600",
+    bg: "bg-rose-50",
+  },
 ];
 
 /* ═══════════════════════════════════════════
@@ -110,23 +122,7 @@ export const HeroSearchSection = () => {
 
   return (
     <>
-      <section className="relative overflow-hidden bg-gradient-to-br from-[#EEF4FF] via-[#F0F7FF] to-[#F8FAFC]">
-        {/* ── Layered gradient background ── */}
-        <div className="absolute inset-0 pointer-events-none">
-          {/* subtle dot grid */}
-          <div
-            className="absolute inset-0 opacity-[0.15]"
-            style={{
-              backgroundImage: `radial-gradient(circle, #3B82F6 0.8px, transparent 0.8px)`,
-              backgroundSize: "24px 24px",
-            }}
-          />
-          {/* Gradient orbs */}
-          <div className="absolute -top-40 -left-40 w-80 h-80 bg-blue-200/30 rounded-full blur-3xl" />
-          <div className="absolute top-20 -right-20 w-96 h-96 bg-indigo-200/20 rounded-full blur-3xl" />
-          <div className="absolute -bottom-20 left-1/3 w-72 h-72 bg-sky-200/25 rounded-full blur-3xl" />
-        </div>
-
+      <section className="relative overflow-hidden">
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-10 pb-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
             {/* ── Left column: Text + CTA ── */}
@@ -191,20 +187,6 @@ export const HeroSearchSection = () => {
                 {/* Glow effect */}
                 <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-green-400/20 to-emerald-400/20 blur-xl opacity-0 group-hover:opacity-100 transition-opacity -z-10" />
               </button>
-
-              {/* Feature pills row */}
-              <div className="flex flex-wrap gap-3">
-                {FEATURE_PILLS.map(({ icon: Icon, text, color, bg }) => (
-                  <div
-                    key={text}
-                    className={`flex items-center gap-2 px-3.5 py-2 ${bg} border border-opacity-20 rounded-xl text-xs font-medium ${color}`}
-                    style={{ borderColor: "rgba(0,0,0,0.1)" }}
-                  >
-                    <Icon className="w-3.5 h-3.5" />
-                    <span>{text}</span>
-                  </div>
-                ))}
-              </div>
             </div>
 
             {/* ── Right column: Hero Illustration ── */}
@@ -223,12 +205,26 @@ export const HeroSearchSection = () => {
               </div>
             </div>
           </div>
+
+          {/* Feature pills row - Centered below both columns */}
+          <div className="flex flex-wrap gap-3 justify-center mt-8">
+            {FEATURE_PILLS.map(({ icon: Icon, text, color, bg }) => (
+              <div
+                key={text}
+                className={`flex items-center gap-2 px-3.5 py-2 ${bg} border border-opacity-20 rounded-xl text-xs font-medium ${color}`}
+                style={{ borderColor: "rgba(0,0,0,0.1)" }}
+              >
+                <Icon className="w-3.5 h-3.5" />
+                <span>{text}</span>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 
 
       {/* ── Category chips ── */}
-      <section className="bg-white py-12">
+      <section className="bg-transparent py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-8">
             <h2 className="text-xl font-bold text-[#0F172A] mb-2">Explore by Category</h2>
