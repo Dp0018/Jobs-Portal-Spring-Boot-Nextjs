@@ -1,4 +1,4 @@
-# 🚀 Job Portal Platform (Spring Boot & Next.js)
+# 🚀 AI Job Portal Platform (Spring Boot & Next.js)
 
 A modern, full-stack Job Portal Application engineered to streamline the hiring process with a robust **Spring Boot** micro-services backend and a highly interactive **Next.js** frontend. This platform leverages advanced **AI Capabilities** using **Spring AI**, **Google GenAI**, and **MongoDB Atlas Vector Search** to automate candidate screening, ensure fairness in hiring, detect fraudulent roles, and smartly match candidates to employers.
 
